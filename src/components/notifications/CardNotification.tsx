@@ -1,0 +1,97 @@
+import { css } from '@emotion/react';
+
+import ImageEducation from '~/assets/images/notification/img_education.png';
+import ImageNotice from '~/assets/images/notification/img_notice.png';
+import ImagePayment from '~/assets/images/notification/img_payment.png';
+import CardCollapse from '~/components/cards/CardCollapse.tsx';
+import Flex from '~/components/display/Flex.tsx';
+import ButtonAttachment from '~/components/notifications/ButtonAttachment.tsx';
+import Body from '~/components/typography/Body.tsx';
+import Caption from '~/components/typography/Caption.tsx';
+import { COLORS } from '~/configs/theme.ts';
+import { NotificationTypeName } from '~/types/notification.type.ts';
+import { formatDate } from '~/utils/format.util.ts';
+
+import type { AttachmentFile } from '~/types/lectures.type.ts';
+import type { Nullable } from '~/types/utils/nullable.type.ts';
+
+interface Props {
+  type: NotificationTypeName;
+  title: string;
+  createdAt: number;
+  description: string;
+  attachments: Nullable<AttachmentFile[]>;
+  isNew?: boolean;
+}
+
+function CardNotification({
+  type,
+  title,
+  createdAt,
+  description,
+  attachments,
+  isNew,
+}: Props) {
+  return (
+    <CardCollapse
+      title={
+        <Flex direction="column" gap={4} justify="center">
+          <Body size={14} weight="bold">
+            <img
+              alt="아이콘"
+              css={notificationStyles.icon}
+              src={getIcon(type)}
+            />
+
+            {title}
+
+            {isNew && <span css={notificationStyles.newLabel}>New</span>}
+          </Body>
+          <Caption color={COLORS.FONT['30']} size={12} weight="regular">
+            {formatDate(createdAt, 'YYYY.MM.DD')}
+          </Caption>
+        </Flex>
+      }
+    >
+      {description}
+
+      {attachments && attachments.length > 0 && (
+        <div>
+          {attachments.map((file, idx) => (
+            <ButtonAttachment key={idx} attachment={file} />
+          ))}
+        </div>
+      )}
+    </CardCollapse>
+  );
+}
+
+const getIcon = (type: NotificationTypeName) => {
+  switch (type) {
+    case NotificationTypeName.MATERIAL:
+      return ImageEducation;
+    case NotificationTypeName.LECTURE_INVOICE:
+      return ImagePayment;
+    case NotificationTypeName.NOTICE:
+    default:
+      return ImageNotice;
+  }
+};
+
+const notificationStyles = {
+  newLabel: css`
+    color: #f43b00;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 18px; /* 150% */
+    letter-spacing: -0.2px;
+    margin-left: 4px;
+  `,
+  icon: css`
+    height: 14px;
+    margin-right: 2px;
+  `,
+};
+
+export default CardNotification;

@@ -1,0 +1,171 @@
+import { css } from '@emotion/react';
+import { Drawer, Tabs } from 'antd';
+
+import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
+import NotificationList from '~/components/notifications/NotificationList.tsx';
+import { COLORS } from '~/configs/theme.ts';
+import useNotifications from '~/hooks/useNotifications.ts';
+import { NotificationType } from '~/types/notification.type.ts';
+
+import type { DrawerProps } from 'antd';
+
+interface Props extends Omit<DrawerProps, 'onClose'> {
+  defaultActiveKey?: string;
+  onClose?: () => void;
+}
+
+const NOTIFICATION_TABS: Array<{
+  key: NotificationType | 'ALL';
+  label: string;
+}> = [
+  { key: 'ALL', label: '전체' },
+  { key: NotificationType.NEW_MATERIAL, label: '학습자료' },
+  { key: NotificationType.NEW_NOTICE, label: '공지사항' },
+  { key: NotificationType.INVOICE_DUE, label: '회비' },
+];
+
+const DEFAULT_PAGINATION = { offset: 0, limit: 10 };
+
+function DrawerNotifications({
+  children,
+  defaultActiveKey,
+  title,
+  onClose,
+  ...props
+}: Props) {
+  const { fetchData } = useNotifications();
+
+  // const [type, setType] = useState<string>('all');
+
+  return (
+    <Drawer
+      closable={false}
+      css={styles.drawer}
+      placement="right"
+      push={{ distance: 0 }}
+      rootClassName="drawerNotificationsRoot"
+      width="100%"
+      {...props}
+      onClose={onClose}
+    >
+      <header css={styles.header}>
+        <div css={styles.titleBar}>
+          <button onClick={() => onClose?.()}>
+            <IconExpandLeft24 />
+          </button>
+          <h1>알림</h1>
+        </div>
+
+        <Tabs
+          css={styles.tabs}
+          defaultActiveKey={defaultActiveKey || 'ALL'}
+          indicator={{ align: 'center', size: 74 }}
+          items={NOTIFICATION_TABS}
+          onChange={activeKey => {
+            const type = activeKey as NotificationType | 'ALL';
+
+            if (type === 'ALL') {
+              fetchData({ pagination: DEFAULT_PAGINATION });
+            } else {
+              fetchData({
+                pagination: DEFAULT_PAGINATION,
+                filter: {
+                  types: [type],
+                },
+              });
+            }
+          }}
+        />
+      </header>
+
+      <NotificationList />
+    </Drawer>
+  );
+}
+
+const styles = {
+  drawer: css`
+    position: relative;
+
+    .ant-drawer-body {
+      padding: 0;
+      background: ${COLORS.BG.BACKGROUND};
+    }
+  `,
+
+  header: css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  `,
+
+  titleBar: css`
+    display: flex;
+    align-items: center;
+    padding: 15px 14px;
+    background: #fff;
+
+    button {
+      display: flex;
+    }
+
+    h1 {
+      color: #111827;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 26px; /* 130% */
+      letter-spacing: -0.5px;
+    }
+  `,
+
+  tabs: css`
+    padding: 0 14px;
+    background: #fff;
+    position: relative;
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      //border-bottom: 1px solid var(--BG-03, #dae0e9);
+      border-bottom: 1px solid ${COLORS.BG['03']};
+    }
+
+    .ant-tabs-nav {
+      margin: 0;
+
+      &:before {
+        border: none;
+      }
+    }
+
+    .ant-tabs-nav-wrap {
+      width: 100%;
+
+      .ant-tabs-nav-list {
+        width: 100%;
+
+        .ant-tabs-ink-bar {
+          //width: 74px !important;
+        }
+
+        .ant-tabs-tab {
+          justify-content: center;
+          flex: 1;
+          //font-size: 18px;
+          //padding: 8px 0;
+
+          & + .ant-tabs-tab {
+            margin: 0;
+          }
+        }
+      }
+    }
+  `,
+};
+
+export default DrawerNotifications;

@@ -92,6 +92,7 @@ module.exports = {
     'import/prefer-default-export': 0,
     'jsx-a11y/click-events-have-key-events': 0,
     'jsx-a11y/no-static-element-interactions': 0,
+    'no-console': 0,
     'no-extra-semi': 0,
     'no-nested-ternary': 0,
     'no-param-reassign': ['error', { props: false }],
