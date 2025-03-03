@@ -1,0 +1,99 @@
+* {
+  box-sizing: border-box;
+  font-family:
+    Pretendard,
+    ‘Noto Sans KR’,
+    ‘Segoe UI’,
+    Apple SD Gothic Neo,
+    Roboto,
+    system ui,
+    sans-serif;
+  letter-spacing: 0.0128em;
+  margin: 0;
+  padding: 0;
+
+  /* scroll 비활성화 */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  -webkit-touch-callout:none;                /* prevent callout to copy image, etc when tap to hold */
+  -webkit-text-size-adjust:none;             /* prevent webkit from resizing text to fit */
+  -webkit-tap-highlight-color: transparent; /* prevent tap highlight color / shadow */
+}
+
+*:not(input):not(textarea) {
+  -webkit-user-select: none; /* input, textarea 를 제외하고 user_select를 허용하지 않는다. */
+}
+
+html {
+  width: 100vw;
+  /*height: 100vh;*/
+  /*overflow: hidden;*/
+}
+
+body {
+  width: 100vw;
+  /*height: 100vh;*/
+  /*overflow: hidden;*/
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  font-size: 16px;
+}
+
+#root {
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+p {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+button {
+  user-select: none;
+  appearance: none;
+  background: none;
+  border: 0;
+  line-height: 1;
+}
+
+.ant-drawer.ant-drawer-bottom.bottomSheetRoot .ant-drawer-content-wrapper {
+  border-radius: 16px;
+  bottom: 6px;
+  margin: 0 6px;
+}
+
+.ant-drawer.ant-drawer-bottom.bottomSheetRoot.dialog .ant-drawer-content-wrapper {
+  height: auto !important;
+  max-height: 378px;
+}
+
+.ant-drawer.ant-drawer-bottom.bottomSheetRoot.autoHeight .ant-drawer-content-wrapper {
+  height: auto !important;
+  max-height: unset !important;
+}
+
+.ant-drawer.ant-drawer-bottom.bottomSheetRoot.autoHeight .ant-drawer-content-wrapper .autoHeightBody {
+  height: auto !important;
+  max-height: unset !important;
+}
+
+.ant-drawer.ant-drawer-bottom.bottomSheetRoot .ant-drawer-content-wrapper .ant-drawer-body {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerNotificationsRoot .ant-drawer-content-wrapper {
+  /*transform: none !important;*/
+}
