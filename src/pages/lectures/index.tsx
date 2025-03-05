@@ -12,7 +12,7 @@ import LectureHeader from '~/pages/lectures/LectureHeader.tsx';
 function LecturesPage() {
   const {
     fetchData,
-    selectLesson,
+    initializeLesson,
     state: { isLoading },
   } = useLectures();
 
@@ -26,11 +26,9 @@ function LecturesPage() {
     (async () => {
       const lecture = await fetchData(lectureId || undefined);
 
-      const lesson = lessonDate
-        ? lecture?.lessons.find(lesson => lesson.date === lessonDate)
-        : lecture?.lessons[0];
-
-      selectLesson(lesson);
+      if (lecture) {
+        initializeLesson(lecture, lessonDate);
+      }
     })();
   }, []);
 
