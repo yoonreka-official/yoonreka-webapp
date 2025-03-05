@@ -1,18 +1,6 @@
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
 
-interface ErrorTemplateProps {
-  message?: string;
-  status?: number | string;
-}
-
-export function ErrorTemplate({ status, message }: ErrorTemplateProps) {
-  return (
-    <div className="flex flex-col gap-4 h-screen justify-center items-center bg-gray-100">
-      <h1 className="text-8xl font-bold">{status || 'Oooooops!'}</h1>
-      <p className="text-2xl text-gray-500">{message}</p>
-    </div>
-  );
-}
+import ErrorTemplate from '~/errors/ErrorTemplate.tsx';
 
 function RootBoundary() {
   const error = useRouteError();

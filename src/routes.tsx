@@ -18,6 +18,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <AppConfig />,
+    errorElement: <RootBoundary />,
     children: [
       {
         path: '/',
@@ -26,7 +27,6 @@ const router = createBrowserRouter([
             <LayoutDefault />
           </AuthGuard>
         ),
-        errorElement: <RootBoundary />,
         children: [
           {
             path: '/',
