@@ -41,16 +41,6 @@ function ScheduleDailyLessons() {
 }
 
 const styles = {
-  marker: css`
-    color: ${COLORS.POINT.PRIMARY};
-    text-align: center;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 14px; /* 116.667% */
-    letter-spacing: -0.2px;
-  `,
-
   dailyInfoHeader: css`
     border-bottom: 1px solid ${COLORS.BG['01']};
     padding-bottom: 4px;
