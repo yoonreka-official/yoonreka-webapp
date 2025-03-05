@@ -62,7 +62,20 @@ function CardQuestion({ question, className, onChange }: CardQuestionProps) {
                 ({dayjs(question.answeredAt).format('YYYY-MM-DD HH:mm')})
               </Caption>
             </Flex>
-            <div css={styles.answer}>{question.answer}</div>
+            <div css={styles.answer}>
+              {question.answer}
+
+              {question.link && (
+                <a
+                  css={styles.link}
+                  href={question.link}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {question.link}
+                </a>
+              )}
+            </div>
           </>
         )}
       </div>
@@ -124,6 +137,16 @@ const styles = {
     font-weight: 500;
     line-height: 18px; /* 150% */
     letter-spacing: -0.2px;
+
+    white-space: pre-wrap;
+  `,
+
+  link: css`
+    display: block;
+    //border-top: 1px solid #ddd;
+    margin-top: 12px;
+    color: ${COLORS.POINT.PRIMARY};
+    word-break: break-all;
   `,
 };
 
