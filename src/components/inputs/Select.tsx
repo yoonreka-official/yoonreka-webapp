@@ -26,6 +26,7 @@ interface Props extends Omit<SelectProps, 'onChange'> {
 
 function Select({
   id,
+  className,
   options = [],
   defaultValue,
   value,
@@ -76,6 +77,7 @@ function Select({
   return (
     <>
       <button
+        className={className}
         css={[
           styles.select,
           isInput && styles.inputStyle,
@@ -106,9 +108,7 @@ function Select({
         onConfirm={() => handleClose()}
       >
         <div css={styles.itemWrapper}>
-          <ul css={[styles.selectItem]}>
-            <li style={{ height: 84 }} />
-
+          <ul>
             {options.map(option => (
               <li key={option.value}>
                 <button
@@ -125,7 +125,6 @@ function Select({
                 </button>
               </li>
             ))}
-            <li style={{ height: 84 }} />
           </ul>
         </div>
       </BottomSheet>
@@ -142,7 +141,7 @@ const styles = {
     gap: 4px;
     appearance: none;
     background: #fff;
-    border: 0;
+    border: 1px solid #fff;
     line-height: 1;
     padding: 14px 16px;
     border-radius: 16px;
@@ -169,8 +168,14 @@ const styles = {
 
   itemWrapper: css`
     position: relative;
+    max-height: 311px;
     height: 100%;
     width: 100%;
+    overflow-y: auto;
+
+    ul {
+      list-style: none;
+    }
 
     li > button {
       display: flex;
@@ -191,24 +196,6 @@ const styles = {
       letter-spacing: -0.2px;
 
       color: ${COLORS.FONT['90']};
-    }
-  `,
-
-  selectItem: css`
-    display: block;
-    flex: 1;
-    list-style: none;
-    height: 100%;
-    overflow-y: auto;
-
-    li > button {
-      display: flex;
-      width: 100%;
-      justify-content: center;
-      padding: 6px 24px;
-      font-size: 22px;
-
-      color: ${COLORS.FONT['10']};
     }
   `,
 
