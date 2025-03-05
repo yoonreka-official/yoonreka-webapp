@@ -1,12 +1,16 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import dayjs from 'dayjs';
 
 import { getNotifications } from '~/api/notification.api.ts';
+
+import type { PayloadAction } from '@reduxjs/toolkit';
 
 import type {
   FormattedNotificationResponse,
   Notification,
   NotificationPageInfo,
   NotificationParams,
+  NotificationType,
 } from '~/types/notification.type.ts';
 
 export interface NotificationState {
@@ -17,6 +21,8 @@ export interface NotificationState {
 
   isLoading: boolean;
   hasNew: boolean;
+
+  selectedType: NotificationType | 'ALL';
 }
 
 const initialState: NotificationState = {
@@ -38,6 +44,8 @@ const initialState: NotificationState = {
 
   isLoading: false,
   hasNew: false,
+
+  selectedType: 'ALL',
 };
 
 export const fetchNotifications = createAsyncThunk<
@@ -52,6 +60,13 @@ export const fetchNotifications = createAsyncThunk<
   }
 });
 
+const isNewNotification = (item: Notification) => {
+  const time = dayjs().subtract(24, 'hours');
+  const readIds = JSON.parse(window.localStorage.getItem('readIds') || '[]');
+
+  return dayjs(item.createdAt).isAfter(time) && !readIds.includes(item.id);
+};
+
 const NotificationSlice = createSlice({
   extraReducers: builder => {
     builder
@@ -63,8 +78,16 @@ const NotificationSlice = createSlice({
         }
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
-        // TODO: isNew 처리할 것!!
-        state.list = action.payload.data;
+        const notifications = action.payload.data.map(item => {
+          return {
+            ...item,
+            isNew: isNewNotification(item),
+          };
+        });
+
+        state.list = notifications;
+        state.hasNew = notifications.some(item => item.isNew);
+
         state.totalCount = action.payload.totalCount;
         state.pageInfo = action.payload.pageInfo;
 
@@ -78,8 +101,22 @@ const NotificationSlice = createSlice({
   },
   initialState,
   name: 'notification',
-  reducers: {},
+  reducers: {
+    readNotifications: state => {
+      const notifications = state.list.map(item => ({
+        ...item,
+        isNew: isNewNotification(item),
+      }));
+
+      state.list = notifications;
+      state.hasNew = notifications.some(item => item.isNew);
+    },
+
+    setType: (state, action: PayloadAction<NotificationType | 'ALL'>) => {
+      state.selectedType = action.payload;
+    },
+  },
 });
 
-// export const { setLesson } = NotificationSlice.actions;
+export const { readNotifications, setType } = NotificationSlice.actions;
 export default NotificationSlice;

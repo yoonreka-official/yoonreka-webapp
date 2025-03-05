@@ -33,9 +33,12 @@ function DrawerNotifications({
   onClose,
   ...props
 }: Props) {
-  const { fetchData } = useNotifications();
+  const { fetchData, handleMarkAsRead, handleChangeType } = useNotifications();
 
-  // const [type, setType] = useState<string>('all');
+  const handleClose = () => {
+    handleMarkAsRead();
+    onClose?.();
+  };
 
   return (
     <Drawer
@@ -46,11 +49,11 @@ function DrawerNotifications({
       rootClassName="drawerNotificationsRoot"
       width="100%"
       {...props}
-      onClose={onClose}
+      onClose={() => handleClose()}
     >
       <header css={styles.header}>
         <div css={styles.titleBar}>
-          <button onClick={() => onClose?.()}>
+          <button onClick={() => handleClose()}>
             <IconExpandLeft24 />
           </button>
           <h1>알림</h1>
@@ -63,6 +66,7 @@ function DrawerNotifications({
           items={NOTIFICATION_TABS}
           onChange={activeKey => {
             const type = activeKey as NotificationType | 'ALL';
+            handleChangeType(type);
 
             if (type === 'ALL') {
               fetchData({ pagination: DEFAULT_PAGINATION });

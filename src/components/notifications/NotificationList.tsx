@@ -8,21 +8,43 @@ import NoData from '~/components/utils/NoData.tsx';
 import { COLORS } from '~/configs/theme.ts';
 import useNotifications from '~/hooks/useNotifications.ts';
 import Container from '~/layouts/Container.tsx';
-import { NotificationTypeName } from '~/types/notification.type.ts';
+import {
+  NotificationType,
+  NotificationTypeName,
+} from '~/types/notification.type.ts';
 
 import type { Notification } from '~/types/notification.type.ts';
 
+const getNotificationTypeLabel = (type: NotificationType | 'ALL') => {
+  switch (type) {
+    case NotificationType.NEW_MATERIAL:
+      return '학습자료 ';
+    case NotificationType.INVOICE_DUE:
+      return '회비 ';
+    case NotificationType.NEW_NOTICE:
+      return '공지사항 ';
+    default:
+      return '';
+  }
+};
+
 function NotificationList() {
   const {
-    state: { isLoading, list },
+    state: { isLoading, list, selectedType },
+    setReadId,
   } = useNotifications();
 
   const renderNotification = (item: Notification) => {
+    // ? 화면에 그릴 때, 읽은 ID로 저장.
+    // ! 단, 실제 읽음 처리는 모달 닫을 뗴 해야함
+    setReadId(item.id);
+
     // eslint-disable-next-line no-underscore-dangle
     switch (item.link?.__typename) {
       case NotificationTypeName.MATERIAL:
         return (
           <CardNotification
+            key={item.id}
             title={item.material!.title}
             attachments={item.material!.attachments}
             createdAt={item.material!.createdAt}
@@ -34,6 +56,7 @@ function NotificationList() {
       case NotificationTypeName.NOTICE:
         return (
           <CardNotification
+            key={item.id}
             title={item.notice!.title}
             attachments={item.notice!.attachments}
             createdAt={item.notice!.createdAt}
@@ -45,6 +68,7 @@ function NotificationList() {
       case NotificationTypeName.LECTURE_INVOICE:
         return (
           <CardInvoice
+            key={item.id}
             title={item.lectureInvoice!.lecture.title}
             createdAt={item.lectureInvoice!.dueDate}
             invoiceType={item.lectureInvoice!.type}
@@ -70,7 +94,7 @@ function NotificationList() {
         <NoData
           description={
             <Body color={COLORS.FONT['30']} size={14}>
-              등록된 알림이 없습니다.
+              등록된 {getNotificationTypeLabel(selectedType)} 알림이 없습니다.
             </Body>
           }
           disableWrapper
