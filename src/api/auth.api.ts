@@ -4,7 +4,12 @@ import { appolo, setToken as setAppoloToken } from '~/utils/apollo.util.ts';
 import { setCookie } from '~/utils/cookie.util.ts';
 import { getTokenExpires } from '~/utils/jwt.utils.ts';
 
-import type { AuthTokenPair, AuthUser, LoginBody } from '~/types/auth.type.ts';
+import type {
+  AuthTokenPair,
+  AuthUser,
+  LoginBody,
+  UpdateUserBody,
+} from '~/types/auth.type.ts';
 
 export const setTokens = ({ accessToken, refreshToken }: AuthTokenPair) => {
   setAppoloToken(accessToken);
@@ -77,7 +82,48 @@ export const fetchAuthUser = async () => {
             id
             title
           }
+
+          isDistractionMode
+          distractionEndTime
+          distractionStartTime
         }
+      }
+    `,
+  });
+};
+
+export const updateAuthUser = (input: UpdateUserBody) => {
+  return appolo.mutate({
+    mutation: gql`
+      mutation UpdateUser($input: UpdateUserInput!) {
+        updateUser(input: $input) {
+          id
+          isDistractionMode
+          distractionStartTime
+          distractionEndTime
+        }
+      }
+    `,
+    variables: { input },
+  });
+};
+
+export const signOut = (token: string) => {
+  return appolo.mutate<{ signInByPhone: AuthTokenPair }>({
+    mutation: gql`
+      mutation SignOut($token: String!) {
+        signOut(token: $token)
+      }
+    `,
+    variables: { token },
+  });
+};
+
+export const withdrawUser = () => {
+  return appolo.mutate<{ signInByPhone: AuthTokenPair }>({
+    mutation: gql`
+      mutation Withdraw {
+        withdraw
       }
     `,
   });

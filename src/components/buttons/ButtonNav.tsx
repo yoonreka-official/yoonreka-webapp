@@ -7,15 +7,23 @@ import type { CSSProperties, ReactNode } from 'react';
 export interface ButtonNavProps {
   children?: ReactNode;
   className?: string;
+  disabled?: boolean;
   style?: CSSProperties;
   onClick?: () => void;
 }
 
-function ButtonNav({ children, className, style, onClick }: ButtonNavProps) {
+function ButtonNav({
+  children,
+  className,
+  disabled,
+  style,
+  onClick,
+}: ButtonNavProps) {
   return (
     <button
       className={className}
       css={buttonNavStyles}
+      disabled={disabled}
       style={style}
       onClick={onClick}
     >
@@ -41,6 +49,11 @@ const buttonNavStyles = css`
   font-weight: 700;
   line-height: 20px; /* 142.857% */
   letter-spacing: -0.2px;
+
+  &:disabled {
+    background: ${COLORS.BG['03']};
+    color: ${COLORS.BG['04']};
+  }
 `;
 
 export default ButtonNav;

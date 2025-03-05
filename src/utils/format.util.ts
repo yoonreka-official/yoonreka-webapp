@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 
+import type { Gender } from '~/types/auth.type.ts';
 import type { NullableString } from '~/types/utils/nullable.type.ts';
 
 export const formattedNumberWithUnits = (value: number): string => {
@@ -40,3 +41,13 @@ export const formatDate = (
 };
 
 export const formatNumber = (value: number) => value.toLocaleString();
+
+export const formatMobileNumber = (mobile?: NullableString) => {
+  if (!mobile) return;
+  return mobile.replace(/(\d{3})(\d{4})(\d{4}|\*{4})/, '$1-$2-$3');
+};
+
+export const formatGender = (gender?: Gender) => {
+  if (!gender) return;
+  return gender === 'MALE' ? '남' : '여';
+};

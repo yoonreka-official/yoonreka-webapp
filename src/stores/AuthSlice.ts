@@ -2,12 +2,16 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { fetchAuthUser } from '~/api/auth.api.ts';
 
+import type { PayloadAction } from '@reduxjs/toolkit';
+
 import type { RootState } from '~/stores';
-import type { AuthUser } from '~/types/auth.type.ts';
+import type { AuthUser, UpdateUserBody } from '~/types/auth.type.ts';
 
 export interface AuthState {
   authUser: AuthUser | null;
   isLoading: boolean;
+
+  notificationConfig?: UpdateUserBody;
 }
 
 const initialState: AuthState = {
@@ -35,6 +39,12 @@ const AuthSlice = createSlice({
       })
       .addCase(fetchMe.fulfilled, (state, action) => {
         state.authUser = action.payload;
+        state.notificationConfig = {
+          isDistractionMode: action.payload.isDistractionMode,
+          distractionStartTime:
+            action.payload.distractionStartTime || undefined,
+          distractionEndTime: action.payload.distractionEndTime || undefined,
+        };
         state.isLoading = false;
       })
       .addCase(fetchMe.rejected, state => {
@@ -45,16 +55,19 @@ const AuthSlice = createSlice({
   initialState,
   name: 'auth',
   reducers: {
-    setAuthUser: (state, action) => {
+    setAuthUser: (state, action: PayloadAction<AuthUser | null>) => {
       state.authUser = action.payload;
     },
 
-    signOut: state => {
-      state.authUser = null;
+    setNotificationConfig: (
+      state,
+      action: PayloadAction<UpdateUserBody | undefined>,
+    ) => {
+      state.notificationConfig = action.payload;
     },
   },
 });
 
-export const { setAuthUser, signOut } = AuthSlice.actions;
+export const { setAuthUser, setNotificationConfig } = AuthSlice.actions;
 export const selectAuthUser = (state: RootState) => state.auth.authUser;
 export default AuthSlice;

@@ -5,7 +5,7 @@ import type {
   InvoiceType,
 } from '~/types/invoice.type.ts';
 import type { AttachmentFile } from '~/types/lectures.type.ts';
-import type { Nullable } from '~/types/utils/nullable.type.ts';
+import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts';
 
 export type NotificationOrderKey = 'ID';
 
@@ -108,7 +108,7 @@ export interface Notice {
   id: string;
   title: string;
   description: string;
-  link: string;
+  link: NullableString;
   lectures: NotificationLecture[];
   attachments: AttachmentFile[];
   createdAt: number;

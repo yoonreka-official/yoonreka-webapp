@@ -13,7 +13,10 @@ function ScreenBase({ children, header }: Props) {
   return (
     <div css={styles.screen}>
       <section css={styles.header}>{header}</section>
-      <section css={styles.body}>{children}</section>
+      <section css={styles.body}>
+        {children}
+        <div css={styles.bottomMargin} />
+      </section>
     </div>
   );
 }
@@ -36,6 +39,12 @@ const styles = {
   body: css`
     height: 100%;
     overflow-y: auto;
+    padding-bottom: 20px;
+  `,
+
+  bottomMargin: css`
+    width: 100%;
+    height: 20px;
   `,
 };
 

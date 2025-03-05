@@ -16,8 +16,11 @@ function Container({ children, className }: Props) {
 }
 
 const style = css`
+  display: flex;
+  flex-direction: column;
   padding: 8px 14px;
-  height: 100%;
+  //height: 100%;
+  min-height: 100%;
 `;
 
 export default Container;

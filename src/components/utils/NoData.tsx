@@ -21,6 +21,9 @@ function NoData({
   return !disableWrapper ? (
     <CardBase
       css={css`
+        flex: 1;
+        display: flex;
+        align-items: center;
         height: ${height};
       `}
     >
@@ -29,8 +32,9 @@ function NoData({
   ) : (
     <Flex
       css={css`
+        flex: 1;
+        display: flex;
         width: 100%;
-        height: ${height};
       `}
     >
       <NoDataInner description={description} footer={footer} />
@@ -47,7 +51,7 @@ function NoDataInner({
       direction="column"
       items="center"
       justify="center"
-      style={{ width: '100%', height: '100%' }}
+      style={{ flex: 1, width: '100%' }}
     >
       <div>{description}</div>
 

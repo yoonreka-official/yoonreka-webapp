@@ -35,6 +35,8 @@ const styles = {
     font-size: 16px;
     letter-spacing: -0.2px;
     line-height: 22px;
+    background: ${COLORS.POINT.PRIMARY};
+    border-color: ${COLORS.POINT.PRIMARY};
 
     &:disabled {
       color: #fff;

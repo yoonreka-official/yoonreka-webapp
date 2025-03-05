@@ -26,7 +26,7 @@ function QuestionList() {
                 등록된 질문이 없습니다.
               </Body>
             }
-            height="80%"
+            // height="80%"
             disableWrapper
           />
         ) : (

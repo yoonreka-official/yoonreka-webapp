@@ -1,4 +1,5 @@
 import type { DeviceType } from '~/api/fcm.api.ts';
+import type { NullableString } from '~/types/utils/nullable.type.ts';
 
 export interface LoginInput {
   phone: string;
@@ -49,9 +50,19 @@ export interface AuthUser {
     id: string;
     title: string;
   }>;
+
+  isDistractionMode: boolean;
+  distractionEndTime: NullableString;
+  distractionStartTime: NullableString;
 }
 
 export interface AuthTokenPair {
   accessToken: string;
   refreshToken: string;
+}
+
+export interface UpdateUserBody {
+  isDistractionMode: boolean;
+  distractionEndTime?: string;
+  distractionStartTime?: string;
 }

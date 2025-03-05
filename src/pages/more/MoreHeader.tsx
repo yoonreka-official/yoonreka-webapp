@@ -5,6 +5,7 @@ import { useState } from 'react';
 import IconSetting24 from '~/assets/svg/icon_setting_24.svg?react';
 import Headline from '~/components/typography/Headline.tsx';
 import { COLORS } from '~/configs/theme.ts';
+import DrawerConfig from '~/pages/more/config/DrawerConfig.tsx';
 
 export type MoreTabKey = 'invoice' | 'school';
 
@@ -19,7 +20,7 @@ interface Props {
 }
 
 function MoreHeader({ value, onChange }: Props) {
-  const [_open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <header css={styles.header}>
@@ -40,6 +41,8 @@ function MoreHeader({ value, onChange }: Props) {
           onChange?.(activeKey as MoreTabKey);
         }}
       />
+
+      <DrawerConfig open={open} onClose={() => setOpen(false)} />
     </header>
   );
 }

@@ -1,11 +1,13 @@
 import ReactDOM from 'react-dom/client';
 
+import DialogConfirm from '~/components/modals/DialogConfirm.tsx';
 import DialogMessage from '~/components/modals/DialogMessage.tsx';
 
 import type { ReactNode } from 'react';
 import type { Root } from 'react-dom/client';
 
 import type { BottomSheetProps } from '~/components/modals/BottomSheet.tsx';
+import type { DialogMessageProps } from '~/components/modals/DialogConfirm.tsx';
 
 export const DIALOG_DOM_ID = '__dialog__';
 
@@ -50,58 +52,59 @@ const message = ({
   return open();
 };
 
-// const confirm = ({
-//   title,
-//   content,
-//   confirmLabel,
-//   cancelLabel,
-// }: Omit<ConfirmProps, 'children'> & { content: React.ReactNode }) => {
-//   const place = document.getElementById(DIALOG_DOM_ID);
-//
-//   let confirmResolver: ((value: boolean) => void) | null = null;
-//
-//   const open = () => {
-//     if (place) {
-//       const root = ReactDOM.createRoot(place);
-//       root.render(
-//         <ConfirmDialog
-//           title={title}
-//           cancelLabel={cancelLabel}
-//           confirmLabel={confirmLabel}
-//           onCancel={() => handleCancel(root)}
-//           onConfirm={() => handleConfirm(root)}
-//         >
-//           <Body>{content}</Body>
-//         </ConfirmDialog>,
-//       );
-//     }
-//
-//     return new Promise<boolean>(resolve => {
-//       confirmResolver = resolve;
-//     });
-//   };
-//
-//   const handleClose = (root: Root) => {
-//     root.unmount();
-//   };
-//
-//   const handleConfirm = (root: Root) => {
-//     if (confirmResolver) {
-//       confirmResolver(true);
-//     }
-//     handleClose(root);
-//   };
-//
-//   const handleCancel = (root: Root) => {
-//     if (confirmResolver) {
-//       confirmResolver(false);
-//     }
-//     handleClose(root);
-//   };
-//
-//   return open();
-// };
+const confirm = ({
+  title,
+  content,
+  danger,
+}: Omit<DialogMessageProps, 'children'> & {
+  content: ReactNode;
+  danger?: boolean;
+}) => {
+  const place = document.getElementById(DIALOG_DOM_ID);
 
-const dialog = { message };
+  let confirmResolver: ((value: boolean) => void) | null = null;
+
+  const open = () => {
+    if (place) {
+      const root = ReactDOM.createRoot(place);
+      root.render(
+        <DialogConfirm
+          title={title}
+          danger={danger}
+          onClose={() => handleCancel(root)}
+          onConfirm={() => handleConfirm(root)}
+        >
+          {content}
+        </DialogConfirm>,
+      );
+    }
+
+    return new Promise<boolean>(resolve => {
+      confirmResolver = resolve;
+    });
+  };
+
+  const handleClose = (root: Root) => {
+    root.unmount();
+  };
+
+  const handleConfirm = (root: Root) => {
+    if (confirmResolver) {
+      confirmResolver(true);
+    }
+    handleClose(root);
+  };
+
+  const handleCancel = (root: Root) => {
+    if (confirmResolver) {
+      confirmResolver(false);
+    }
+    handleClose(root);
+  };
+
+  return open();
+};
+
+const dialog = { message, confirm };
 
 export default dialog;

@@ -45,7 +45,7 @@ function SchoolGrades() {
         />
       ))}
 
-      {list.length && (
+      {list.length ? (
         <ButtonPrimary
           block={false}
           css={styles.button}
@@ -53,9 +53,9 @@ function SchoolGrades() {
         >
           등록하기
         </ButtonPrimary>
+      ) : (
+        <NoSchoolGrades onButtonClick={() => setOpen(true)} />
       )}
-
-      {!list.length && <NoSchoolGrades onButtonClick={() => setOpen(true)} />}
 
       <DrawerSchoolGrade open={open} onClose={() => setOpen(false)} />
     </>

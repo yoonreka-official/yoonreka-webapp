@@ -18,12 +18,12 @@ const antDesignTheme: ThemeConfig = {
   /* eslint-disable @typescript-eslint/naming-convention */
   components: {
     Switch: {
-      trackHeight: 32,
+      trackHeight: 28,
       trackHeightSM: 24,
-      trackMinWidth: 60,
+      trackMinWidth: 52,
       trackMinWidthSM: 45,
-      trackPadding: 4,
-      handleSize: 24,
+      trackPadding: 3,
+      handleSize: 22,
       handleSizeSM: 18,
       innerMaxMargin: 27,
       innerMaxMarginSM: 18,
