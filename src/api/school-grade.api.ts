@@ -14,15 +14,6 @@ export const getSchoolGrades = () => {
     query: gql`
       query MySchoolReportCards {
         mySchoolReportCards {
-          attachment {
-            createdAt
-            filename
-            id
-            mimeType
-            size
-            updatedAt
-            url
-          }
           id
           grade
           level
@@ -32,6 +23,20 @@ export const getSchoolGrades = () => {
           term
           totalCount
           type
+          school {
+            id
+            name
+            type
+          }
+          attachment {
+            createdAt
+            filename
+            id
+            mimeType
+            size
+            updatedAt
+            url
+          }
         }
       }
     `,

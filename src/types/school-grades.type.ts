@@ -7,6 +7,12 @@ export enum SchoolGradeType {
   MOCK = 'MOCK', // 모의고사
 }
 
+export interface School {
+  id: string;
+  name: string;
+  type: SchoolGradeType;
+}
+
 export interface SchoolGrade {
   id: string;
   type: SchoolGradeType;
@@ -18,6 +24,7 @@ export interface SchoolGrade {
   term: number;
   totalCount: number;
 
+  school: School;
   attachment: AttachmentFile;
 }
 
@@ -49,10 +56,4 @@ export interface SchoolPagination {
 export interface SchoolEdge {
   edge: string;
   node: School;
-}
-
-export interface School {
-  id: string;
-  name: string;
-  type: string;
 }

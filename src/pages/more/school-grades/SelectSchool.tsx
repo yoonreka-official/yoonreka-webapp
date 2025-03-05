@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { getSchools } from '~/api/school-grade.api.ts';
@@ -8,10 +8,14 @@ import Spinner from '~/components/utils/Spinner.tsx';
 
 import type { AutoCompleteProps } from '~/components/inputs/AutoComplete.tsx';
 import type { SelectOption } from '~/components/inputs/Select.tsx';
+import type { School } from '~/types/school-grades.type.ts';
 
-function SelectSchool({
-  ...props
-}: Omit<AutoCompleteProps, 'options' | 'filterOption'>) {
+export interface SelectSchoolProps
+  extends Omit<AutoCompleteProps, 'options' | 'filterOption'> {
+  school?: School;
+}
+
+function SelectSchool({ school, onChange, ...props }: SelectSchoolProps) {
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -36,6 +40,18 @@ function SelectSchool({
     setIsLoading(false);
   }, 400);
 
+  useEffect(() => {
+    if (school) {
+      setOptions([
+        {
+          value: school.id,
+          label: school.name,
+        },
+      ]);
+      onChange?.(school.id);
+    }
+  }, [school]);
+
   return (
     <AutoComplete
       filterOption={false}
@@ -49,6 +65,7 @@ function SelectSchool({
         ) : null
       }
       showSearch
+      onChange={onChange}
       onSearch={value => handleOption(value)}
     />
   );

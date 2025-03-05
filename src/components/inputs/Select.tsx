@@ -25,7 +25,6 @@ interface Props extends Omit<SelectProps, 'onChange'> {
 }
 
 function Select({
-  id,
   className,
   options = [],
   defaultValue,
@@ -71,7 +70,8 @@ function Select({
   }, [value, options]);
 
   useEffect(() => {
-    console.log(form?.getFieldError(id));
+    // TODO: form error 감지 처리
+    // console.log(form?.getFieldError(id));
   }, [form]);
 
   return (

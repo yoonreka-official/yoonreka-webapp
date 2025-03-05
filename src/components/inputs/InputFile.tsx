@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import { Input } from 'antd';
 import useFormInstance from 'antd/es/form/hooks/useFormInstance';
 import { useEffect, useRef, useState } from 'react';
 
@@ -8,46 +7,33 @@ import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
 import Flex from '~/components/display/Flex.tsx';
 import InputText from '~/components/inputs/InputText.tsx';
 
-import type { InputRef } from 'antd';
 import type { InputProps } from 'antd/es/input/Input';
 
+import type { AttachmentFile } from '~/types/lectures.type.ts';
+import type { Nullable } from '~/types/utils/nullable.type.ts';
+
 export interface InputFileProps extends Omit<InputProps, 'name' | 'onChange'> {
-  allowClear?: boolean;
-  disableDownload?: boolean;
-  files?: File | string;
-  name?: string;
+  // allowClear?: boolean;
+  attachment?: Nullable<AttachmentFile>;
   onChange?: (value: string) => void;
 }
 
 function InputFile({
   value,
+  attachment,
   onChange,
   id,
-  className,
-  disableDownload,
-  style,
   placeholder = '파일을 선택하세요',
-  files,
   ...props
 }: InputFileProps) {
-  const ref = useRef<InputRef>(null);
+  const ref = useRef<HTMLInputElement>(null);
 
   const form = useFormInstance();
 
   const [internalValue, setInternalValue] = useState<string>();
 
-  // const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (!file) {
-  //     setValue(null);
-  //     return;
-  //   }
-  //
-  //   return handleUpload(file);
-  // };
-
   const openFileBrowser = () => {
-    ref.current?.input?.click();
+    ref.current?.click();
   };
 
   const handleUpload = async (file: File) => {
@@ -70,13 +56,11 @@ function InputFile({
   };
 
   useEffect(() => {
-    if (!files) return;
-    if (typeof files === 'string') {
-      const split = files.split('/');
-      const fileName = split[split.length - 1];
-      setInternalValue(fileName);
+    if (attachment) {
+      setInternalValue(attachment.filename);
+      onChange?.(attachment.id);
     }
-  }, [files]);
+  }, [attachment]);
 
   return (
     <>
@@ -84,9 +68,8 @@ function InputFile({
         <InputText
           value={internalValue}
           placeholder={placeholder}
-          className={className}
-          style={style}
           readOnly
+          {...props}
           onClick={() => !internalValue && openFileBrowser()}
         />
         {internalValue ? (
@@ -110,11 +93,10 @@ function InputFile({
         )}
       </Flex>
 
-      <Input
+      <input
         css={styles.invisibleInput}
         ref={ref}
         type="file"
-        hidden
         onChange={event => {
           const file = event.target.files?.[0];
           if (!file) {
@@ -124,7 +106,6 @@ function InputFile({
 
           return handleUpload(file);
         }}
-        {...props}
       />
     </>
   );
@@ -136,7 +117,6 @@ const styles = {
     width: 0;
     height: 0;
     padding: 0;
-    margin-bottom: -24px;
   `,
 
   button: css`

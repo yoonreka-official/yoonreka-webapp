@@ -28,10 +28,16 @@ const getTestName = (type: SchoolGradeType) => {
 
 function CardSchoolGrade({ schoolGrade, onUpdate }: Props) {
   const type = getTestName(schoolGrade.type);
-  const title = `${schoolGrade.grade}학년 ${schoolGrade.term}학기 ${type}`;
 
   return (
-    <CardCollapse title={title}>
+    <CardCollapse
+      title={[
+        schoolGrade.school.name,
+        `${schoolGrade.grade}학년`,
+        `${schoolGrade.term}학기`,
+        type,
+      ].join(' ')}
+    >
       <Flex direction="column" gap={4}>
         <GradeRow label="종류" value={type} />
         <GradeRow label="등급" value={`${schoolGrade.level}등급`} />

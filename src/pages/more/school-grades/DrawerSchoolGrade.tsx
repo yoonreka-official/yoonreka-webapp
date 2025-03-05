@@ -50,8 +50,8 @@ function DrawerSchoolGrade({ children, title, onClose, ...props }: Props) {
 
   useEffect(() => {
     if (selected) {
-      const { attachment, ...values } = selected;
-      form.setFieldsValue(values);
+      const { attachment, school, ...values } = selected;
+      form.setFieldsValue({ ...values });
     }
   }, [selected]);
 
@@ -97,7 +97,10 @@ function DrawerSchoolGrade({ children, title, onClose, ...props }: Props) {
           >
             <section>
               <FormItem label="학교" name="schoolId" rules={[rules.required]}>
-                <SelectSchool placeholder="학교명을 입력해주세요.(ex.청원고등학교)" />
+                <SelectSchool
+                  placeholder="학교명을 입력해주세요.(ex.청원고등학교)"
+                  school={selected?.school}
+                />
               </FormItem>
 
               <Flex gap={8}>
@@ -183,7 +186,10 @@ function DrawerSchoolGrade({ children, title, onClose, ...props }: Props) {
                 name="fileId"
                 rules={[rules.required]}
               >
-                <InputFile placeholder="PNG 또는 JPG만 업로드 가능해요." />
+                <InputFile
+                  placeholder="PNG 또는 JPG만 업로드 가능해요."
+                  attachment={selected?.attachment}
+                />
               </FormItem>
 
               <Caption
