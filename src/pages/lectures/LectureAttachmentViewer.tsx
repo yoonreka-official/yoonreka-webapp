@@ -1,6 +1,12 @@
 import { css } from '@emotion/react';
-import { useMemo, useState } from 'react';
-import { BiChevronLeft, BiChevronRight, BiSolidError } from 'react-icons/bi';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  BiChevronLeft,
+  BiChevronRight,
+  BiSolidError,
+  BiZoomIn,
+  BiZoomOut,
+} from 'react-icons/bi';
 import { LuRotateCw } from 'react-icons/lu';
 import { RiFullscreenExitFill, RiFullscreenFill } from 'react-icons/ri';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -23,6 +29,21 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 type FullScreenDirection = 'left' | 'right';
 
+interface DocumentMeta {
+  pageWidth?: number;
+  pageHeight?: number;
+  pageRatio?: number;
+
+  canvasWidth?: number;
+  canvasHeight?: number;
+  canvasRatio?: number;
+
+  width?: number;
+  height?: number;
+}
+
+const SCALE_STEP = 0.25;
+
 function LectureAttachmentViewer() {
   const {
     state: { lesson },
@@ -32,10 +53,55 @@ function LectureAttachmentViewer() {
   const [direction, setDirection] = useState<FullScreenDirection>('left');
   const [total, setTotal] = useState<number>();
   const [page, setPage] = useState<number>(1);
+  const [scale, setScale] = useState<number>(1);
+
+  const [canvasRatio, setCanvasRatio] = useState<number>(1.7);
+  const [meta, setMeta] = useState<DocumentMeta>({});
 
   const isDisabled = useMemo(() => {
     return !lesson?.attachment || !total;
   }, [total, lesson]);
+
+  /**
+   * * 전체화면 모드 PDF 사이즈 계산
+   */
+  const getSize = (className: string) => {
+    const element = document.getElementsByClassName(className)[0];
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      return {
+        // ? 전체화면 모드는 -90deg, -270deg 로 회전한 상태기 때문에 width, height 가 반대
+        width: rect.height,
+        height: rect.width,
+        ratio: rect.height / rect.width,
+      };
+    }
+  };
+
+  useEffect(() => {
+    if (!isFullScreen) return;
+
+    const page = getSize('react-pdf__Page');
+    if (page && canvasRatio) {
+      if (page.ratio > canvasRatio) {
+        // ? 세로를 고정하고 가로를 비율 계산
+        // console.log(1, { height: page.height, width: page.height * canvasRatio });
+        setMeta({
+          ...meta,
+          height: page.height,
+          width: page.height * canvasRatio,
+        });
+      } else {
+        // ? 가로를 고정하고 세로를 비율 계산
+        // console.log(2, { height: page.width / canvasRatio, width: page.width });
+        setMeta({
+          ...meta,
+          height: page.width / canvasRatio,
+          width: page.width,
+        });
+      }
+    }
+  }, [isFullScreen, canvasRatio]);
 
   return (
     lesson && (
@@ -50,45 +116,53 @@ function LectureAttachmentViewer() {
                     direction === 'left'
                       ? styles.fullScreenLeft
                       : styles.fullScreenRight,
+                    styles.pageScale(meta, scale),
                   ]
                 : []),
             ]}
           >
-            <Document
-              error={
-                <Flex direction="column" gap={2} items="center">
-                  <BiSolidError color={COLORS.STATUS['03']} size={28} />
+            <div css={styles.fullScreenInner}>
+              <Document
+                error={
+                  <Flex direction="column" gap={2} items="center">
+                    <BiSolidError color={COLORS.STATUS['03']} size={28} />
+                    <Caption color={COLORS.FONT['50']}>
+                      자료를 불러오는데 실패했습니다.
+                    </Caption>
+                  </Flex>
+                }
+                file={lesson.attachment?.url}
+                loading={
+                  <Flex direction="column" gap={2} items="center">
+                    <Caption color={COLORS.FONT['50']}>
+                      자료 불러오는중..
+                    </Caption>
+                  </Flex>
+                }
+                noData={
                   <Caption color={COLORS.FONT['50']}>
-                    자료를 불러오는데 실패했습니다.
+                    수업 자료가 아직 등록되지 않았습니다.
                   </Caption>
-                </Flex>
-              }
-              file={lesson.attachment?.url}
-              loading={
-                <Flex direction="column" gap={2} items="center">
-                  <Caption color={COLORS.FONT['50']}>자료 불러오는중..</Caption>
-                </Flex>
-              }
-              noData={
-                <Caption color={COLORS.FONT['50']}>
-                  수업 자료가 아직 등록되지 않았습니다.
-                </Caption>
-              }
-              onLoadError={() => {
-                setTotal(undefined);
-                setPage(1);
-              }}
-              onLoadSuccess={({ numPages }) => {
-                setTotal(numPages);
-              }}
-            >
-              <Page
-                loading={isFullScreen && <div css={styles.pageLoader} />}
-                pageNumber={page}
-                renderAnnotationLayer={false}
-                renderTextLayer={false}
-              />
-            </Document>
+                }
+                onLoadError={() => {
+                  setTotal(undefined);
+                  setPage(1);
+                }}
+                onLoadSuccess={async ({ numPages }) => {
+                  setTotal(numPages);
+                }}
+              >
+                <Page
+                  loading={isFullScreen && <div css={styles.pageLoader} />}
+                  pageNumber={page}
+                  renderAnnotationLayer={false}
+                  renderTextLayer={false}
+                  onLoadSuccess={({ originalWidth, originalHeight }) => {
+                    setCanvasRatio(originalWidth / originalHeight);
+                  }}
+                />
+              </Document>
+            </div>
 
             <Flex
               css={styles.controller}
@@ -126,15 +200,37 @@ function LectureAttachmentViewer() {
 
               <Flex gap={4}>
                 {isFullScreen ? (
-                  <button
-                    css={styles.controlButton}
-                    disabled={isDisabled}
-                    onClick={() =>
-                      setDirection(direction === 'left' ? 'right' : 'left')
-                    }
-                  >
-                    <LuRotateCw />
-                  </button>
+                  <>
+                    <button
+                      css={styles.controlButton}
+                      disabled={isDisabled}
+                      onClick={() => {
+                        if (scale === 4) return;
+                        setScale(scale + SCALE_STEP);
+                      }}
+                    >
+                      <BiZoomIn />
+                    </button>
+                    <button
+                      css={styles.controlButton}
+                      disabled={isDisabled}
+                      onClick={() => {
+                        if (scale === 0.5) return;
+                        setScale(scale - SCALE_STEP);
+                      }}
+                    >
+                      <BiZoomOut />
+                    </button>
+                    <button
+                      css={styles.controlButton}
+                      disabled={isDisabled}
+                      onClick={() =>
+                        setDirection(direction === 'left' ? 'right' : 'left')
+                      }
+                    >
+                      <LuRotateCw />
+                    </button>
+                  </>
                 ) : (
                   <div
                     css={styles.controlButton}
@@ -145,7 +241,10 @@ function LectureAttachmentViewer() {
                 <button
                   css={styles.controlButton}
                   disabled={isDisabled}
-                  onClick={() => setIsFullScreen(!isFullScreen)}
+                  onClick={() => {
+                    setIsFullScreen(!isFullScreen);
+                    setScale(1);
+                  }}
                 >
                   {isFullScreen ? (
                     <RiFullscreenExitFill />
@@ -236,20 +335,45 @@ const styles = {
     height: 100vw;
 
     .react-pdf__Document {
+      width: auto !important;
       height: calc(100vw - 32px) !important;
 
       .react-pdf__Page {
-        min-width: 100%;
+        width: auto;
         height: calc(100vw - 32px) !important;
         background-color: rgba(0, 0, 0, 0.7) !important;
+        overflow: auto;
+        min-width: unset !important;
+        min-height: unset !important;
 
         .react-pdf__Page__canvas {
           margin: auto;
+          height: 100% !important;
           width: auto !important;
-          height: calc(100vw - 32px) !important;
+          //width: auto !important;
+          //height: calc(100vw - 32px) !important;
         }
       }
     }
+  `,
+
+  fullScreenInner: css`
+    //width: 100%;
+    //height: 100%;
+  `,
+
+  pageScale: (meta: DocumentMeta, scale: number) => css`
+    .react-pdf__Document {
+      .react-pdf__Page {
+        //display: flex;
+        padding: 10px;
+        //touch-action: pan-x pan-y;
+        
+        .react-pdf__Page__canvas {
+          width: ${(meta.width || 0) * scale}px !important;
+          height: ${(meta.height || 0) * scale}px !important;
+        }
+      }
   `,
 
   fullScreenLeft: css`
