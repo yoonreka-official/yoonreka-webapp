@@ -13,7 +13,7 @@ import type { Nullable } from '~/types/utils/nullable.type.ts';
 
 function Invoices() {
   const {
-    state: { list, isLoading },
+    state: { list, isLoading, invoiceType },
     fetchData,
     handleInvoiceType,
   } = useInvoices();
@@ -31,6 +31,10 @@ function Invoices() {
         handleInvoiceType(invoiceTypeFromQuery);
         await fetchData({
           types: [invoiceTypeFromQuery],
+        });
+      } else if (invoiceType) {
+        await fetchData({
+          types: [invoiceType],
         });
       } else {
         await fetchData();
