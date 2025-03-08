@@ -154,7 +154,6 @@ function DrawerSchoolGrade({ children, title, onClose, ...props }: Props) {
                   label="백분위"
                   name="percentage"
                   css={styles.formItem}
-                  rules={[rules.required]}
                 >
                   <InputNumeric placeholder="단위: %" />
                 </FormItem>

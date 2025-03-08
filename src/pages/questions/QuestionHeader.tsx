@@ -34,7 +34,7 @@ function QuestionHeader() {
 
       <Tabs
         css={styles.tabs}
-        defaultActiveKey="student"
+        defaultActiveKey={QuestionUser.STUDENT}
         indicator={{ align: 'center', size: 168 }}
         items={QUESTION_TABS}
         onChange={activeKey => {

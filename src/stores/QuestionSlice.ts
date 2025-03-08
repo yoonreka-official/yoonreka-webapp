@@ -1,22 +1,23 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { getMyQuestions } from '~/api/question.api.ts';
+import { QuestionUser } from '~/types/question.type.ts';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
-
-import type { QuestionUser } from '~/types/question.type.ts';
 
 export interface QuestionState {
   isLoading: boolean;
   // eslint-disable-next-line
   list: any[];
 
+  selectedUserType: QuestionUser;
   selectedLectureId?: string;
 }
 
 const initialState: QuestionState = {
   list: [],
   isLoading: false,
+  selectedUserType: QuestionUser.STUDENT,
 };
 
 // eslint-disable-next-line
@@ -55,8 +56,11 @@ const QuestionSlice = createSlice({
     setLectureId: (state, action: PayloadAction<string | undefined>) => {
       state.selectedLectureId = action.payload;
     },
+    setSelectedUserType: (state, action: PayloadAction<QuestionUser>) => {
+      state.selectedUserType = action.payload;
+    },
   },
 });
 
-export const { setLectureId } = QuestionSlice.actions;
+export const { setLectureId, setSelectedUserType } = QuestionSlice.actions;
 export default QuestionSlice;

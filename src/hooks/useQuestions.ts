@@ -1,6 +1,10 @@
 import { createQuestion } from '~/api/question.api.ts';
 import { useAppDispatch, useAppSelector } from '~/stores';
-import { fetchQuestions, setLectureId } from '~/stores/QuestionSlice.ts';
+import {
+  fetchQuestions,
+  setLectureId,
+  setSelectedUserType,
+} from '~/stores/QuestionSlice.ts';
 import { QuestionUser } from '~/types/question.type.ts';
 
 import type { QuestionBody } from '~/types/question.type.ts';
@@ -11,6 +15,8 @@ const useQuestions = () => {
   const dispatch = useAppDispatch();
 
   const fetchData = async (userType = QuestionUser.STUDENT) => {
+    handleChangeType(userType);
+
     try {
       await dispatch(fetchQuestions(userType));
     } catch (e) {
@@ -32,7 +38,17 @@ const useQuestions = () => {
     dispatch(setLectureId(id));
   };
 
-  return { state, fetchData, handleCreateQuestion, handleLectureId };
+  const handleChangeType = (type: QuestionUser) => {
+    dispatch(setSelectedUserType(type));
+  };
+
+  return {
+    state,
+    fetchData,
+    handleCreateQuestion,
+    handleChangeType,
+    handleLectureId,
+  };
 };
 
 export default useQuestions;

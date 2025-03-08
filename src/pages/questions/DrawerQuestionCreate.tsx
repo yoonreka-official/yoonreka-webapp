@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { Drawer } from 'antd';
+import { useEffect } from 'react';
 
 import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
 import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
@@ -42,12 +43,25 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
     state: { authUser },
   } = useAuth();
 
-  const { handleCreateQuestion } = useQuestions();
+  const {
+    state: { selectedUserType, selectedLectureId },
+    handleCreateQuestion,
+  } = useQuestions();
 
   const handleClose = () => {
     onClose?.();
     form.resetFields();
   };
+
+  useEffect(() => {
+    // ? 질문하기 목록에서 선택한 사용자 유형 자동 선택 - 학생/학부모
+    form.setFieldValue('who', selectedUserType);
+
+    // ? 선택한 강의 자동선택
+    if (selectedLectureId) {
+      form.setFieldValue('lectureId', selectedLectureId);
+    }
+  }, [selectedUserType, selectedLectureId]);
 
   return (
     <Drawer
