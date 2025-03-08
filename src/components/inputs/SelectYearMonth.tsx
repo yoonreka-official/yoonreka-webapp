@@ -26,10 +26,12 @@ interface Props {
   onChange?: (value: Dayjs) => void;
 }
 
+const today = dayjs();
+
 function SelectYearMonth({ value, onChange }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [year, setYear] = useState<number>(2025);
-  const [month, setMonth] = useState<number>(2);
+  const [year, setYear] = useState<number>(today.year());
+  const [month, setMonth] = useState<number>(today.month());
   const [internalValue, setInternalValue] = useState<string>();
 
   const getFormattedValue = (val?: string) => {
@@ -64,13 +66,13 @@ function SelectYearMonth({ value, onChange }: Props) {
   }, [isOpen, year, month]);
 
   useEffect(() => {
-    setInternalValue((value || dayjs()).format('YYYY. MM'));
+    setInternalValue(dayjs(value).format('YYYY. MM'));
   }, [value]);
 
   return (
     <>
       <button css={styles.selectYearMonth} onClick={() => setIsOpen(true)}>
-        <Headline>{getFormattedValue(internalValue)}</Headline>
+        <Headline>{internalValue}</Headline>
         <IconArrowDown24 />
       </button>
 
