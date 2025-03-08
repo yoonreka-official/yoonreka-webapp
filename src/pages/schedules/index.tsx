@@ -18,11 +18,15 @@ function SchedulesPage() {
     state: { isLoading },
   } = useSchedules();
 
-  const { fetchData: fetchNotifications } = useNotifications();
+  const {
+    fetchData: fetchNotifications,
+    handleChangeType: handleNotificationType,
+  } = useNotifications();
 
   useLoading(isLoading);
 
   useEffect(() => {
+    handleNotificationType('ALL');
     fetchNotifications();
 
     (async () => {

@@ -148,6 +148,8 @@ const styles = {
     box-shadow: 0px 4px 20px 0px rgba(206, 218, 241, 0.4);
 
     svg {
+      margin-right: -4px;
+
       path {
         stroke: ${COLORS.FONT['40']};
       }

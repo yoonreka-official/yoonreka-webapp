@@ -18,9 +18,15 @@ import type {
 
 interface CardDailyGradeProps {
   lesson: LectureGradeLesson;
+  defaultOpen?: boolean;
+  scrollId?: string;
 }
 
-function CardDailyGrade({ lesson }: CardDailyGradeProps) {
+function CardDailyGrade({
+  lesson,
+  defaultOpen,
+  scrollId,
+}: CardDailyGradeProps) {
   const {
     state: { authUser },
   } = useAuth();
@@ -32,7 +38,7 @@ function CardDailyGrade({ lesson }: CardDailyGradeProps) {
   const title = `${dayjs(lesson.date).format('YYYY.MM.DD (ddd)')} 데일리 성적`;
 
   return (
-    <CardCollapse title={title}>
+    <CardCollapse id={scrollId} title={title} value={defaultOpen}>
       <header>
         <Caption color={COLORS.FONT['80']} size={12} weight="semibold">
           “{authUser?.name}” 학생의 금일 성적입니다. 😊

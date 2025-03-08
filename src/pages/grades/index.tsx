@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import useGrades from '~/hooks/useGrades.ts';
 import useLoading from '~/hooks/useLoading.ts';
@@ -14,16 +15,19 @@ function GradesPage() {
 
   const { toggleLoading } = useLoading();
 
+  const [params] = useSearchParams();
+  const lectureId = params.get('lectureId');
+
   useEffect(() => {
     (async () => {
       toggleLoading(true);
-      await fetchData();
+      await fetchData(lectureId || undefined);
       toggleLoading(false);
     })();
 
     return () => {
-      handleChangeTab('daily');
-      handleChangeType(GradeType.DEFAULT);
+      handleChangeTab('daily', false);
+      handleChangeType(GradeType.DEFAULT, false);
     };
   }, []);
 

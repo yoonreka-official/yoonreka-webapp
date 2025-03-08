@@ -1,11 +1,13 @@
 import { css } from '@emotion/react';
 import { Drawer, Tabs } from 'antd';
+import { useEffect } from 'react';
 
 import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
 import NotificationList from '~/components/notifications/NotificationList.tsx';
 import { COLORS } from '~/configs/theme.ts';
 import useNotifications from '~/hooks/useNotifications.ts';
 import { NotificationType } from '~/types/notification.type.ts';
+import { native } from '~/utils/app.util.ts';
 
 import type { DrawerProps } from 'antd';
 
@@ -24,26 +26,39 @@ const NOTIFICATION_TABS: Array<{
   { key: NotificationType.INVOICE_DUE, label: '회비' },
 ];
 
-const DEFAULT_PAGINATION = { offset: 0, limit: 10 };
+export const DEFAULT_PAGINATION = { offset: 0, limit: 10 };
 
 function DrawerNotifications({
+  open,
   children,
   defaultActiveKey,
   title,
   onClose,
   ...props
 }: Props) {
-  const { fetchData, handleMarkAsRead, handleChangeType } = useNotifications();
+  const {
+    state: { selectedType },
+    fetchData,
+    handleMarkAsRead,
+    handleChangeType,
+  } = useNotifications();
 
   const handleClose = () => {
     handleMarkAsRead();
     onClose?.();
   };
 
+  useEffect(() => {
+    if (open && selectedType === 'ALL') {
+      native.updateBadgeCount();
+    }
+  }, [open, selectedType]);
+
   return (
     <Drawer
       closable={false}
       css={styles.drawer}
+      open={open}
       placement="right"
       push={{ distance: 0 }}
       rootClassName="drawerNotificationsRoot"
@@ -60,6 +75,7 @@ function DrawerNotifications({
         </div>
 
         <Tabs
+          activeKey={selectedType}
           css={styles.tabs}
           defaultActiveKey={defaultActiveKey || 'ALL'}
           indicator={{ align: 'center', size: 74 }}
@@ -160,8 +176,18 @@ const styles = {
         .ant-tabs-tab {
           justify-content: center;
           flex: 1;
-          //font-size: 18px;
+          font-size: 18px;
+          font-weight: 500;
           //padding: 8px 0;
+
+          &.ant-tabs-tab-active {
+            .ant-tabs-tab-btn {
+              font-size: 18px;
+              font-weight: 700;
+              //line-height: 26px; /* 144.444% */
+              letter-spacing: -0.2px;
+            }
+          }
 
           & + .ant-tabs-tab {
             margin: 0;

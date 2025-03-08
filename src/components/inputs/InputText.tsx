@@ -1,20 +1,30 @@
 import { css } from '@emotion/react';
 import { Input } from 'antd';
 
+import IconClear20 from '~/assets/svg/icon_clear_20.svg?react';
+import { useFormInstance } from '~/components/forms/FormBase.tsx';
 import { COLORS } from '~/configs/theme.ts';
 
 import type { InputProps } from 'antd';
 
-export interface InputTextProps extends Omit<InputProps, 'size' | 'status'> {
-  removeSpace?: boolean;
+export interface InputTextProps
+  extends Omit<InputProps, 'size' | 'status' | 'value'> {
+  value?: string;
 }
 
-function InputText({ removeSpace, ...props }: InputTextProps) {
+function InputText({ id, value, allowClear = true, ...props }: InputTextProps) {
+  const form = useFormInstance();
+
   return (
     <Input
+      id={id}
+      value={value}
       css={textInputStyle}
-      // size={getInputSize(size)}
-      // suffix={getStatusIcon(status, size)}
+      suffix={
+        allowClear && value ? (
+          <IconClear20 css={clearIcon} onClick={() => form.resetFields([id])} />
+        ) : undefined
+      }
       {...props}
     />
   );
@@ -93,6 +103,10 @@ export const textInputStyle = css`
       background: ${COLORS.BG.BACKGROUND};
     }
   }
+`;
+
+export const clearIcon = css`
+  margin: 0 !important;
 `;
 
 export default InputText;

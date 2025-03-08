@@ -2,10 +2,15 @@ import { css } from '@emotion/react';
 import { useState } from 'react';
 
 import ButtonNav from '~/components/buttons/ButtonNav.tsx';
-import DrawerNotifications from '~/components/notifications/DrawerNotifications.tsx';
+import DrawerNotifications, {
+  DEFAULT_PAGINATION,
+} from '~/components/notifications/DrawerNotifications.tsx';
 import Headline from '~/components/typography/Headline.tsx';
+import useNotifications from '~/hooks/useNotifications.ts';
+import { NotificationType } from '~/types/notification.type.ts';
 
 function LectureHeader() {
+  const { fetchData, handleChangeType } = useNotifications();
   const [open, setOpen] = useState(false);
 
   return (
@@ -13,7 +18,20 @@ function LectureHeader() {
       <header css={styles.header}>
         <Headline>공부하기</Headline>
 
-        <ButtonNav onClick={() => setOpen(true)}>학습자료</ButtonNav>
+        <ButtonNav
+          onClick={() => {
+            handleChangeType(NotificationType.NEW_MATERIAL);
+            fetchData({
+              pagination: DEFAULT_PAGINATION,
+              filter: {
+                types: [NotificationType.NEW_MATERIAL],
+              },
+            });
+            setOpen(true);
+          }}
+        >
+          학습자료
+        </ButtonNav>
       </header>
 
       <DrawerNotifications

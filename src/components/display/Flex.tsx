@@ -1,6 +1,7 @@
 import type { CSSProperties, PropsWithChildren } from 'react';
 
 export interface FlexProps extends PropsWithChildren {
+  id?: string;
   className?: string;
   style?: CSSProperties;
 
@@ -17,6 +18,7 @@ export interface FlexProps extends PropsWithChildren {
 }
 
 function Flex({
+  id,
   children,
   className,
   style,
@@ -32,6 +34,7 @@ function Flex({
 }: FlexProps) {
   return (
     <div
+      id={id}
       className={className}
       style={{
         alignItems: items,

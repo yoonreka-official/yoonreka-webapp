@@ -4,12 +4,13 @@ import type { ReactNode } from 'react';
 
 export interface CardBaseProps {
   children?: ReactNode;
+  id?: string;
   className?: string;
 }
 
-function CardBase({ children, className }: CardBaseProps) {
+function CardBase({ id, children, className }: CardBaseProps) {
   return (
-    <div className={className} css={styles.cardBase}>
+    <div id={id} className={className} css={styles.cardBase}>
       {children}
     </div>
   );

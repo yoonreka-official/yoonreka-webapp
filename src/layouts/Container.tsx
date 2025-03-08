@@ -5,22 +5,33 @@ import type { ReactNode } from 'react';
 interface Props {
   children?: ReactNode;
   className?: string;
+  scrollRoot?: boolean;
 }
 
-function Container({ children, className }: Props) {
+function Container({ children, className, scrollRoot }: Props) {
   return (
-    <div className={className} css={style}>
+    <div
+      className={className}
+      css={[styles.container, scrollRoot && styles.scrollRoot]}
+    >
       {children}
     </div>
   );
 }
 
-const style = css`
-  display: flex;
-  flex-direction: column;
-  padding: 8px 14px;
-  //height: 100%;
-  min-height: 100%;
-`;
+const styles = {
+  container: css`
+    display: flex;
+    flex-direction: column;
+    padding: 8px 14px;
+    //height: 100%;
+    min-height: 100%;
+  `,
+
+  scrollRoot: css`
+    height: 100% !important;
+    overflow-y: auto;
+  `,
+};
 
 export default Container;

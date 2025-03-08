@@ -17,7 +17,7 @@ interface Props {
 
 function ScheduleCalendar({ index, lesson }: Props) {
   return (
-    <Link to={`/lectures?lectureId=${lesson.lecture.id}&date=${lesson.date}`}>
+    <Link to={`/grades?lectureId=${lesson.lecture.id}&date=${lesson.date}`}>
       <Flex key={index} direction="column" gap={2}>
         <Flex gap={4} items="center">
           <ScheduleMarker order={index} block />

@@ -1,15 +1,57 @@
 import { css } from '@emotion/react';
 import { Input } from 'antd';
 
+import IconClear20 from '~/assets/svg/icon_clear_20.svg?react';
+import { useFormInstance } from '~/components/forms/FormBase.tsx';
+import { clearIcon } from '~/components/inputs/InputText.tsx';
 import { COLORS } from '~/configs/theme.ts';
 
 import type { TextAreaProps } from 'antd/es/input';
 
-function InputTextArea({ ...props }: TextAreaProps) {
-  return <Input.TextArea css={textInputStyle} {...props} />;
+function InputTextArea({
+  id,
+  value,
+  allowClear = true,
+  ...props
+}: Omit<TextAreaProps, 'value'> & {
+  value?: string;
+}) {
+  const form = useFormInstance();
+
+  const isClearable = allowClear && !!value;
+
+  return (
+    <div css={styles.wrapper}>
+      <Input.TextArea
+        id={id}
+        value={value}
+        css={[textInputStyle(isClearable)]}
+        {...props}
+      />
+      {isClearable && (
+        <div css={styles.suffix}>
+          <IconClear20 css={clearIcon} onClick={() => form.resetFields([id])} />
+        </div>
+      )}
+    </div>
+  );
 }
 
-export const textInputStyle = css`
+const styles = {
+  wrapper: css`
+    position: relative;
+    display: flex;
+  `,
+
+  suffix: css`
+    position: absolute;
+    right: 13px;
+    top: 11px;
+    z-index: 100;
+  `,
+};
+
+export const textInputStyle = (isClearable?: boolean) => css`
   &.ant-input-outlined {
     border-radius: 8px;
     border: 1px solid ${COLORS.BG.BACKGROUND};
@@ -65,6 +107,7 @@ export const textInputStyle = css`
 
     textarea {
       height: 132px;
+      ${isClearable ? 'padding-right: 32px;' : ''}
     }
 
     &:read-only {
@@ -86,6 +129,12 @@ export const textInputStyle = css`
 
     &.ant-input-status-warning:read-only {
       background: ${COLORS.BG.BACKGROUND};
+    }
+
+    .ant-input-suffix .ant-input-textarea-suffix {
+      //background: red;
+      align-items: flex-start;
+      padding-top: 8px;
     }
   }
 `;

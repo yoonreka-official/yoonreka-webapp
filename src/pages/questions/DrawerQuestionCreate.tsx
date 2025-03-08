@@ -93,6 +93,7 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
 
               <FormItem label="수업" name="lectureId" rules={[rules.required]}>
                 <Select
+                  placeholder="수강중인 수업을 선택해주세요."
                   options={authUser?.lectures.map(item => ({
                     label: item.title,
                     value: item.id,
@@ -102,12 +103,12 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
               </FormItem>
 
               <FormItem label="제목" name="title" rules={[rules.required]}>
-                <InputText />
+                <InputText placeholder="제목을 입력해주세요." />
               </FormItem>
 
               {type === QuestionUser.STUDENT && (
                 <FormItem label="문제" name="bookInfo">
-                  <InputText />
+                  <InputText placeholder="문제집 이름, 페이지, 번호를 적어주세요. (없으면 빈칸)" />
                 </FormItem>
               )}
 
@@ -116,7 +117,11 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
                 name="description"
                 rules={[rules.required]}
               >
-                <InputTextArea />
+                <InputTextArea
+                  placeholder={
+                    '내용을 입력해 주세요.\n*현재 화면에서는 작성 중인 내용이 자동 저장되지 않습니다. 긴 문장은 다른 곳에서 작성 후 복사해 주세요.'
+                  }
+                />
               </FormItem>
             </section>
 

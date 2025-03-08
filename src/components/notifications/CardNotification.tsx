@@ -13,7 +13,7 @@ import { NotificationTypeName } from '~/types/notification.type.ts';
 import { formatDate } from '~/utils/format.util.ts';
 
 import type { AttachmentFile } from '~/types/lectures.type.ts';
-import type { Nullable } from '~/types/utils/nullable.type.ts';
+import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts';
 
 interface Props {
   type: NotificationTypeName;
@@ -21,6 +21,7 @@ interface Props {
   createdAt: number;
   description: string;
   attachments: Nullable<AttachmentFile[]>;
+  link?: NullableString;
   isNew?: boolean;
 }
 
@@ -30,6 +31,7 @@ function CardNotification({
   createdAt,
   description,
   attachments,
+  link,
   isNew,
 }: Props) {
   return (
@@ -54,6 +56,17 @@ function CardNotification({
       }
     >
       {description}
+
+      {link && (
+        <a
+          css={notificationStyles.link}
+          href={link}
+          rel="noreferrer"
+          target="_blank"
+        >
+          {link}
+        </a>
+      )}
 
       {attachments && attachments.length > 0 && (
         <div>
@@ -88,9 +101,18 @@ const notificationStyles = {
     letter-spacing: -0.2px;
     margin-left: 4px;
   `,
+
   icon: css`
     height: 14px;
     margin-right: 2px;
+  `,
+
+  link: css`
+    display: block;
+    //border-top: 1px solid #ddd;
+    margin-top: 12px;
+    color: ${COLORS.POINT.PRIMARY};
+    word-break: break-all;
   `,
 };
 

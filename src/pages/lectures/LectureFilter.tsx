@@ -36,6 +36,7 @@ function LectureFilter() {
 
       <Select
         value={selectedLesson?.date}
+        placeholder="수업 날짜를 선택해주세요."
         options={lecture?.lessons.map(item => ({
           label: dayjs(item.date).format('YYYY.MM.DD ddd'),
           value: item.date,

@@ -62,6 +62,7 @@ function NotificationList() {
             createdAt={item.notice!.createdAt}
             description={item.notice!.description}
             isNew={item.isNew}
+            link={item.notice!.link}
             type={NotificationTypeName.NOTICE}
           />
         );

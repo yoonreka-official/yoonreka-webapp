@@ -94,8 +94,18 @@ const styles = {
         .ant-tabs-tab {
           justify-content: center;
           flex: 1;
-          //font-size: 18px;
+          font-size: 18px;
+          font-weight: 500;
           //padding: 8px 0;
+
+          &.ant-tabs-tab-active {
+            .ant-tabs-tab-btn {
+              font-size: 18px;
+              font-weight: 700;
+              //line-height: 26px; /* 144.444% */
+              letter-spacing: -0.2px;
+            }
+          }
 
           & + .ant-tabs-tab {
             margin: 0;

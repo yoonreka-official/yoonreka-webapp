@@ -26,7 +26,8 @@ const styles = {
     /* Caption/12/B */
     font-size: 12px;
     font-style: normal;
-    font-weight: 700;
+    //font-weight: 700;
+    font-weight: 600;
     line-height: 18px; /* 150% */
     letter-spacing: -0.2px;
   `,

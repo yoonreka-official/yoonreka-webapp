@@ -12,12 +12,14 @@ import type { ReactNode } from 'react';
 import type { CardBaseProps } from '~/components/cards/CardBase.tsx';
 
 export interface CardCollapseProps extends CardBaseProps {
+  id?: string;
   title?: ReactNode;
   value?: boolean;
   onChange?: (open: boolean) => void;
 }
 
 function CardCollapse({
+  id,
   title,
   children,
   className,
@@ -42,7 +44,7 @@ function CardCollapse({
   }, [value]);
 
   return (
-    <CardBase className={className} css={styles.cardCollapse}>
+    <CardBase id={id} className={className} css={styles.cardCollapse}>
       <header css={styles.header} onClick={() => toggle()}>
         <Flex gap={4} items="center" justify="space-between">
           <Body size={14} weight="semibold">

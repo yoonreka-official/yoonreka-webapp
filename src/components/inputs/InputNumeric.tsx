@@ -1,7 +1,9 @@
 import { Input } from 'antd';
 import isInt from 'validator/es/lib/isInt';
 
-import { textInputStyle } from '~/components/inputs/InputText.tsx';
+import IconClear20 from '~/assets/svg/icon_clear_20.svg?react';
+import { useFormInstance } from '~/components/forms/FormBase.tsx';
+import { clearIcon, textInputStyle } from '~/components/inputs/InputText.tsx';
 
 import type { InputProps } from 'antd';
 
@@ -16,7 +18,7 @@ const ALLOW_KEYS = [
   'ArrowDown',
   'Control',
   'Meta',
-  '.',
+  // '.',
 ];
 
 export interface InputNumericProps
@@ -24,11 +26,26 @@ export interface InputNumericProps
   onChange?: (value?: number) => void;
 }
 
-function InputNumeric({ onKeyDown, onChange, ...props }: InputNumericProps) {
+function InputNumeric({
+  id,
+  value,
+  allowClear = true,
+  onKeyDown,
+  onChange,
+  ...props
+}: InputNumericProps) {
+  const form = useFormInstance();
+
   return (
     <Input
+      value={value}
       css={textInputStyle}
       inputMode="decimal"
+      suffix={
+        allowClear && value ? (
+          <IconClear20 css={clearIcon} onClick={() => form.resetFields([id])} />
+        ) : undefined
+      }
       onChange={e => {
         if (!e.target.value) {
           onChange?.(undefined);
@@ -43,6 +60,7 @@ function InputNumeric({ onKeyDown, onChange, ...props }: InputNumericProps) {
 
         if (!isInt(event.key)) {
           event.preventDefault();
+          return;
         }
 
         onKeyDown?.(event);

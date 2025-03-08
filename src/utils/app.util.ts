@@ -25,6 +25,7 @@ export interface ToNative {
   ready(): void;
   getFcmToken(): Promise<string>;
   log(log: string): void;
+  updateBadgeCount(): void;
 }
 
 export interface FromNative {
@@ -195,4 +196,7 @@ export const native: ToNative = {
   log(message: string): void {
     postMessage({ handler: 'log', args: [message] });
   },
+  updateBadgeCount() {
+    postMessage({ handler: 'updateBadgeCount', args: [0] });
+  }
 };

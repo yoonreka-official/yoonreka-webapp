@@ -49,6 +49,7 @@ const useGrades = () => {
     id?: string,
     gradeType: GradeType = GradeType.DEFAULT,
   ) => {
+    console.log('fetch data --- ', id);
     const lectureId = id || authUser?.lectures[0]?.id;
 
     if (!lectureId) {
@@ -74,14 +75,18 @@ const useGrades = () => {
     }
   };
 
-  const handleChangeTab = async (key: GradeTab) => {
+  const handleChangeTab = async (key: GradeTab, reload = true) => {
     dispatch(setActiveTab(key));
-    await fetchData(state.lecture?.id);
+    if (reload) {
+      await fetchData(state.lecture?.id);
+    }
   };
 
-  const handleChangeType = (gradeType: GradeType) => {
+  const handleChangeType = (gradeType: GradeType, reload = true) => {
     dispatch(setGradeType(gradeType));
-    return fetchData(state.lecture?.id, gradeType);
+    if (reload) {
+      return fetchData(state.lecture?.id, gradeType);
+    }
   };
 
   const handleSelectedLabel = (label: LectureGradeFormLabel, index: number) => {
