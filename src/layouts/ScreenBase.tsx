@@ -9,11 +9,13 @@ interface Props {
   children: ReactNode;
 }
 
+export const SCROLL_BASE_ID = '__SCROLL_BASE__';
+
 function ScreenBase({ children, header }: Props) {
   return (
     <div css={styles.screen}>
       <section css={styles.header}>{header}</section>
-      <section css={styles.body}>
+      <section id={SCROLL_BASE_ID} css={styles.body}>
         {children}
         <div css={styles.bottomMargin} />
       </section>

@@ -1,12 +1,13 @@
 import { css } from '@emotion/react';
 import { Tabs } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import IconQuestions from '~/assets/svg/icon_questions.svg?react';
 import ButtonNav from '~/components/buttons/ButtonNav.tsx';
 import Headline from '~/components/typography/Headline.tsx';
 import { COLORS } from '~/configs/theme.ts';
 import useQuestions from '~/hooks/useQuestions.ts';
+import useScroll from '~/hooks/useScroll.ts';
 import DrawerQuestionCreate from '~/pages/questions/DrawerQuestionCreate.tsx';
 import { QuestionUser } from '~/types/question.type.ts';
 
@@ -16,10 +17,16 @@ const QUESTION_TABS = [
 ];
 
 function QuestionHeader() {
-  const [_type, setType] = useState<string>('all');
+  const [type, setType] = useState<string>(QuestionUser.STUDENT);
   const [open, setOpen] = useState<boolean>(false);
 
   const { fetchData } = useQuestions();
+
+  const { reset: scrollReset } = useScroll();
+
+  useEffect(() => {
+    scrollReset();
+  }, [type]);
 
   return (
     <header css={styles.header}>
