@@ -188,6 +188,7 @@ function DrawerSchoolGrade({ children, title, onClose, ...props }: Props) {
               >
                 <InputFile
                   placeholder="PNG 또는 JPG만 업로드 가능해요."
+                  accept="image/png, image/jpeg"
                   attachment={selected?.attachment}
                 />
               </FormItem>

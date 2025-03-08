@@ -1,11 +1,88 @@
+import { gql } from '@apollo/client';
 import axios from 'axios';
 
+import { appolo } from '~/utils/apollo.util.ts';
 import { getCookie } from '~/utils/cookie.util.ts';
 
 import type { AttachmentFile } from '~/types/lectures.type.ts';
+import type {
+  FileMetaBody,
+  FileMetaResponse,
+  PresignedUrlData,
+} from '~/types/utils/file.type.ts';
 
 const FILE_ENDPOINT = `${import.meta.env.VITE_API_URL}/api/files`;
 
+export const getPresignedUrl = async () => {
+  return appolo.mutate<{ generatePrivateFilePutObjectUrl: PresignedUrlData }>({
+    mutation: gql`
+      mutation UpdateUser {
+        generatePrivateFilePutObjectUrl {
+          key
+          url
+        }
+      }
+    `,
+  });
+};
+
+export async function uploadPresignedUrl(
+  url: string,
+  file: File,
+  onProgress?: (progress: number) => void,
+) {
+  const xhr = new XMLHttpRequest();
+  return new Promise<void>((resolve, reject) => {
+    xhr.open('PUT', url);
+    xhr.upload.onprogress = event => {
+      onProgress?.(event.loaded / event.total);
+    };
+    xhr.onload = () => {
+      if (xhr.status !== 200) {
+        reject(new Error(`AWS에 이미지 업로드 중 실패: ${xhr.status}`));
+        return;
+      }
+      resolve();
+    };
+    xhr.send(file);
+  });
+}
+
+export const updateFileMeta = async (body: FileMetaBody) => {
+  return appolo.mutate<{ analyzePrivateFileMetadata: FileMetaResponse }>({
+    mutation: gql`
+      mutation AnalyzePrivateFileMetadata(
+        $filename: String!
+        $key: String!
+        $mimeType: String!
+        $size: Int!
+      ) {
+        analyzePrivateFileMetadata(
+          filename: $filename
+          key: $key
+          mimeType: $mimeType
+          size: $size
+        ) {
+          createdAt
+          filename
+          id
+          key
+          mimeType
+          size
+          updatedAt
+          url
+        }
+      }
+    `,
+    variables: body,
+  });
+};
+
+/**
+ * ! Deprecated - 예전 파일 업로드 API
+ * @param file
+ * @param isPublic
+ */
 export const uploadFile = (file: File, isPublic = true) => {
   const formData = new FormData();
   formData.append('file', file);
@@ -21,55 +98,3 @@ export const uploadFile = (file: File, isPublic = true) => {
     },
   });
 };
-
-export function upload(
-  file: File,
-  isPublic?: boolean,
-  onProgress?: (progress: number) => void,
-): { abort: () => void; promise: Promise<AttachmentFile> } {
-  const xhr = new XMLHttpRequest();
-
-  return {
-    abort() {
-      xhr.abort();
-    },
-    promise: new Promise<AttachmentFile>((resolve, reject) => {
-      xhr.open('POST', FILE_ENDPOINT);
-      const accessToken = getCookie('accessToken');
-      if (accessToken) {
-        xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
-      }
-      xhr.addEventListener('load', e => {
-        // eslint-disable-next-line
-        console.log(e);
-
-        resolve(JSON.parse(xhr.responseText));
-        // try {
-        //   const file = JSON.parse(xhr.responseText);
-        //   if (isFile(file)) {
-        //     resolve(file);
-        //     return;
-        //   }
-        //   reject(new SyntaxError('Invalid file format'));
-        // } catch (e) {
-        //   reject(new SyntaxError('JSON parsing error'));
-        // }
-      });
-      xhr.upload.onprogress = (e: ProgressEvent) => {
-        const progress = e.loaded / e.total;
-        onProgress?.(progress);
-      };
-
-      xhr.addEventListener('error', () => {
-        reject(new Error(xhr.statusText));
-      });
-
-      const formData = new FormData();
-
-      formData.append('file', file);
-      formData.append('isPublic', isPublic ? 'true' : 'false');
-
-      xhr.send(formData);
-    }),
-  };
-}

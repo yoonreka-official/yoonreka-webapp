@@ -2,7 +2,11 @@ import { css } from '@emotion/react';
 import useFormInstance from 'antd/es/form/hooks/useFormInstance';
 import { useEffect, useRef, useState } from 'react';
 
-import { uploadFile } from '~/api/file.api.ts';
+import {
+  getPresignedUrl,
+  updateFileMeta,
+  uploadPresignedUrl,
+} from '~/api/file.api.ts';
 import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
 import Flex from '~/components/display/Flex.tsx';
 import InputText from '~/components/inputs/InputText.tsx';
@@ -24,6 +28,7 @@ function InputFile({
   onChange,
   id,
   placeholder = '파일을 선택하세요',
+  accept,
   ...props
 }: InputFileProps) {
   const ref = useRef<HTMLInputElement>(null);
@@ -37,10 +42,32 @@ function InputFile({
   };
 
   const handleUpload = async (file: File) => {
+    /*
+      1. generatePrivateFilePutObjectUrl 뮤테이션
+      2. presigned url 로 파일 업로드
+      3. analyzePrivateFileMetadata 뮤테이션
+     */
     try {
-      const { data } = await uploadFile(file, false);
-      setInternalValue(data.filename);
-      onChange?.(data.id);
+      const { data: presignedData } = await getPresignedUrl();
+
+      if (!presignedData) return;
+
+      const { url: presignedUrl, key } =
+        presignedData.generatePrivateFilePutObjectUrl;
+
+      console.log(presignedUrl, key);
+      await uploadPresignedUrl(presignedUrl, file);
+      const { data } = await updateFileMeta({
+        key,
+        filename: file.name,
+        mimeType: file.type,
+        size: file.size,
+      });
+      console.log(data);
+      if (!data) return;
+
+      setInternalValue(data.analyzePrivateFileMetadata.filename);
+      onChange?.(data.analyzePrivateFileMetadata.id);
     } catch (e) {
       console.log(e);
     }
@@ -94,6 +121,7 @@ function InputFile({
       </Flex>
 
       <input
+        accept={accept}
         css={styles.invisibleInput}
         ref={ref}
         type="file"

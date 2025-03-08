@@ -72,6 +72,10 @@ const formItemStyle = css`
     }
   }
 
+  &.ant-form-item .ant-form-item-feedback-icon {
+    display: flex;
+  }
+
   .ant-form-item-explain-error {
     padding-left: 8px;
     color: ${COLORS.TAG.RED};
