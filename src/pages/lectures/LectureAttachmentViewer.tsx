@@ -1,17 +1,18 @@
 import { css } from '@emotion/react';
 import { useMemo, useState } from 'react';
 import { BiChevronLeft, BiChevronRight, BiSolidError } from 'react-icons/bi';
+import { LuRotateCw } from 'react-icons/lu';
 import { RiFullscreenExitFill, RiFullscreenFill } from 'react-icons/ri';
 import { Document, Page, pdfjs } from 'react-pdf';
 
 import CardBase from '~/components/cards/CardBase.tsx';
 import Flex from '~/components/display/Flex.tsx';
 import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
 
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
+import { COLORS } from '~/configs/theme.ts';
 import useLectures from '~/hooks/useLectures.ts';
 
 // workerSrc 정의 하지 않으면 pdf 보여지지 않습니다.
@@ -20,12 +21,15 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url,
 ).toString();
 
+type FullScreenDirection = 'left' | 'right';
+
 function LectureAttachmentViewer() {
   const {
     state: { lesson },
   } = useLectures();
 
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [direction, setDirection] = useState<FullScreenDirection>('left');
   const [total, setTotal] = useState<number>();
   const [page, setPage] = useState<number>(1);
 
@@ -37,7 +41,19 @@ function LectureAttachmentViewer() {
     lesson && (
       <>
         <div css={styles.pdfViewerWrapper}>
-          <div css={[styles.box, isFullScreen && styles.fullScreenMode]}>
+          <div
+            css={[
+              styles.box,
+              ...(isFullScreen
+                ? [
+                    styles.fullScreenMode,
+                    direction === 'left'
+                      ? styles.fullScreenLeft
+                      : styles.fullScreenRight,
+                  ]
+                : []),
+            ]}
+          >
             <Document
               error={
                 <Flex direction="column" gap={2} items="center">
@@ -67,6 +83,7 @@ function LectureAttachmentViewer() {
               }}
             >
               <Page
+                loading={isFullScreen && <div css={styles.pageLoader} />}
                 pageNumber={page}
                 renderAnnotationLayer={false}
                 renderTextLayer={false}
@@ -108,30 +125,36 @@ function LectureAttachmentViewer() {
               )}
 
               <Flex gap={4}>
-                <div
-                  css={styles.controlButton}
-                  style={{ visibility: 'hidden' }}
-                />
+                {isFullScreen ? (
+                  <button
+                    css={styles.controlButton}
+                    disabled={isDisabled}
+                    onClick={() =>
+                      setDirection(direction === 'left' ? 'right' : 'left')
+                    }
+                  >
+                    <LuRotateCw />
+                  </button>
+                ) : (
+                  <div
+                    css={styles.controlButton}
+                    style={{ visibility: 'hidden' }}
+                  />
+                )}
 
                 <button
                   css={styles.controlButton}
                   disabled={isDisabled}
                   onClick={() => setIsFullScreen(!isFullScreen)}
                 >
-                  <RiFullscreenFill />
+                  {isFullScreen ? (
+                    <RiFullscreenExitFill />
+                  ) : (
+                    <RiFullscreenFill />
+                  )}
                 </button>
               </Flex>
             </Flex>
-
-            {isFullScreen && (
-              <button
-                css={styles.buttonFullScreen}
-                style={{ position: 'fixed' }}
-                onClick={() => setIsFullScreen(!isFullScreen)}
-              >
-                <RiFullscreenExitFill />
-              </button>
-            )}
           </div>
         </div>
 
@@ -154,18 +177,14 @@ function LectureAttachmentViewer() {
 const styles = {
   box: css`
     position: relative;
-    //height: 230px;
-    //aspect-ratio: 1.65;
-    padding: 16px;
     border-radius: 20px;
-    background: var(--Font-10, #c3c3c3);
-    //background: #fff;
+    background: ${COLORS.FONT['10']};
+
     /* card */
     box-shadow: 0px 4px 20px 0px rgba(206, 218, 241, 0.4);
     margin-bottom: 12px;
     overflow: auto;
 
-    //transition: all 0.3s linear;
     .react-pdf__Document {
       min-height: 186px;
       background: #fff;
@@ -188,7 +207,7 @@ const styles = {
 
     .PdfViewer-module_article__smGeF {
       padding: 0;
-      background: var(--Font-10, #c3c3c3);
+      background: ${COLORS.FONT['10']};
       //transform: translateY(-600px);
 
       .PdfViewer-module_document__RBXeV {
@@ -208,17 +227,56 @@ const styles = {
 
   fullScreenMode: css`
     position: fixed;
-    width: 100vw;
-    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     z-index: 10000;
-    inset: 0;
     border-radius: 0;
+    width: 100vh;
+    height: 100vw;
+
+    .react-pdf__Document {
+      height: calc(100vw - 32px) !important;
+
+      .react-pdf__Page {
+        min-width: 100%;
+        height: calc(100vw - 32px) !important;
+        background-color: rgba(0, 0, 0, 0.7) !important;
+
+        .react-pdf__Page__canvas {
+          margin: auto;
+          width: auto !important;
+          height: calc(100vw - 32px) !important;
+        }
+      }
+    }
+  `,
+
+  fullScreenLeft: css`
+    transform: rotate(-90deg);
+    transform-origin: top left;
+    left: 0;
+    top: 100%;
+  `,
+
+  fullScreenRight: css`
+    transform: rotate(-270deg);
+    transform-origin: top right;
+    right: 0;
+    top: 100%;
+  `,
+
+  pageLoader: css`
+    width: 100%;
+    height: calc(100vw - 32px) !important;
+    background-color: rgba(0, 0, 0, 0.7) !important;
   `,
 
   controller: css`
     background: rgba(0, 0, 0, 0.75);
     color: #fff;
     font-size: 12px;
+    padding: 0 20px;
   `,
 
   controlButton: css`
