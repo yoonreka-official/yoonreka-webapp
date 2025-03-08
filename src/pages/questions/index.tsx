@@ -8,7 +8,7 @@ import QuestionFilter from '~/pages/questions/QuestionFilter.tsx';
 import QuestionHeader from '~/pages/questions/QuestionHeader.tsx';
 import QuestionList from '~/pages/questions/QuestionList.tsx';
 
-function QuestionPage() {
+function QuestionsPage() {
   const { fetchData } = useQuestions();
 
   const { toggleLoading } = useLoading();
@@ -31,4 +31,4 @@ function QuestionPage() {
   );
 }
 
-export default QuestionPage;
+export default QuestionsPage;

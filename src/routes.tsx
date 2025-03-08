@@ -1,18 +1,23 @@
-import { lazy } from 'react';
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 
 import AppConfig from '~/configs/AppConfig.tsx';
 import RootBoundary from '~/errors/RootBoundary';
 import AuthGuard from '~/guards/AuthGuard';
 import LayoutDefault from '~/layouts/LayoutDefault.tsx';
+import GradesPage from '~/pages/grades';
+import LecturesPage from '~/pages/lectures';
+import LoginPage from '~/pages/login';
+import MorePage from '~/pages/more';
+import QuestionsPage from '~/pages/questions';
+import SchedulesPage from '~/pages/schedules';
 
-const LoginPage = lazy(() => import('~/pages/login'));
-
-const SchedulesPage = lazy(() => import('~/pages/schedules'));
-const LecturesPage = lazy(() => import('~/pages/lectures'));
-const GradesPage = lazy(() => import('~/pages/grades'));
-const QuestionsPage = lazy(() => import('~/pages/questions'));
-const MorePage = lazy(() => import('~/pages/more'));
+// const LoginPage = lazy(() => import('~/pages/login'));
+//
+// const SchedulesPage = lazy(() => import('~/pages/schedules'));
+// const LecturesPage = lazy(() => import('~/pages/lectures'));
+// const GradesPage = lazy(() => import('~/pages/grades'));
+// const QuestionsPage = lazy(() => import('~/pages/questions'));
+// const MorePage = lazy(() => import('~/pages/more'));
 
 const router = createBrowserRouter([
   {
