@@ -159,6 +159,7 @@ module.exports = {
       },
     ],
     'react-hooks/exhaustive-deps': 'off',
+    'react/no-unused-prop-types': 0,
     'react/button-has-type': 0,
     'react/jsx-curly-brace-presence': [1, { children: 'never', props: 'never' }],
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
