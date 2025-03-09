@@ -25,12 +25,11 @@ export interface NotificationState {
   selectedType: NotificationType | 'ALL';
 }
 
+export const DEFAULT_PAGINATION = { offset: 0, limit: 10 };
+
 const initialState: NotificationState = {
   params: {
-    pagination: {
-      offset: 0,
-      limit: 20,
-    },
+    pagination: DEFAULT_PAGINATION,
     // filter: {
     //   types: [NotificationType.NEW_MATERIAL],
     // },
@@ -85,7 +84,11 @@ const NotificationSlice = createSlice({
           };
         });
 
-        state.list = notifications;
+        if ((action.meta.arg?.pagination.offset || 0) === 0) {
+          state.list = notifications;
+        } else {
+          state.list = [...state.list, ...notifications];
+        }
         state.hasNew = notifications.some(item => item.isNew);
 
         state.totalCount = action.payload.totalCount;

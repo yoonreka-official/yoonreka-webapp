@@ -6,6 +6,7 @@ import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
 import NotificationList from '~/components/notifications/NotificationList.tsx';
 import { COLORS } from '~/configs/theme.ts';
 import useNotifications from '~/hooks/useNotifications.ts';
+import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts';
 import { NotificationType } from '~/types/notification.type.ts';
 import { native } from '~/utils/app.util.ts';
 
@@ -25,8 +26,6 @@ const NOTIFICATION_TABS: Array<{
   { key: NotificationType.NEW_NOTICE, label: '공지사항' },
   { key: NotificationType.INVOICE_DUE, label: '회비' },
 ];
-
-export const DEFAULT_PAGINATION = { offset: 0, limit: 10 };
 
 function DrawerNotifications({
   open,
