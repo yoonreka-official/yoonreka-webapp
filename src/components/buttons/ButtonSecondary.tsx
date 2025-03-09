@@ -31,6 +31,13 @@ const styles = {
     border-color: ${COLORS.BG['01']};
     color: ${COLORS.FONT['60']};
 
+    &:hover,
+    &:focus {
+      background: ${COLORS.BG['01']};
+      border-color: ${COLORS.BG['01']};
+      color: ${COLORS.FONT['60']};
+    }
+
     &:disabled {
       color: ${COLORS.FONT['60']};
       background: ${COLORS.BG['03']};

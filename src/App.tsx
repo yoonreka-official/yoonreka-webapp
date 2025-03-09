@@ -13,7 +13,7 @@ import router from '~/routes.tsx';
 import { store } from '~/stores';
 
 const client = new ApolloClient({
-  uri: 'https://api.dev.yoonreka.app/graphql',
+  uri: `${import.meta.env.VITE_API_URL}/graphql`,
   cache: new InMemoryCache(),
 });
 

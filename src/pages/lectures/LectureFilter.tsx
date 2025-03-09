@@ -19,6 +19,7 @@ function LectureFilter() {
     state: { lecture, lesson: selectedLesson },
     fetchData,
     selectLesson,
+    initializeLesson,
   } = useLectures();
 
   return (
@@ -29,8 +30,11 @@ function LectureFilter() {
           label: item.title,
           value: item.id,
         }))}
-        onChange={value => {
-          fetchData(value);
+        onChange={async value => {
+          const lecture = await fetchData(value);
+          if (lecture) {
+            initializeLesson(lecture);
+          }
         }}
       />
 

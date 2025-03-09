@@ -38,7 +38,7 @@ const router = createBrowserRouter([
             element: <SchedulesPage />,
           },
           {
-            path: '/lectures',
+            path: 'lectures',
             element: <LecturesPage />,
           },
           {

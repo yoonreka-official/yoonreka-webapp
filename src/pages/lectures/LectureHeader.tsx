@@ -2,11 +2,10 @@ import { css } from '@emotion/react';
 import { useState } from 'react';
 
 import ButtonNav from '~/components/buttons/ButtonNav.tsx';
-import DrawerNotifications, {
-  DEFAULT_PAGINATION,
-} from '~/components/notifications/DrawerNotifications.tsx';
+import DrawerNotifications from '~/components/notifications/DrawerNotifications.tsx';
 import Headline from '~/components/typography/Headline.tsx';
 import useNotifications from '~/hooks/useNotifications.ts';
+import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts';
 import { NotificationType } from '~/types/notification.type.ts';
 
 function LectureHeader() {

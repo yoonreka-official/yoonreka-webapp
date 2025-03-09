@@ -39,7 +39,7 @@ function AuthGuard({ children }: PropsWithChildren) {
 
   if (isLoading) return <Spinner fullScreen />;
 
-  return authUser ? children : <Navigate to="/sign-in" />;
+  return authUser ? children : <Navigate to="/auth/login" />;
 }
 
 export default AuthGuard;
