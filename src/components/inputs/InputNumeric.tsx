@@ -40,29 +40,38 @@ function InputNumeric({
     <Input
       value={value}
       css={textInputStyle}
-      inputMode="decimal"
+      inputMode="numeric"
+      pattern="[0-9]*"
       suffix={
-        allowClear && value ? (
+        allowClear && typeof value !== 'undefined' && value !== '' ? (
           <IconClear20 css={clearIcon} onClick={() => form.resetFields([id])} />
         ) : undefined
       }
+      type="tel"
       onChange={e => {
         if (!e.target.value) {
           onChange?.(undefined);
           return;
         }
+
+        if (Number.isNaN(Number(e.target.value))) {
+          return;
+        }
+
         onChange?.(Number(e.target.value));
       }}
       onKeyDown={event => {
         if (ALLOW_KEYS.includes(event.key)) {
+          console.log(1);
           return;
         }
 
         if (!isInt(event.key)) {
+          console.log(2);
           event.preventDefault();
           return;
         }
-
+        console.log(3);
         onKeyDown?.(event);
       }}
       {...props}
