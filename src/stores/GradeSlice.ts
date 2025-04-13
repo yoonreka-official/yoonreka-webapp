@@ -76,16 +76,18 @@ const GradeSlice = createSlice({
 
         if (lecture) {
           // ? 데일리 성적 출력시 사용할 라벨 그룹
-          const labels: GradeFormLabelGroup[] = [];
+          const labelGroups: GradeFormLabelGroup[] = [];
           state.lecture.gradeFormLabels.forEach(label => {
-            const labelType = labels.find(item => item.type === label.type);
-            if (labelType) {
-              labelType.children.push(label);
+            const labelGroup = labelGroups.find(
+              item => item.type === label.type,
+            );
+            if (labelGroup) {
+              labelGroup.children.push(label);
             } else {
-              labels.push({ type: label.type, children: [label] });
+              labelGroups.push({ type: label.type, children: [label] });
             }
           });
-          state.labelGroups = labels;
+          state.labelGroups = labelGroups;
 
           // ? 누적 성적 그래프 태그 기본값 설정
           state.testLabels = lecture.gradeFormLabels.filter(item => {
@@ -152,6 +154,7 @@ const GradeSlice = createSlice({
             type: selectedLabel.type,
             label: selectedLabel.value,
             value: gradeData?.value || null,
+            value2: gradeData?.value2 || null,
             maxValue: gradeData?.maxValue || null,
             score:
               calculator.rates(gradeData?.value, gradeData?.maxValue) || null,

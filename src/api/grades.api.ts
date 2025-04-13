@@ -47,6 +47,7 @@ export const getLectureGrades = (myLectureId: string, gradeType: GradeType) => {
                 maxValue
                 type
                 value
+                value2
               }
               gradeType
               id

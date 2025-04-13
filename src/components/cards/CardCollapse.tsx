@@ -85,7 +85,7 @@ const styles = {
   `,
 
   open: css`
-    max-height: 1000px;
+    max-height: 10000px;
   `,
 
   body: css`

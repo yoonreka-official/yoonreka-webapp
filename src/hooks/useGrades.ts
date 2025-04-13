@@ -49,7 +49,6 @@ const useGrades = () => {
     id?: string,
     gradeType: GradeType = GradeType.DEFAULT,
   ) => {
-    console.log('fetch data --- ', id);
     const lectureId = id || authUser?.lectures[0]?.id;
 
     if (!lectureId) {

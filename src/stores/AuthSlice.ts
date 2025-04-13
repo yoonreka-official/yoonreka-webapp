@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { fetchAuthUser } from '~/api/auth.api.ts';
+import { setToken } from '~/utils/apollo.util.ts';
+import { removeCookie } from '~/utils/cookie.util.ts';
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -19,12 +21,12 @@ const initialState: AuthState = {
   isLoading: true,
 };
 
-export const fetchMe = createAsyncThunk<AuthUser>(
+export const fetchMe = createAsyncThunk<AuthUser | null>(
   'auth/fetchMe',
-  async (_, { rejectWithValue }) => {
+  async (_, { signal, rejectWithValue }) => {
     try {
-      const { data } = await fetchAuthUser();
-      return Promise.resolve(data.currentUser);
+      const res = await fetchAuthUser(signal);
+      return Promise.resolve(res?.data?.currentUser || null);
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -39,17 +41,27 @@ const AuthSlice = createSlice({
       })
       .addCase(fetchMe.fulfilled, (state, action) => {
         state.authUser = action.payload;
-        state.notificationConfig = {
-          isDistractionMode: action.payload.isDistractionMode,
-          distractionStartTime:
-            action.payload.distractionStartTime || undefined,
-          distractionEndTime: action.payload.distractionEndTime || undefined,
-        };
-        state.isLoading = false;
+
+        if (action.payload) {
+          state.notificationConfig = {
+            isDistractionMode: action.payload.isDistractionMode,
+            distractionStartTime:
+              action.payload.distractionStartTime || undefined,
+            distractionEndTime: action.payload.distractionEndTime || undefined,
+          };
+
+          state.isLoading = false;
+        } else {
+          state.isLoading = true;
+        }
       })
       .addCase(fetchMe.rejected, state => {
         state.authUser = null;
         state.isLoading = false;
+
+        removeCookie('accessToken');
+        removeCookie('refreshToken');
+        setToken(undefined);
       });
   },
   initialState,

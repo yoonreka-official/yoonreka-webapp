@@ -57,39 +57,57 @@ export const signIn = async (variables: LoginBody) => {
   return res;
 };
 
-export const fetchAuthUser = async () => {
-  return appolo.query<{ currentUser: AuthUser }>({
-    query: gql`
-      query GetCurrentUser {
-        currentUser {
-          birthDate
-          code
-          gender
-          grade
-          id
-          name
-          parentName
-          parentPhone
-          payDueDay
-          phone
-          registeredDate
-          school {
+export const fetchAuthUser = async (signal: AbortSignal) => {
+  try {
+    const res = await appolo.query<{ currentUser: AuthUser }>({
+      query: gql`
+        query GetCurrentUser {
+          currentUser {
+            birthDate
+            code
+            gender
+            grade
             id
             name
-          }
-          state
-          lectures {
-            id
-            title
-          }
+            parentName
+            parentPhone
+            payDueDay
+            phone
+            registeredDate
+            school {
+              id
+              name
+            }
+            state
+            lectures {
+              id
+              title
+            }
 
-          isDistractionMode
-          distractionEndTime
-          distractionStartTime
+            isDistractionMode
+            distractionEndTime
+            distractionStartTime
+          }
         }
-      }
-    `,
-  });
+      `,
+      context: {
+        fetchOptions: { signal },
+      },
+    });
+
+    if (!res.data?.currentUser) {
+      // eslint-disable-next-line
+      throw new Error('로그인 실패했습니다.');
+    }
+
+    return res;
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.log('fetchAuthUser --- 요청이 중단됨');
+      return null;
+    }
+    throw error;
+  }
 };
 
 export const updateAuthUser = (input: UpdateUserBody) => {

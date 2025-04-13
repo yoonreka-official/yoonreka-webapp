@@ -46,6 +46,7 @@ export interface LectureGradeData {
   maxValue: NullableString;
   type: string;
   value: NullableString;
+  value2: NullableString;
 }
 
 export interface LectureGradeFormLabel {

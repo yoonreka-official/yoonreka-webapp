@@ -264,8 +264,8 @@ function LectureAttachmentViewer() {
             </Caption>
           </header>
           <Caption color="#9A9A9A" size={12} weight="medium">
-            썸네일 또는 전체보기 아이콘 선택 후 기기 화면을 가로로 돌려보면 학습
-            자료를 자세히 확인할 수 있어요 :)
+            오른쪽 하단에 전체보기 아이콘(ㅁ)을 선택 후 돋보기(+) 버튼을 누르면
+            자료를 자세히 확인할 수 있어요:)
           </Caption>
         </CardBase>
       </>

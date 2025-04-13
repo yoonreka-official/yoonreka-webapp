@@ -62,6 +62,38 @@ function CardDailyGrade({
           lesson={lesson}
         />
       ))}
+
+      <Flex direction="column" gap={4} style={{ marginTop: 16 }}>
+        <Body size={14} weight="bold">
+          {`지윤T's Comment`}
+        </Body>
+
+        <div css={gradeStyles.commentBox}>
+          <Caption
+            color={
+              lesson.myLessonGrade?.comment
+                ? COLORS.FONT['80']
+                : COLORS.BG['04']
+            }
+            size={12}
+          >
+            {lesson.myLessonGrade?.comment || '개별 코멘트가 없습니다.'}
+          </Caption>
+        </div>
+      </Flex>
+
+      <section style={{ marginTop: 16 }}>
+        <Caption color={COLORS.FONT['80']} size={12}>
+          <ul>
+            <li>
+              궁금하신 점은 언제든지 학원으로 연락주시면 자세하게
+              안내해드리겠습니다.
+            </li>
+            <li>고등관_메가스터디 러셀 중계 : ☎︎ 02-6316-1010</li>
+            <li>중등관_윤레카 ENGLISH : 📞 010-6330-0559</li>
+          </ul>
+        </Caption>
+      </section>
     </CardCollapse>
   );
 }
@@ -128,6 +160,7 @@ function GradeSection({
 
       <Flex css={gradeStyles.scoreBox}>
         <Caption color={COLORS.FONT['80']} size={12} weight="semibold">
+          {grade?.value2 && `${grade?.value2} `}
           {grade?.value || <EmptyData />}
           {grade?.maxValue && `/${grade?.maxValue}`}
         </Caption>
@@ -150,6 +183,12 @@ export const gradeStyles = {
 
   scoreBox: css`
     width: 100%;
+  `,
+
+  commentBox: css`
+    padding: 12px;
+    border-radius: 8px;
+    background: ${COLORS.BG['01']};
   `,
 };
 
