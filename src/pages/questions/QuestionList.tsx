@@ -12,7 +12,7 @@ function QuestionList() {
   } = useQuestions();
 
   const questions = useMemo(() => {
-    return list.filter(item => item.lecture.id === selectedLectureId);
+    return list.filter(item => item.lecture?.id === selectedLectureId);
   }, [list, selectedLectureId]);
 
   return (

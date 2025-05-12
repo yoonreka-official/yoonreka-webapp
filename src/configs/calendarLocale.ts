@@ -42,6 +42,7 @@ const locale: PickerLocale = {
       '11월',
       '12월',
     ],
+    week: '주',
     shortWeekDays: ['일', '월', '화', '수', '목', '금', '토'],
     timeSelect: '시간을 선택하세요',
     today: '오늘',
