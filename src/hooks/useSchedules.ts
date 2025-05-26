@@ -1,16 +1,16 @@
-import { useAppDispatch, useAppSelector } from '~/stores';
+import { useAppDispatch, useAppSelector } from '~/stores'
 import {
   fetchLessons,
   setSelectedDate,
   setSelectedMonth,
-} from '~/stores/SchedulesSlice.ts';
+} from '~/stores/SchedulesSlice.ts'
 
-import type { Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs'
 
 const useSchedules = () => {
-  const state = useAppSelector(state => state.schedules);
+  const state = useAppSelector((state) => state.schedules)
 
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
   const fetchData = async (date: Dayjs) => {
     try {
@@ -22,25 +22,25 @@ const useSchedules = () => {
             .format('YYYY-MM-DD'),
           endDate: date.endOf('month').add(14, 'days').format('YYYY-MM-DD'),
         }),
-      );
+      )
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+  }
 
   const handleSetDate = (date?: Dayjs) => {
-    dispatch(setSelectedDate(date));
-  };
+    dispatch(setSelectedDate(date))
+  }
 
   const handleSetMonth = (month?: Dayjs) => {
     if (state.selectedMonth?.format('YYYY-MM') === month?.format('YYYY-MM')) {
-      return;
+      return
     }
 
-    dispatch(setSelectedMonth(month));
-  };
+    dispatch(setSelectedMonth(month))
+  }
 
-  return { state, fetchData, handleSetDate, handleSetMonth };
-};
+  return { state, fetchData, handleSetDate, handleSetMonth }
+}
 
-export default useSchedules;
+export default useSchedules

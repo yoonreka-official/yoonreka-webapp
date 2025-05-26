@@ -1,31 +1,31 @@
-import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
+import { css } from '@emotion/react'
+import { useNavigate } from 'react-router-dom'
 
-import ImagePayment from '~/assets/images/notification/img_payment.png';
-import IconExpandRight24 from '~/assets/svg/icon_expand_right_24.svg?react';
-import CardBase from '~/components/cards/CardBase.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import { formatDate } from '~/utils/format.util.ts';
+import ImagePayment from '~/assets/images/notification/img_payment.png'
+import IconExpandRight24 from '~/assets/svg/icon_expand_right_24.svg?react'
+import CardBase from '~/components/cards/CardBase.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import { formatDate } from '~/utils/format.util.ts'
 
-import type { InvoiceType } from '~/types/invoice.type.ts';
+import type { InvoiceType } from '~/types/invoice.type.ts'
 
 interface Props {
-  title: string;
-  createdAt: number;
-  invoiceType?: InvoiceType;
-  isNew?: boolean;
+  title: string
+  createdAt: number
+  invoiceType?: InvoiceType
+  isNew?: boolean
 }
 
 function CardInvoice({ title, createdAt, invoiceType, isNew }: Props) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   return (
     <div
       onClick={() => {
-        navigate(`/more?invoiceType=${invoiceType}`);
+        navigate(`/more?invoiceType=${invoiceType}`)
       }}
     >
       <CardBase>
@@ -51,7 +51,7 @@ function CardInvoice({ title, createdAt, invoiceType, isNew }: Props) {
         </Flex>
       </CardBase>
     </div>
-  );
+  )
 }
 
 const notificationStyles = {
@@ -69,6 +69,6 @@ const notificationStyles = {
     height: 14px;
     margin-right: 2px;
   `,
-};
+}
 
-export default CardInvoice;
+export default CardInvoice

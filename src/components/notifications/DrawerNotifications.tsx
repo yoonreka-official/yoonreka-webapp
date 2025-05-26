@@ -1,31 +1,31 @@
-import { css } from '@emotion/react';
-import { Drawer, Tabs } from 'antd';
-import { useEffect } from 'react';
+import { css } from '@emotion/react'
+import { Drawer, Tabs } from 'antd'
+import { useEffect } from 'react'
 
-import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
-import NotificationList from '~/components/notifications/NotificationList.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useNotifications from '~/hooks/useNotifications.ts';
-import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts';
-import { NotificationType } from '~/types/notification.type.ts';
-import { native } from '~/utils/app.util.ts';
+import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
+import NotificationList from '~/components/notifications/NotificationList.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useNotifications from '~/hooks/useNotifications.ts'
+import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
+import { NotificationType } from '~/types/notification.type.ts'
+import { native } from '~/utils/app.util.ts'
 
-import type { DrawerProps } from 'antd';
+import type { DrawerProps } from 'antd'
 
 interface Props extends Omit<DrawerProps, 'onClose'> {
-  defaultActiveKey?: string;
-  onClose?: () => void;
+  defaultActiveKey?: string
+  onClose?: () => void
 }
 
 const NOTIFICATION_TABS: Array<{
-  key: NotificationType | 'ALL';
-  label: string;
+  key: NotificationType | 'ALL'
+  label: string
 }> = [
   { key: 'ALL', label: '전체' },
   { key: NotificationType.NEW_MATERIAL, label: '학습자료' },
   { key: NotificationType.NEW_NOTICE, label: '공지사항' },
   { key: NotificationType.INVOICE_DUE, label: '회비' },
-];
+]
 
 function DrawerNotifications({
   open,
@@ -40,18 +40,18 @@ function DrawerNotifications({
     fetchData,
     handleMarkAsRead,
     handleChangeType,
-  } = useNotifications();
+  } = useNotifications()
 
   const handleClose = () => {
-    handleMarkAsRead();
-    onClose?.();
-  };
+    handleMarkAsRead()
+    onClose?.()
+  }
 
   useEffect(() => {
     if (open && selectedType === 'ALL') {
-      native.updateBadgeCount();
+      native.updateBadgeCount()
     }
-  }, [open, selectedType]);
+  }, [open, selectedType])
 
   return (
     <Drawer
@@ -79,19 +79,19 @@ function DrawerNotifications({
           defaultActiveKey={defaultActiveKey || 'ALL'}
           indicator={{ align: 'center', size: 74 }}
           items={NOTIFICATION_TABS}
-          onChange={activeKey => {
-            const type = activeKey as NotificationType | 'ALL';
-            handleChangeType(type);
+          onChange={(activeKey) => {
+            const type = activeKey as NotificationType | 'ALL'
+            handleChangeType(type)
 
             if (type === 'ALL') {
-              fetchData({ pagination: DEFAULT_PAGINATION });
+              fetchData({ pagination: DEFAULT_PAGINATION })
             } else {
               fetchData({
                 pagination: DEFAULT_PAGINATION,
                 filter: {
                   types: [type],
                 },
-              });
+              })
             }
           }}
         />
@@ -99,7 +99,7 @@ function DrawerNotifications({
 
       <NotificationList />
     </Drawer>
-  );
+  )
 }
 
 const styles = {
@@ -195,6 +195,6 @@ const styles = {
       }
     }
   `,
-};
+}
 
-export default DrawerNotifications;
+export default DrawerNotifications

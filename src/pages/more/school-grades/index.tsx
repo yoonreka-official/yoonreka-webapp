@@ -1,35 +1,35 @@
-import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { css } from '@emotion/react'
+import { useEffect, useState } from 'react'
 
-import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
-import ButtonSecondary from '~/components/buttons/ButtonSecondary.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import NoData from '~/components/utils/NoData.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useLoading from '~/hooks/useLoading.ts';
-import useSchoolGrades from '~/hooks/useSchoolGrades.ts';
-import CardSchoolGrade from '~/pages/more/school-grades/CardSchoolGrade.tsx';
-import DrawerSchoolGrade from '~/pages/more/school-grades/DrawerSchoolGrade.tsx';
+import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
+import ButtonSecondary from '~/components/buttons/ButtonSecondary.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import NoData from '~/components/utils/NoData.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useLoading from '~/hooks/useLoading.ts'
+import useSchoolGrades from '~/hooks/useSchoolGrades.ts'
+import CardSchoolGrade from '~/pages/more/school-grades/CardSchoolGrade.tsx'
+import DrawerSchoolGrade from '~/pages/more/school-grades/DrawerSchoolGrade.tsx'
 
 function SchoolGrades() {
   const {
     state: { list },
     fetchData,
     handleSelected,
-  } = useSchoolGrades();
+  } = useSchoolGrades()
 
-  const { toggleLoading } = useLoading();
+  const { toggleLoading } = useLoading()
 
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false)
 
   useEffect(() => {
-    (async () => {
-      toggleLoading(true);
-      await fetchData();
-      toggleLoading(false);
-    })();
-  }, []);
+    ;(async () => {
+      toggleLoading(true)
+      await fetchData()
+      toggleLoading(false)
+    })()
+  }, [])
 
   return (
     // eslint-disable-next-line
@@ -38,9 +38,9 @@ function SchoolGrades() {
         <CardSchoolGrade
           key={idx}
           schoolGrade={item}
-          onUpdate={selected => {
-            handleSelected(selected);
-            setOpen(true);
+          onUpdate={(selected) => {
+            handleSelected(selected)
+            setOpen(true)
           }}
         />
       ))}
@@ -59,7 +59,7 @@ function SchoolGrades() {
 
       <DrawerSchoolGrade open={open} onClose={() => setOpen(false)} />
     </>
-  );
+  )
 }
 
 function NoSchoolGrades({ onButtonClick }: { onButtonClick?: () => void }) {
@@ -84,7 +84,7 @@ function NoSchoolGrades({ onButtonClick }: { onButtonClick?: () => void }) {
         </Flex>
       }
     />
-  );
+  )
 }
 
 const styles = {
@@ -99,6 +99,6 @@ const styles = {
     right: 14px;
     padding: 0 28px;
   `,
-};
+}
 
-export default SchoolGrades;
+export default SchoolGrades

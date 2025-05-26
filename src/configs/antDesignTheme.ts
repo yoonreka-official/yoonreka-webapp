@@ -1,6 +1,6 @@
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { ThemeConfig } from 'antd';
+import type { ThemeConfig } from 'antd'
 
 const antDesignTheme: ThemeConfig = {
   token: {
@@ -89,6 +89,6 @@ const antDesignTheme: ThemeConfig = {
     },
   },
   /* eslint-enable @typescript-eslint/naming-convention */
-};
+}
 
-export default antDesignTheme;
+export default antDesignTheme

@@ -1,8 +1,8 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
-import { appolo } from '~/utils/apollo.util.ts';
+import { appolo } from '~/utils/apollo.util.ts'
 
-import type { GradeType, LectureGradeDetail } from '~/types/grades.type.ts';
+import type { GradeType, LectureGradeDetail } from '~/types/grades.type.ts'
 
 export const getLectureGrades = (myLectureId: string, gradeType: GradeType) => {
   return appolo.query<{ myLecture: LectureGradeDetail }>({
@@ -72,5 +72,5 @@ export const getLectureGrades = (myLectureId: string, gradeType: GradeType) => {
     `,
     fetchPolicy: 'no-cache',
     variables: { myLectureId, gradeType },
-  });
-};
+  })
+}

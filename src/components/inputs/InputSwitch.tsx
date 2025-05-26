@@ -1,12 +1,12 @@
-import { css } from '@emotion/react';
-import { Switch as AntdSwitch } from 'antd';
+import { css } from '@emotion/react'
+import { Switch as AntdSwitch } from 'antd'
 
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { SwitchProps } from 'antd/es/switch';
+import type { SwitchProps } from 'antd/es/switch'
 
 function Switch({ ...props }: SwitchProps) {
-  return <AntdSwitch css={switchStyle} {...props} />;
+  return <AntdSwitch css={switchStyle} {...props} />
 }
 
 const switchStyle = css`
@@ -30,6 +30,6 @@ const switchStyle = css`
       top: 3px;
     }
   }
-`;
+`
 
-export default Switch;
+export default Switch

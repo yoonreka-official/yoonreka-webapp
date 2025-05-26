@@ -1,25 +1,25 @@
-import { css } from '@emotion/react';
-import dayjs from 'dayjs';
+import { css } from '@emotion/react'
+import dayjs from 'dayjs'
 
-import CardCollapse from '~/components/cards/CardCollapse.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useAuth from '~/hooks/useAuth.tsx';
-import useGrades from '~/hooks/useGrades.ts';
-import { AttendanceStatus } from '~/types/grades.type.ts';
+import CardCollapse from '~/components/cards/CardCollapse.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useAuth from '~/hooks/useAuth.tsx'
+import useGrades from '~/hooks/useGrades.ts'
+import { AttendanceStatus } from '~/types/grades.type.ts'
 
 import type {
   GradeFormLabelGroup,
   LectureGradeFormLabel,
   LectureGradeLesson,
-} from '~/types/grades.type.ts';
+} from '~/types/grades.type.ts'
 
 interface CardDailyGradeProps {
-  lesson: LectureGradeLesson;
-  defaultOpen?: boolean;
-  scrollId?: string;
+  lesson: LectureGradeLesson
+  defaultOpen?: boolean
+  scrollId?: string
 }
 
 function CardDailyGrade({
@@ -29,13 +29,13 @@ function CardDailyGrade({
 }: CardDailyGradeProps) {
   const {
     state: { authUser },
-  } = useAuth();
+  } = useAuth()
 
   const {
     state: { labelGroups },
-  } = useGrades();
+  } = useGrades()
 
-  const title = `${dayjs(lesson.date).format('YYYY.MM.DD (ddd)')} 데일리 성적`;
+  const title = `${dayjs(lesson.date).format('YYYY.MM.DD (ddd)')} 데일리 성적`
 
   return (
     <CardCollapse id={scrollId} title={title} value={defaultOpen}>
@@ -55,7 +55,7 @@ function CardDailyGrade({
         </Caption>
       </Flex>
 
-      {labelGroups.map(group => (
+      {labelGroups.map((group) => (
         <GradeGroup
           key={`${lesson.date}-${group.type}`}
           group={group}
@@ -95,33 +95,33 @@ function CardDailyGrade({
         </Caption>
       </section>
     </CardCollapse>
-  );
+  )
 }
 
 export function EmptyData() {
-  return <Caption color={COLORS.FONT['30']}>-</Caption>;
+  return <Caption color={COLORS.FONT['30']}>-</Caption>
 }
 
 const getAttendanceText = (attendance?: AttendanceStatus) => {
   switch (attendance) {
     case AttendanceStatus.PRESENT:
-      return '출석';
+      return '출석'
     case AttendanceStatus.ABSENT:
-      return '결석';
+      return '결석'
     case AttendanceStatus.LATE:
-      return '지각';
+      return '지각'
     case AttendanceStatus.EARLY_LEAVE:
-      return '조퇴';
+      return '조퇴'
     default:
-      return <EmptyData />;
+      return <EmptyData />
   }
-};
+}
 
 function GradeGroup({
   group,
   lesson,
 }: CardDailyGradeProps & {
-  group: GradeFormLabelGroup;
+  group: GradeFormLabelGroup
 }) {
   return (
     <Flex direction="column" gap={4} style={{ marginTop: 16 }}>
@@ -129,7 +129,7 @@ function GradeGroup({
         {group.type}
       </Body>
 
-      {group.children.map(label => (
+      {group.children.map((label) => (
         <GradeSection
           key={`${lesson.date}-${group.type}-${label.id}`}
           label={label}
@@ -137,16 +137,16 @@ function GradeGroup({
         />
       ))}
     </Flex>
-  );
+  )
 }
 
 function GradeSection({
   lesson,
   label,
 }: CardDailyGradeProps & {
-  label: LectureGradeFormLabel;
+  label: LectureGradeFormLabel
 }) {
-  const grade = lesson.myLessonGrade?.data?.find(item => item.id === label.id);
+  const grade = lesson.myLessonGrade?.data?.find((item) => item.id === label.id)
 
   return (
     <Flex key={label.id} gap={6} items="stretch">
@@ -166,7 +166,7 @@ function GradeSection({
         </Caption>
       </Flex>
     </Flex>
-  );
+  )
 }
 
 export const gradeStyles = {
@@ -190,6 +190,6 @@ export const gradeStyles = {
     border-radius: 8px;
     background: ${COLORS.BG['01']};
   `,
-};
+}
 
-export default CardDailyGrade;
+export default CardDailyGrade

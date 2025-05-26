@@ -1,11 +1,11 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import type { CSSProperties } from 'react';
+import type { CSSProperties } from 'react'
 
 type Props = {
-  fullScreen?: boolean;
-  size?: CSSProperties['width'];
-};
+  fullScreen?: boolean
+  size?: CSSProperties['width']
+}
 
 function Spinner({ fullScreen, size = 80 }: Props) {
   return (
@@ -61,7 +61,7 @@ function Spinner({ fullScreen, size = 80 }: Props) {
         </svg>
       </div>
     </div>
-  );
+  )
 }
 
 const styles = {
@@ -85,6 +85,6 @@ const styles = {
       }
     }
   `,
-};
+}
 
-export default Spinner;
+export default Spinner

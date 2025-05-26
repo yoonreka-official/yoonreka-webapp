@@ -1,87 +1,87 @@
-import { css } from '@emotion/react';
-import { useEffect, useMemo, useState } from 'react';
+import { css } from '@emotion/react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   BiChevronLeft,
   BiChevronRight,
   BiSolidError,
   BiZoomIn,
   BiZoomOut,
-} from 'react-icons/bi';
-import { LuRotateCw } from 'react-icons/lu';
-import { RiFullscreenExitFill, RiFullscreenFill } from 'react-icons/ri';
-import { Document, Page, pdfjs } from 'react-pdf';
+} from 'react-icons/bi'
+import { LuRotateCw } from 'react-icons/lu'
+import { RiFullscreenExitFill, RiFullscreenFill } from 'react-icons/ri'
+import { Document, Page, pdfjs } from 'react-pdf'
 
-import CardBase from '~/components/cards/CardBase.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Caption from '~/components/typography/Caption.tsx';
+import CardBase from '~/components/cards/CardBase.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Caption from '~/components/typography/Caption.tsx'
 
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css'
+import 'react-pdf/dist/Page/TextLayer.css'
 
-import { COLORS } from '~/configs/theme.ts';
-import useLectures from '~/hooks/useLectures.ts';
+import { COLORS } from '~/configs/theme.ts'
+import useLectures from '~/hooks/useLectures.ts'
 
 // workerSrc 정의 하지 않으면 pdf 보여지지 않습니다.
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
   import.meta.url,
-).toString();
+).toString()
 
-type FullScreenDirection = 'left' | 'right';
+type FullScreenDirection = 'left' | 'right'
 
 interface DocumentMeta {
-  pageWidth?: number;
-  pageHeight?: number;
-  pageRatio?: number;
+  pageWidth?: number
+  pageHeight?: number
+  pageRatio?: number
 
-  canvasWidth?: number;
-  canvasHeight?: number;
-  canvasRatio?: number;
+  canvasWidth?: number
+  canvasHeight?: number
+  canvasRatio?: number
 
-  width?: number;
-  height?: number;
+  width?: number
+  height?: number
 }
 
-const SCALE_STEP = 0.25;
+const SCALE_STEP = 0.25
 
 function LectureAttachmentViewer() {
   const {
     state: { lesson },
-  } = useLectures();
+  } = useLectures()
 
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [direction, setDirection] = useState<FullScreenDirection>('left');
-  const [total, setTotal] = useState<number>();
-  const [page, setPage] = useState<number>(1);
-  const [scale, setScale] = useState<number>(1);
+  const [isFullScreen, setIsFullScreen] = useState(false)
+  const [direction, setDirection] = useState<FullScreenDirection>('left')
+  const [total, setTotal] = useState<number>()
+  const [page, setPage] = useState<number>(1)
+  const [scale, setScale] = useState<number>(1)
 
-  const [canvasRatio, setCanvasRatio] = useState<number>(1.7);
-  const [meta, setMeta] = useState<DocumentMeta>({});
+  const [canvasRatio, setCanvasRatio] = useState<number>(1.7)
+  const [meta, setMeta] = useState<DocumentMeta>({})
 
   const isDisabled = useMemo(() => {
-    return !lesson?.attachment || !total;
-  }, [total, lesson]);
+    return !lesson?.attachment || !total
+  }, [total, lesson])
 
   /**
    * * 전체화면 모드 PDF 사이즈 계산
    */
   const getSize = (className: string) => {
-    const element = document.getElementsByClassName(className)[0];
+    const element = document.getElementsByClassName(className)[0]
     if (element) {
-      const rect = element.getBoundingClientRect();
+      const rect = element.getBoundingClientRect()
       return {
         // ? 전체화면 모드는 -90deg, -270deg 로 회전한 상태기 때문에 width, height 가 반대
         width: rect.height,
         height: rect.width,
         ratio: rect.height / rect.width,
-      };
+      }
     }
-  };
+  }
 
   useEffect(() => {
-    if (!isFullScreen) return;
+    if (!isFullScreen) return
 
-    const page = getSize('react-pdf__Page');
+    const page = getSize('react-pdf__Page')
     if (page && canvasRatio) {
       if (page.ratio > canvasRatio) {
         // ? 세로를 고정하고 가로를 비율 계산
@@ -90,7 +90,7 @@ function LectureAttachmentViewer() {
           ...meta,
           height: page.height,
           width: page.height * canvasRatio,
-        });
+        })
       } else {
         // ? 가로를 고정하고 세로를 비율 계산
         // console.log(2, { height: page.width / canvasRatio, width: page.width });
@@ -98,10 +98,10 @@ function LectureAttachmentViewer() {
           ...meta,
           height: page.width / canvasRatio,
           width: page.width,
-        });
+        })
       }
     }
-  }, [isFullScreen, canvasRatio]);
+  }, [isFullScreen, canvasRatio])
 
   return (
     lesson && (
@@ -145,11 +145,11 @@ function LectureAttachmentViewer() {
                   </Caption>
                 }
                 onLoadError={() => {
-                  setTotal(undefined);
-                  setPage(1);
+                  setTotal(undefined)
+                  setPage(1)
                 }}
                 onLoadSuccess={async ({ numPages }) => {
-                  setTotal(numPages);
+                  setTotal(numPages)
                 }}
               >
                 <Page
@@ -158,7 +158,7 @@ function LectureAttachmentViewer() {
                   renderAnnotationLayer={false}
                   renderTextLayer={false}
                   onLoadSuccess={({ originalWidth, originalHeight }) => {
-                    setCanvasRatio(originalWidth / originalHeight);
+                    setCanvasRatio(originalWidth / originalHeight)
                   }}
                 />
               </Document>
@@ -174,8 +174,8 @@ function LectureAttachmentViewer() {
                   css={styles.controlButton}
                   disabled={isDisabled || page === 1}
                   onClick={() => {
-                    if (page === 1) return;
-                    setPage(page - 1);
+                    if (page === 1) return
+                    setPage(page - 1)
                   }}
                 >
                   <BiChevronLeft />
@@ -184,8 +184,8 @@ function LectureAttachmentViewer() {
                   css={styles.controlButton}
                   disabled={isDisabled || page === total}
                   onClick={() => {
-                    if (page === total) return;
-                    setPage(page + 1);
+                    if (page === total) return
+                    setPage(page + 1)
                   }}
                 >
                   <BiChevronRight />
@@ -205,8 +205,8 @@ function LectureAttachmentViewer() {
                       css={styles.controlButton}
                       disabled={isDisabled}
                       onClick={() => {
-                        if (scale === 4) return;
-                        setScale(scale + SCALE_STEP);
+                        if (scale === 4) return
+                        setScale(scale + SCALE_STEP)
                       }}
                     >
                       <BiZoomIn />
@@ -215,8 +215,8 @@ function LectureAttachmentViewer() {
                       css={styles.controlButton}
                       disabled={isDisabled}
                       onClick={() => {
-                        if (scale === 0.5) return;
-                        setScale(scale - SCALE_STEP);
+                        if (scale === 0.5) return
+                        setScale(scale - SCALE_STEP)
                       }}
                     >
                       <BiZoomOut />
@@ -242,8 +242,8 @@ function LectureAttachmentViewer() {
                   css={styles.controlButton}
                   disabled={isDisabled}
                   onClick={() => {
-                    setIsFullScreen(!isFullScreen);
-                    setScale(1);
+                    setIsFullScreen(!isFullScreen)
+                    setScale(1)
                   }}
                 >
                   {isFullScreen ? (
@@ -270,7 +270,7 @@ function LectureAttachmentViewer() {
         </CardBase>
       </>
     )
-  );
+  )
 }
 
 const styles = {
@@ -442,6 +442,6 @@ const styles = {
     padding-bottom: 4px;
     margin-bottom: 10px;
   `,
-};
+}
 
-export default LectureAttachmentViewer;
+export default LectureAttachmentViewer

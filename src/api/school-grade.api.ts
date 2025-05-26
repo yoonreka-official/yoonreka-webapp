@@ -1,13 +1,13 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
-import { appolo } from '~/utils/apollo.util.ts';
+import { appolo } from '~/utils/apollo.util.ts'
 
 import type {
   SchoolGrade,
   SchoolGradeBody,
   SchoolGradeUpdateBody,
   SchoolPagination,
-} from '~/types/school-grades.type.ts';
+} from '~/types/school-grades.type.ts'
 
 export const getSchoolGrades = () => {
   return appolo.query<{ mySchoolReportCards: SchoolGrade[] }>({
@@ -41,8 +41,8 @@ export const getSchoolGrades = () => {
       }
     `,
     fetchPolicy: 'no-cache',
-  });
-};
+  })
+}
 
 export const createSchoolGrade = (body: SchoolGradeBody) => {
   return appolo.mutate({
@@ -73,8 +73,8 @@ export const createSchoolGrade = (body: SchoolGradeBody) => {
       }
     `,
     variables: { input: body },
-  });
-};
+  })
+}
 
 export const updateSchoolGrade = (body: SchoolGradeUpdateBody) => {
   return appolo.mutate({
@@ -88,8 +88,8 @@ export const updateSchoolGrade = (body: SchoolGradeUpdateBody) => {
       }
     `,
     variables: { input: body },
-  });
-};
+  })
+}
 
 export const getSchools = (nameContains: string) => {
   return appolo.query<{ schoolPagination: SchoolPagination }>({
@@ -114,5 +114,5 @@ export const getSchools = (nameContains: string) => {
     `,
     fetchPolicy: 'no-cache',
     variables: { filter: { nameContains } },
-  });
-};
+  })
+}

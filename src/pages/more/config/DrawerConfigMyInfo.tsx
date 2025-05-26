@@ -1,34 +1,34 @@
-import { css } from '@emotion/react';
-import { Drawer } from 'antd';
+import { css } from '@emotion/react'
+import { Drawer } from 'antd'
 
-import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useAuth from '~/hooks/useAuth.tsx';
-import Container from '~/layouts/Container.tsx';
-import CardConfig from '~/pages/more/config/CardConfig.tsx';
+import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useAuth from '~/hooks/useAuth.tsx'
+import Container from '~/layouts/Container.tsx'
+import CardConfig from '~/pages/more/config/CardConfig.tsx'
 import {
   formatDate,
   formatGender,
   formatMobileNumber,
-} from '~/utils/format.util.ts';
+} from '~/utils/format.util.ts'
 
-import type { DrawerProps } from 'antd';
-import type { ReactNode } from 'react';
+import type { DrawerProps } from 'antd'
+import type { ReactNode } from 'react'
 
 interface Props extends Omit<DrawerProps, 'onClose'> {
-  onClose?: () => void;
+  onClose?: () => void
 }
 
 function DrawerConfigMyInfo({ children, onClose, ...props }: Props) {
   const {
     state: { authUser },
-  } = useAuth();
+  } = useAuth()
 
   const handleClose = () => {
-    onClose?.();
-  };
+    onClose?.()
+  }
 
   return (
     <Drawer
@@ -66,12 +66,12 @@ function DrawerConfigMyInfo({ children, onClose, ...props }: Props) {
         </CardConfig>
       </Container>
     </Drawer>
-  );
+  )
 }
 
 interface MyInfoRowProps {
-  title: ReactNode;
-  children: ReactNode;
+  title: ReactNode
+  children: ReactNode
 }
 
 function MyInfoRow({ title, children }: MyInfoRowProps) {
@@ -84,7 +84,7 @@ function MyInfoRow({ title, children }: MyInfoRowProps) {
         {children}
       </Body>
     </Flex>
-  );
+  )
 }
 
 const styles = {
@@ -131,6 +131,6 @@ const styles = {
   myInfoRowContent: css`
     text-align: right;
   `,
-};
+}
 
-export default DrawerConfigMyInfo;
+export default DrawerConfigMyInfo

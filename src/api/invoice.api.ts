@@ -1,12 +1,12 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
-import { appolo } from '~/utils/apollo.util.ts';
+import { appolo } from '~/utils/apollo.util.ts'
 
 import type {
   Invoice,
   InvoiceParams,
   InvoiceRequestBody,
-} from '~/types/invoice.type.ts';
+} from '~/types/invoice.type.ts'
 
 export const getInvoices = (params: InvoiceParams) => {
   return appolo.query<{ myLectureInvoices: Invoice[] }>({
@@ -39,8 +39,8 @@ export const getInvoices = (params: InvoiceParams) => {
     `,
     fetchPolicy: 'no-cache',
     variables: { filter: params },
-  });
-};
+  })
+}
 
 export const updateInvoice = (body: InvoiceRequestBody) => {
   return appolo.mutate({
@@ -60,5 +60,5 @@ export const updateInvoice = (body: InvoiceRequestBody) => {
       }
     `,
     variables: { input: body },
-  });
-};
+  })
+}

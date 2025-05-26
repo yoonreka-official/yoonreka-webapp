@@ -1,18 +1,18 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 
-import IconBook16 from '~/assets/svg/icon_book_16.svg?react';
-import IconClock16 from '~/assets/svg/icon_clock_16.svg?react';
-import IconMarker16 from '~/assets/svg/icon_marker_16.svg?react';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import ScheduleMarker from '~/pages/schedules/ScheduleMarker.tsx';
+import IconBook16 from '~/assets/svg/icon_book_16.svg?react'
+import IconClock16 from '~/assets/svg/icon_clock_16.svg?react'
+import IconMarker16 from '~/assets/svg/icon_marker_16.svg?react'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import ScheduleMarker from '~/pages/schedules/ScheduleMarker.tsx'
 
-import type { Lesson } from '~/types/schedules.type.ts';
+import type { Lesson } from '~/types/schedules.type.ts'
 
 interface Props {
-  index: number;
-  lesson: Lesson;
+  index: number
+  lesson: Lesson
 }
 
 function ScheduleCalendar({ index, lesson }: Props) {
@@ -48,7 +48,7 @@ function ScheduleCalendar({ index, lesson }: Props) {
         </Flex>
       </Flex>
     </Link>
-  );
+  )
 }
 
-export default ScheduleCalendar;
+export default ScheduleCalendar

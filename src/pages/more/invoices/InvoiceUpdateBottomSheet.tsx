@@ -1,52 +1,52 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
-import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import FormBase, { FormItem, useForm } from '~/components/forms/FormBase.tsx';
-import InputSegmented from '~/components/inputs/InputSegmented.tsx';
-import InputText from '~/components/inputs/InputText.tsx';
-import BottomSheet from '~/components/modals/BottomSheet.tsx';
-import Body from '~/components/typography/Body.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useInvoices from '~/hooks/useInvoices.ts';
-import { InvoiceMethod } from '~/types/invoice.type.ts';
-import { formatDate } from '~/utils/format.util.ts';
-import rules from '~/utils/rules.util.ts';
+import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import FormBase, { FormItem, useForm } from '~/components/forms/FormBase.tsx'
+import InputSegmented from '~/components/inputs/InputSegmented.tsx'
+import InputText from '~/components/inputs/InputText.tsx'
+import BottomSheet from '~/components/modals/BottomSheet.tsx'
+import Body from '~/components/typography/Body.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useInvoices from '~/hooks/useInvoices.ts'
+import { InvoiceMethod } from '~/types/invoice.type.ts'
+import { formatDate } from '~/utils/format.util.ts'
+import rules from '~/utils/rules.util.ts'
 
-import type { InvoiceRequestBody } from '~/types/invoice.type.ts';
+import type { InvoiceRequestBody } from '~/types/invoice.type.ts'
 
 const INVOICE_METHODS: Array<{ value: InvoiceMethod; label: string }> = [
   { value: InvoiceMethod.CARD, label: '카드' },
   { value: InvoiceMethod.TRANSFER, label: '이체' },
   { value: InvoiceMethod.SEOULPAY, label: '서울페이' },
-];
+]
 
 function InvoiceUpdateBottomSheet() {
   const {
     state: { selected },
     handleUpdateInvoice,
     handleSelectedInvoice,
-  } = useInvoices();
+  } = useInvoices()
 
-  const [form] = useForm<InvoiceRequestBody>();
+  const [form] = useForm<InvoiceRequestBody>()
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleClose = () => {
-    setIsOpen(false);
+    setIsOpen(false)
     setTimeout(() => {
-      handleSelectedInvoice(undefined);
-      form.resetFields();
-    }, 10);
-  };
+      handleSelectedInvoice(undefined)
+      form.resetFields()
+    }, 10)
+  }
 
   useEffect(() => {
     if (selected) {
-      form.setFieldsValue({ lectureInvoiceId: selected.id });
-      setIsOpen(true);
+      form.setFieldsValue({ lectureInvoiceId: selected.id })
+      setIsOpen(true)
     }
-  }, [selected, form]);
+  }, [selected, form])
 
   return (
     <BottomSheet
@@ -75,9 +75,9 @@ function InvoiceUpdateBottomSheet() {
         initialValues={{
           method: InvoiceMethod.CARD,
         }}
-        onFinish={async values => {
-          await handleUpdateInvoice(values);
-          handleClose();
+        onFinish={async (values) => {
+          await handleUpdateInvoice(values)
+          handleClose()
         }}
       >
         <FormItem name="lectureInvoiceId" hidden>
@@ -102,7 +102,7 @@ function InvoiceUpdateBottomSheet() {
         </Flex>
       </FormBase>
     </BottomSheet>
-  );
+  )
 }
 
-export default InvoiceUpdateBottomSheet;
+export default InvoiceUpdateBottomSheet

@@ -1,18 +1,18 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { getInvoices } from '~/api/invoice.api.ts';
-import { InvoiceType } from '~/types/invoice.type.ts';
+import { getInvoices } from '~/api/invoice.api.ts'
+import { InvoiceType } from '~/types/invoice.type.ts'
 
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit'
 
-import type { InvoiceParams, Invoice } from '~/types/invoice.type.ts';
+import type { InvoiceParams, Invoice } from '~/types/invoice.type.ts'
 
 export interface InvoiceState {
-  isLoading: boolean;
-  list: Invoice[];
+  isLoading: boolean
+  list: Invoice[]
 
-  invoiceType: InvoiceType;
-  selected?: Invoice;
+  invoiceType: InvoiceType
+  selected?: Invoice
 }
 
 const initialState: InvoiceState = {
@@ -20,49 +20,49 @@ const initialState: InvoiceState = {
   isLoading: false,
 
   invoiceType: InvoiceType.LECTURE,
-};
+}
 
 export const fetchInvoices = createAsyncThunk<Invoice[], InvoiceParams>(
   'invoice/fetchInvoices',
   async (params, { rejectWithValue }) => {
     try {
-      const { data } = await getInvoices(params);
-      return Promise.resolve(data.myLectureInvoices);
+      const { data } = await getInvoices(params)
+      return Promise.resolve(data.myLectureInvoices)
     } catch (err) {
-      return rejectWithValue(err);
+      return rejectWithValue(err)
     }
   },
-);
+)
 
 const InvoiceSlice = createSlice({
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(fetchInvoices.pending, state => {
-        state.isLoading = true;
+      .addCase(fetchInvoices.pending, (state) => {
+        state.isLoading = true
       })
 
       .addCase(fetchInvoices.fulfilled, (state, action) => {
-        state.list = action.payload;
-        state.isLoading = false;
+        state.list = action.payload
+        state.isLoading = false
       })
 
-      .addCase(fetchInvoices.rejected, state => {
-        state.list = [];
-        state.isLoading = false;
-      });
+      .addCase(fetchInvoices.rejected, (state) => {
+        state.list = []
+        state.isLoading = false
+      })
   },
   initialState,
   name: 'invoice',
   reducers: {
     setInvoiceType: (state, action: PayloadAction<InvoiceType>) => {
-      state.invoiceType = action.payload;
+      state.invoiceType = action.payload
     },
 
     setSelectedInvoice: (state, action: PayloadAction<Invoice | undefined>) => {
-      state.selected = action.payload;
+      state.selected = action.payload
     },
   },
-});
+})
 
-export const { setInvoiceType, setSelectedInvoice } = InvoiceSlice.actions;
-export default InvoiceSlice;
+export const { setInvoiceType, setSelectedInvoice } = InvoiceSlice.actions
+export default InvoiceSlice

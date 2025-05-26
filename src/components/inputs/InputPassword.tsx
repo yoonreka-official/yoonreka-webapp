@@ -1,13 +1,13 @@
-import { css } from '@emotion/react';
-import { Input } from 'antd';
+import { css } from '@emotion/react'
+import { Input } from 'antd'
 
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { InputProps } from 'antd';
+import type { InputProps } from 'antd'
 
 export interface InputPasswordProps
   extends Omit<InputProps, 'size' | 'status'> {
-  removeSpace?: boolean;
+  removeSpace?: boolean
 }
 
 function InputPassword({ removeSpace, ...props }: InputPasswordProps) {
@@ -17,27 +17,27 @@ function InputPassword({ removeSpace, ...props }: InputPasswordProps) {
       // size={getInputSize(size)}
       // suffix={getStatusIcon(status, size)}
       {...props}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         // ? removeSpace 값이 true 이면, space 입력 무시
         if (removeSpace && e.code === 'Space') {
-          e.preventDefault();
+          e.preventDefault()
         }
       }}
-      onPaste={e => {
+      onPaste={(e) => {
         // ? removeSpace 값이 true 이면, 붙여넣기 막고 공백 제거한 value 올려줌
         if (removeSpace) {
-          e.preventDefault();
+          e.preventDefault()
           props.onChange?.({
             ...e,
             target: {
               ...e.currentTarget,
               value: e.clipboardData.getData('text').replace(/ /gi, ''),
             },
-          });
+          })
         }
       }}
     />
-  );
+  )
 }
 
 export const textInputStyle = css`
@@ -120,6 +120,6 @@ export const textInputStyle = css`
       background: ${COLORS.BG.BACKGROUND_TEXT};
     }
   }
-`;
+`
 
-export default InputPassword;
+export default InputPassword

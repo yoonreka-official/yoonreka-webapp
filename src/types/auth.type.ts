@@ -1,18 +1,18 @@
-import type { DeviceType } from '~/api/fcm.api.ts';
-import type { NullableString } from '~/types/utils/nullable.type.ts';
+import type { DeviceType } from '~/api/fcm.api.ts'
+import type { NullableString } from '~/types/utils/nullable.type.ts'
 
 export interface LoginInput {
-  phone: string;
-  password: string;
+  phone: string
+  password: string
 }
 
 export interface LoginBody extends LoginInput {
-  deviceType?: DeviceType;
-  token?: string;
-  userAgent?: string;
+  deviceType?: DeviceType
+  token?: string
+  userAgent?: string
 }
 
-export type Gender = 'MALE' | 'FEMALE';
+export type Gender = 'MALE' | 'FEMALE'
 
 /** 학생 상태 */
 export enum UserState {
@@ -27,42 +27,42 @@ export enum UserState {
 }
 
 export interface AuthUser {
-  id: string;
-  birthDate: string;
-  code: string;
-  gender: Gender;
-  grade: number;
-  name: string;
+  id: string
+  birthDate: string
+  code: string
+  gender: Gender
+  grade: number
+  name: string
 
-  phone: string;
-  registeredDate: string;
+  phone: string
+  registeredDate: string
   school: {
-    id: string;
-    name: string;
-  };
-  state: UserState;
+    id: string
+    name: string
+  }
+  state: UserState
 
-  parentName: string;
-  parentPhone: string;
-  payDueDay: number;
+  parentName: string
+  parentPhone: string
+  payDueDay: number
 
   lectures: Array<{
-    id: string;
-    title: string;
-  }>;
+    id: string
+    title: string
+  }>
 
-  isDistractionMode: boolean;
-  distractionEndTime: NullableString;
-  distractionStartTime: NullableString;
+  isDistractionMode: boolean
+  distractionEndTime: NullableString
+  distractionStartTime: NullableString
 }
 
 export interface AuthTokenPair {
-  accessToken: string;
-  refreshToken: string;
+  accessToken: string
+  refreshToken: string
 }
 
 export interface UpdateUserBody {
-  isDistractionMode: boolean;
-  distractionEndTime?: string;
-  distractionStartTime?: string;
+  isDistractionMode: boolean
+  distractionEndTime?: string
+  distractionStartTime?: string
 }

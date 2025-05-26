@@ -1,19 +1,19 @@
-import { css } from '@emotion/react';
-import { Drawer } from 'antd';
+import { css } from '@emotion/react'
+import { Drawer } from 'antd'
 
-import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
-import Body from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
+import Body from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { DrawerProps } from 'antd';
-import type { ReactNode } from 'react';
+import type { DrawerProps } from 'antd'
+import type { ReactNode } from 'react'
 
 export interface BottomSheetProps
   extends Omit<DrawerProps, 'placement' | 'onClose'> {
-  confirmLabel?: string;
-  footer?: ReactNode;
-  onClose?: () => void;
-  onConfirm?: () => void;
+  confirmLabel?: string
+  footer?: ReactNode
+  onClose?: () => void
+  onConfirm?: () => void
 }
 
 function BottomSheet({
@@ -66,7 +66,7 @@ function BottomSheet({
         footer
       )}
     </Drawer>
-  );
+  )
 }
 
 const styles = {
@@ -108,6 +108,6 @@ const styles = {
     flex-shrink: 0;
     padding-top: 32px;
   `,
-};
+}
 
-export default BottomSheet;
+export default BottomSheet

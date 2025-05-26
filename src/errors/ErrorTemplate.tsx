@@ -1,29 +1,29 @@
-import { css } from '@emotion/react';
-import { useNavigate } from 'react-router-dom';
+import { css } from '@emotion/react'
+import { useNavigate } from 'react-router-dom'
 
-import Image404 from '~/assets/images/error/img_404.png';
-import Image500 from '~/assets/images/error/img_500.png';
-import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
-import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import Image404 from '~/assets/images/error/img_404.png'
+import Image500 from '~/assets/images/error/img_500.png'
+import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
+import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
 export interface ErrorTemplateProps {
-  message?: string;
-  status?: number | string;
+  message?: string
+  status?: number | string
 }
 
 function ErrorTemplate({ status, message }: ErrorTemplateProps) {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleClose = () => {
-    navigate(-1);
-  };
+    navigate(-1)
+  }
 
   const handleGoToHome = () => {
-    navigate('/', { replace: true });
-  };
+    navigate('/', { replace: true })
+  }
 
   const renderErrorInfo = () => {
     switch (status) {
@@ -45,7 +45,7 @@ function ErrorTemplate({ status, message }: ErrorTemplateProps) {
               찾을 수 없는 페이지예요.
             </Body>
           </Flex>
-        );
+        )
       case 500:
       default:
         return (
@@ -65,9 +65,9 @@ function ErrorTemplate({ status, message }: ErrorTemplateProps) {
               잠시 후 다시 이용해 주세요!
             </Body>
           </Flex>
-        );
+        )
     }
-  };
+  }
 
   return (
     <div css={styles.errorPage}>
@@ -96,7 +96,7 @@ function ErrorTemplate({ status, message }: ErrorTemplateProps) {
         </ButtonPrimary>
       </Flex>
     </div>
-  );
+  )
 }
 
 const styles = {
@@ -161,6 +161,6 @@ const styles = {
     line-height: 20px; /* 142.857% */
     letter-spacing: -0.4px;
   `,
-};
+}
 
-export default ErrorTemplate;
+export default ErrorTemplate

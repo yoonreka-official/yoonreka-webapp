@@ -1,27 +1,27 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
-import { appolo, setToken as setAppoloToken } from '~/utils/apollo.util.ts';
-import { setCookie } from '~/utils/cookie.util.ts';
-import { getTokenExpires } from '~/utils/jwt.utils.ts';
+import { appolo, setToken as setAppoloToken } from '~/utils/apollo.util.ts'
+import { setCookie } from '~/utils/cookie.util.ts'
+import { getTokenExpires } from '~/utils/jwt.utils.ts'
 
 import type {
   AuthTokenPair,
   AuthUser,
   LoginBody,
   UpdateUserBody,
-} from '~/types/auth.type.ts';
+} from '~/types/auth.type.ts'
 
 export const setTokens = ({ accessToken, refreshToken }: AuthTokenPair) => {
-  setAppoloToken(accessToken);
+  setAppoloToken(accessToken)
 
   setCookie('accessToken', accessToken, {
     expires: getTokenExpires(accessToken),
-  });
+  })
 
   setCookie('refreshToken', refreshToken, {
     expires: getTokenExpires(refreshToken),
-  });
-};
+  })
+}
 
 export const signIn = async (variables: LoginBody) => {
   const res = await appolo.mutate<{ signInByPhone: AuthTokenPair }>({
@@ -46,16 +46,16 @@ export const signIn = async (variables: LoginBody) => {
       }
     `,
     variables,
-  });
+  })
 
   if (!res.data?.signInByPhone) {
-    throw new Error('로그인 실패했습니다.');
+    throw new Error('로그인 실패했습니다.')
   }
 
-  setTokens(res.data.signInByPhone);
+  setTokens(res.data.signInByPhone)
 
-  return res;
-};
+  return res
+}
 
 export const fetchAuthUser = async (signal: AbortSignal) => {
   try {
@@ -93,22 +93,22 @@ export const fetchAuthUser = async (signal: AbortSignal) => {
       context: {
         fetchOptions: { signal },
       },
-    });
+    })
 
     if (!res.data?.currentUser) {
       // eslint-disable-next-line
       throw new Error('로그인 실패했습니다.');
     }
 
-    return res;
+    return res
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      console.log('fetchAuthUser --- 요청이 중단됨');
-      return null;
+      console.log('fetchAuthUser --- 요청이 중단됨')
+      return null
     }
-    throw error;
+    throw error
   }
-};
+}
 
 export const updateAuthUser = (input: UpdateUserBody) => {
   return appolo.mutate({
@@ -123,8 +123,8 @@ export const updateAuthUser = (input: UpdateUserBody) => {
       }
     `,
     variables: { input },
-  });
-};
+  })
+}
 
 export const signOut = (token: string) => {
   return appolo.mutate<{ signInByPhone: AuthTokenPair }>({
@@ -134,8 +134,8 @@ export const signOut = (token: string) => {
       }
     `,
     variables: { token },
-  });
-};
+  })
+}
 
 export const withdrawUser = () => {
   return appolo.mutate<{ signInByPhone: AuthTokenPair }>({
@@ -144,5 +144,5 @@ export const withdrawUser = () => {
         withdraw
       }
     `,
-  });
-};
+  })
+}

@@ -1,12 +1,12 @@
-import { css } from '@emotion/react';
-import { Input } from 'antd';
+import { css } from '@emotion/react'
+import { Input } from 'antd'
 
-import IconClear20 from '~/assets/svg/icon_clear_20.svg?react';
-import { useFormInstance } from '~/components/forms/FormBase.tsx';
-import { clearIcon } from '~/components/inputs/InputText.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import IconClear20 from '~/assets/svg/icon_clear_20.svg?react'
+import { useFormInstance } from '~/components/forms/FormBase.tsx'
+import { clearIcon } from '~/components/inputs/InputText.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { TextAreaProps } from 'antd/es/input';
+import type { TextAreaProps } from 'antd/es/input'
 
 function InputTextArea({
   id,
@@ -14,11 +14,11 @@ function InputTextArea({
   allowClear = true,
   ...props
 }: Omit<TextAreaProps, 'value'> & {
-  value?: string;
+  value?: string
 }) {
-  const form = useFormInstance();
+  const form = useFormInstance()
 
-  const isClearable = allowClear && !!value;
+  const isClearable = allowClear && !!value
 
   return (
     <div css={styles.wrapper}>
@@ -34,7 +34,7 @@ function InputTextArea({
         </div>
       )}
     </div>
-  );
+  )
 }
 
 const styles = {
@@ -49,7 +49,7 @@ const styles = {
     top: 11px;
     z-index: 100;
   `,
-};
+}
 
 export const textInputStyle = (isClearable?: boolean) => css`
   &.ant-input-outlined {
@@ -137,6 +137,6 @@ export const textInputStyle = (isClearable?: boolean) => css`
       padding-top: 8px;
     }
   }
-`;
+`
 
-export default InputTextArea;
+export default InputTextArea

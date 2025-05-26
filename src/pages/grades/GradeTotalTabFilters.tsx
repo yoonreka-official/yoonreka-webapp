@@ -1,21 +1,21 @@
-import { css } from '@emotion/react';
-import { Segmented } from 'antd';
+import { css } from '@emotion/react'
+import { Segmented } from 'antd'
 
-import Flex from '~/components/display/Flex.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useGrades from '~/hooks/useGrades.ts';
-import { GradeType } from '~/types/grades.type.ts';
+import Flex from '~/components/display/Flex.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useGrades from '~/hooks/useGrades.ts'
+import { GradeType } from '~/types/grades.type.ts'
 
 const TYPES: Array<{ value: GradeType; label: string }> = [
   { value: GradeType.DEFAULT, label: 'Daily / Weekly' },
   { value: GradeType.EXAM, label: '지윤T 모의고사' },
-];
+]
 
 function GradeTotalTabFilters() {
   const {
     state: { gradeType },
     handleChangeType,
-  } = useGrades();
+  } = useGrades()
 
   return (
     <Flex direction="column" gap={24}>
@@ -24,21 +24,21 @@ function GradeTotalTabFilters() {
         css={styles.segmented}
         options={TYPES}
         block
-        onChange={value => {
-          handleChangeType(value);
+        onChange={(value) => {
+          handleChangeType(value)
         }}
       />
 
       <TagGroup />
     </Flex>
-  );
+  )
 }
 
 function TagGroup() {
   const {
     state: { lecture, selectedLabel, labelColor, testLabels },
     handleSelectedLabel,
-  } = useGrades();
+  } = useGrades()
 
   return (
     lecture && (
@@ -53,7 +53,7 @@ function TagGroup() {
                 styles.activeTag(labelColor),
             ]}
             onClick={() => {
-              handleSelectedLabel(label, index);
+              handleSelectedLabel(label, index)
             }}
           >
             {label.value}
@@ -61,7 +61,7 @@ function TagGroup() {
         ))}
       </Flex>
     )
-  );
+  )
 }
 
 const styles = {
@@ -126,6 +126,6 @@ const styles = {
     background: #fff;
     color: ${color};
   `,
-};
+}
 
-export default GradeTotalTabFilters;
+export default GradeTotalTabFilters

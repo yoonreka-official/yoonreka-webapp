@@ -1,11 +1,11 @@
-import { css } from '@emotion/react';
-import { Calendar } from 'antd';
+import { css } from '@emotion/react'
+import { Calendar } from 'antd'
 
-import CardBase from '~/components/cards/CardBase.tsx';
-import locale from '~/configs/calendarLocale.ts';
-import { COLORS } from '~/configs/theme.ts';
-import useSchedules from '~/hooks/useSchedules.ts';
-import ScheduleDateCell from '~/pages/schedules/ScheduleDateCell.tsx';
+import CardBase from '~/components/cards/CardBase.tsx'
+import locale from '~/configs/calendarLocale.ts'
+import { COLORS } from '~/configs/theme.ts'
+import useSchedules from '~/hooks/useSchedules.ts'
+import ScheduleDateCell from '~/pages/schedules/ScheduleDateCell.tsx'
 
 function ScheduleCalendar() {
   const {
@@ -13,7 +13,7 @@ function ScheduleCalendar() {
     fetchData,
     handleSetMonth,
     handleSetDate,
-  } = useSchedules();
+  } = useSchedules()
 
   return (
     <CardBase>
@@ -30,17 +30,17 @@ function ScheduleCalendar() {
         fullscreen={false}
         headerRender={() => null}
         locale={locale}
-        onChange={date => {
+        onChange={(date) => {
           // ? 선택한 날짜가 이전 선택했던 날짜와 다른 연월(YYYY-MM)에 속하면 데이터 갱신
           if (selectedDate?.format('YYYY-MM') !== date.format('YYYY-MM')) {
-            fetchData(date);
+            fetchData(date)
           }
-          handleSetMonth(date);
-          handleSetDate(date);
+          handleSetMonth(date)
+          handleSetDate(date)
         }}
       />
     </CardBase>
-  );
+  )
 }
 
 const styles = {
@@ -82,6 +82,6 @@ const styles = {
       }
     }
   `,
-};
+}
 
-export default ScheduleCalendar;
+export default ScheduleCalendar

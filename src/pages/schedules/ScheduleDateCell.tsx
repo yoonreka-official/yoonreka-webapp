@@ -1,28 +1,28 @@
-import { css } from '@emotion/react';
-import dayjs from 'dayjs';
+import { css } from '@emotion/react'
+import dayjs from 'dayjs'
 
-import Flex from '~/components/display/Flex.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import ScheduleMarker from '~/pages/schedules/ScheduleMarker.tsx';
+import Flex from '~/components/display/Flex.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import ScheduleMarker from '~/pages/schedules/ScheduleMarker.tsx'
 
-import type { Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs'
 
-import type { Lesson } from '~/types/schedules.type.ts';
+import type { Lesson } from '~/types/schedules.type.ts'
 
 interface Props {
-  lessons: Lesson[];
-  date: Dayjs;
-  selected?: Dayjs;
+  lessons: Lesson[]
+  date: Dayjs
+  selected?: Dayjs
 }
 
 function ScheduleDateCell({ lessons, date, selected }: Props) {
-  const events = lessons.filter(item => {
-    return dayjs(item.date).format('YYYY-MM-DD') === date.format('YYYY-MM-DD');
-  });
+  const events = lessons.filter((item) => {
+    return dayjs(item.date).format('YYYY-MM-DD') === date.format('YYYY-MM-DD')
+  })
 
   const isActive = (date: Dayjs) => {
-    return selected?.format('YYYY-MM-DD') === date.format('YYYY-MM-DD');
-  };
+    return selected?.format('YYYY-MM-DD') === date.format('YYYY-MM-DD')
+  }
 
   return (
     <Flex css={[styles.dateBox]} direction="column" gap={6} items="center">
@@ -36,7 +36,7 @@ function ScheduleDateCell({ lessons, date, selected }: Props) {
         ))}
       </Flex>
     </Flex>
-  );
+  )
 }
 
 const styles = {
@@ -62,6 +62,6 @@ const styles = {
     background: ${COLORS.POINT.PRIMARY};
     color: #fff;
   `,
-};
+}
 
-export default ScheduleDateCell;
+export default ScheduleDateCell

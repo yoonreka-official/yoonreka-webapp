@@ -1,16 +1,16 @@
-import { css } from '@emotion/react';
-import { useState } from 'react';
+import { css } from '@emotion/react'
+import { useState } from 'react'
 
-import ButtonNav from '~/components/buttons/ButtonNav.tsx';
-import DrawerNotifications from '~/components/notifications/DrawerNotifications.tsx';
-import Headline from '~/components/typography/Headline.tsx';
-import useNotifications from '~/hooks/useNotifications.ts';
-import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts';
-import { NotificationType } from '~/types/notification.type.ts';
+import ButtonNav from '~/components/buttons/ButtonNav.tsx'
+import DrawerNotifications from '~/components/notifications/DrawerNotifications.tsx'
+import Headline from '~/components/typography/Headline.tsx'
+import useNotifications from '~/hooks/useNotifications.ts'
+import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
+import { NotificationType } from '~/types/notification.type.ts'
 
 function LectureHeader() {
-  const { fetchData, handleChangeType } = useNotifications();
-  const [open, setOpen] = useState(false);
+  const { fetchData, handleChangeType } = useNotifications()
+  const [open, setOpen] = useState(false)
 
   return (
     <>
@@ -19,14 +19,14 @@ function LectureHeader() {
 
         <ButtonNav
           onClick={() => {
-            handleChangeType(NotificationType.NEW_MATERIAL);
+            handleChangeType(NotificationType.NEW_MATERIAL)
             fetchData({
               pagination: DEFAULT_PAGINATION,
               filter: {
                 types: [NotificationType.NEW_MATERIAL],
               },
-            });
-            setOpen(true);
+            })
+            setOpen(true)
           }}
         >
           학습자료
@@ -37,11 +37,11 @@ function LectureHeader() {
         defaultActiveKey="education"
         open={open}
         onClose={() => {
-          setOpen(false);
+          setOpen(false)
         }}
       />
     </>
-  );
+  )
 }
 
 const styles = {
@@ -52,6 +52,6 @@ const styles = {
 
     padding: 14px;
   `,
-};
+}
 
-export default LectureHeader;
+export default LectureHeader

@@ -1,32 +1,32 @@
-import { css } from '@emotion/react';
-import { Drawer } from 'antd';
+import { css } from '@emotion/react'
+import { Drawer } from 'antd'
 
-import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
-import Flex from '~/components/display/Flex.tsx';
-import Switch from '~/components/inputs/InputSwitch.tsx';
-import SelectTime from '~/components/inputs/SelectTime.tsx';
-import Body from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useAuth from '~/hooks/useAuth.tsx';
-import Container from '~/layouts/Container.tsx';
-import CardConfig from '~/pages/more/config/CardConfig.tsx';
+import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
+import Flex from '~/components/display/Flex.tsx'
+import Switch from '~/components/inputs/InputSwitch.tsx'
+import SelectTime from '~/components/inputs/SelectTime.tsx'
+import Body from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useAuth from '~/hooks/useAuth.tsx'
+import Container from '~/layouts/Container.tsx'
+import CardConfig from '~/pages/more/config/CardConfig.tsx'
 
-import type { DrawerProps } from 'antd';
-import type { ReactNode } from 'react';
+import type { DrawerProps } from 'antd'
+import type { ReactNode } from 'react'
 
 interface Props extends Omit<DrawerProps, 'onClose'> {
-  onClose?: () => void;
+  onClose?: () => void
 }
 
 function DrawerConfigNotification({ children, onClose, ...props }: Props) {
   const {
     state: { notificationConfig },
     handleUpdate,
-  } = useAuth();
+  } = useAuth()
 
   const handleClose = () => {
-    onClose?.();
-  };
+    onClose?.()
+  }
 
   return (
     <Drawer
@@ -54,8 +54,8 @@ function DrawerConfigNotification({ children, onClose, ...props }: Props) {
             <MyInfoRow title="방해금지 모드">
               <Switch
                 value={notificationConfig?.isDistractionMode}
-                onChange={isDistractionMode => {
-                  handleUpdate({ ...notificationConfig, isDistractionMode });
+                onChange={(isDistractionMode) => {
+                  handleUpdate({ ...notificationConfig, isDistractionMode })
                 }}
               />
             </MyInfoRow>
@@ -69,18 +69,18 @@ function DrawerConfigNotification({ children, onClose, ...props }: Props) {
                 id="startTime"
                 value={notificationConfig?.distractionStartTime}
                 disabled={!notificationConfig?.isDistractionMode}
-                onChange={value => {
+                onChange={(value) => {
                   if (
                     !notificationConfig ||
                     notificationConfig.distractionStartTime === value
                   ) {
-                    return;
+                    return
                   }
 
                   handleUpdate({
                     ...notificationConfig,
                     distractionStartTime: value,
-                  });
+                  })
                 }}
               />
             </MyInfoRow>
@@ -89,18 +89,18 @@ function DrawerConfigNotification({ children, onClose, ...props }: Props) {
                 id="endTime"
                 value={notificationConfig?.distractionEndTime}
                 disabled={!notificationConfig?.isDistractionMode}
-                onChange={value => {
+                onChange={(value) => {
                   if (
                     !notificationConfig ||
                     notificationConfig.distractionEndTime === value
                   ) {
-                    return;
+                    return
                   }
 
                   handleUpdate({
                     ...notificationConfig,
                     distractionEndTime: value,
-                  });
+                  })
                 }}
               />
             </MyInfoRow>
@@ -108,12 +108,12 @@ function DrawerConfigNotification({ children, onClose, ...props }: Props) {
         </CardConfig>
       </Container>
     </Drawer>
-  );
+  )
 }
 
 interface MyInfoRowProps {
-  title: ReactNode;
-  children: ReactNode;
+  title: ReactNode
+  children: ReactNode
 }
 
 function MyInfoRow({ title, children }: MyInfoRowProps) {
@@ -126,7 +126,7 @@ function MyInfoRow({ title, children }: MyInfoRowProps) {
         {children}
       </Body>
     </Flex>
-  );
+  )
 }
 
 const styles = {
@@ -173,6 +173,6 @@ const styles = {
   myInfoRowContent: css`
     text-align: right;
   `,
-};
+}
 
-export default DrawerConfigNotification;
+export default DrawerConfigNotification

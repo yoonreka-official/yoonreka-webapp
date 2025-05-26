@@ -1,9 +1,9 @@
-import { css } from '@emotion/react';
-import { Button } from 'antd';
+import { css } from '@emotion/react'
+import { Button } from 'antd'
 
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { ButtonProps } from 'antd';
+import type { ButtonProps } from 'antd'
 
 function ButtonSecondary({
   children,
@@ -13,7 +13,7 @@ function ButtonSecondary({
     <Button css={[styles.buttonSecondary]} type="primary" {...props}>
       {children}
     </Button>
-  );
+  )
 }
 
 const styles = {
@@ -44,6 +44,6 @@ const styles = {
       border-color: ${COLORS.BG['03']};
     }
   `,
-};
+}
 
-export default ButtonSecondary;
+export default ButtonSecondary

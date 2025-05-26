@@ -1,8 +1,8 @@
-import { Suspense } from 'react';
+import { Suspense } from 'react'
 
-import CardBase from '~/components/cards/CardBase.tsx';
-import GradeTotalTabContent from '~/pages/grades/GradeTotalTabContent.tsx';
-import GradeTotalTabFilters from '~/pages/grades/GradeTotalTabFilters.tsx';
+import CardBase from '~/components/cards/CardBase.tsx'
+import GradeTotalTabContent from '~/pages/grades/GradeTotalTabContent.tsx'
+import GradeTotalTabFilters from '~/pages/grades/GradeTotalTabFilters.tsx'
 
 function GradeTotalTab() {
   return (
@@ -13,7 +13,7 @@ function GradeTotalTab() {
         <GradeTotalTabContent />
       </Suspense>
     </CardBase>
-  );
+  )
 }
 
-export default GradeTotalTab;
+export default GradeTotalTab

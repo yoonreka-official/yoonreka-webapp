@@ -47,7 +47,7 @@ export const COLORS = {
     '06': '#5492D0',
     '07': '#A68AE8',
   },
-} as const;
+} as const
 
 export const FONT_WEIGHT = {
   LIGHT: 300,
@@ -55,7 +55,7 @@ export const FONT_WEIGHT = {
   MEDIUM: 500,
   SEMI_BOLD: 600,
   BOLD: 700,
-};
+}
 
 export const FONT_SIZE = {
   10: '0.625rem',
@@ -75,9 +75,9 @@ export const FONT_SIZE = {
   48: '3rem', // 700
   54: '3.375rem',
   64: '4rem', // 800
-} as const;
+} as const
 
-export const FONT_SIZE_DEFAULT = '16px' as const;
+export const FONT_SIZE_DEFAULT = '16px' as const
 
 export const HEIGHT = {
   XS: '24px',
@@ -85,7 +85,7 @@ export const HEIGHT = {
   MD: '40px',
   LG: '48px',
   XL: '64px',
-} as const;
+} as const
 
 export const SPACING = {
   1: '2px',
@@ -100,11 +100,11 @@ export const SPACING = {
   10: '48px',
   11: '64px',
   12: '80px',
-} as const;
+} as const
 
 export const LAYOUT = {
   NAV_BAR_HEIGHT: '60px',
-};
+}
 
 const THEME = {
   COLORS,
@@ -114,6 +114,6 @@ const THEME = {
   HEIGHT,
   SPACING,
   LAYOUT,
-};
+}
 
-export default THEME;
+export default THEME

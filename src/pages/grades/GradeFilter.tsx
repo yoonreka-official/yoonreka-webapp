@@ -1,21 +1,21 @@
-import { css } from '@emotion/react';
-import dayjs from 'dayjs';
+import { css } from '@emotion/react'
+import dayjs from 'dayjs'
 
-import Flex from '~/components/display/Flex.tsx';
-import Select from '~/components/inputs/Select.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import Flex from '~/components/display/Flex.tsx'
+import Select from '~/components/inputs/Select.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import 'dayjs/locale/ko';
+import 'dayjs/locale/ko'
 
-import useAuth from '~/hooks/useAuth.tsx';
-import useGrades from '~/hooks/useGrades.ts';
+import useAuth from '~/hooks/useAuth.tsx'
+import useGrades from '~/hooks/useGrades.ts'
 
-dayjs.locale('ko');
+dayjs.locale('ko')
 
 function GradeFilter() {
   const {
     state: { authUser },
-  } = useAuth();
+  } = useAuth()
 
   const {
     state: {
@@ -23,7 +23,7 @@ function GradeFilter() {
       // activeTab,
     },
     fetchData,
-  } = useGrades();
+  } = useGrades()
 
   return (
     <Flex direction="column" gap={8} style={{ marginTop: 2, marginBottom: 10 }}>
@@ -33,22 +33,22 @@ function GradeFilter() {
           styles.borderPrimary,
           // activeTab === 'daily' && styles.borderPrimary,
         ]}
-        options={authUser?.lectures.map(item => ({
+        options={authUser?.lectures.map((item) => ({
           label: item.title,
           value: item.id,
         }))}
-        onChange={value => {
-          fetchData(value);
+        onChange={(value) => {
+          fetchData(value)
         }}
       />
     </Flex>
-  );
+  )
 }
 
 const styles = {
   borderPrimary: css`
     border: 1px solid ${COLORS.POINT.PRIMARY};
   `,
-};
+}
 
-export default GradeFilter;
+export default GradeFilter

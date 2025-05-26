@@ -1,11 +1,11 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
 interface Props {
-  children?: ReactNode;
-  className?: string;
-  scrollRoot?: boolean;
+  children?: ReactNode
+  className?: string
+  scrollRoot?: boolean
 }
 
 function Container({ children, className, scrollRoot }: Props) {
@@ -16,7 +16,7 @@ function Container({ children, className, scrollRoot }: Props) {
     >
       {children}
     </div>
-  );
+  )
 }
 
 const styles = {
@@ -32,6 +32,6 @@ const styles = {
     height: 100% !important;
     overflow-y: auto;
   `,
-};
+}
 
-export default Container;
+export default Container

@@ -1,12 +1,12 @@
-import { css } from '@emotion/react';
-import { Checkbox as AntdCheckbox } from 'antd';
+import { css } from '@emotion/react'
+import { Checkbox as AntdCheckbox } from 'antd'
 
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { CheckboxProps } from 'antd';
+import type { CheckboxProps } from 'antd'
 
 interface Props extends CheckboxProps {
-  label?: string;
+  label?: string
 }
 
 function Checkbox({ children, ...props }: Props) {
@@ -14,7 +14,7 @@ function Checkbox({ children, ...props }: Props) {
     <AntdCheckbox css={styles} {...props}>
       {children}
     </AntdCheckbox>
-  );
+  )
 }
 
 const styles = css`
@@ -119,6 +119,6 @@ const styles = css`
       }
     }
   }
-`;
+`
 
-export default Checkbox;
+export default Checkbox

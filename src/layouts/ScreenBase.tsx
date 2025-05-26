@@ -1,15 +1,15 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import { COLORS, LAYOUT } from '~/configs/theme.ts';
+import { COLORS, LAYOUT } from '~/configs/theme.ts'
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
 interface Props {
-  header: ReactNode;
-  children: ReactNode;
+  header: ReactNode
+  children: ReactNode
 }
 
-export const SCROLL_BASE_ID = '__SCROLL_BASE__';
+export const SCROLL_BASE_ID = '__SCROLL_BASE__'
 
 function ScreenBase({ children, header }: Props) {
   return (
@@ -20,7 +20,7 @@ function ScreenBase({ children, header }: Props) {
         <div css={styles.bottomMargin} />
       </section>
     </div>
-  );
+  )
 }
 
 const styles = {
@@ -48,6 +48,6 @@ const styles = {
     width: 100%;
     height: 20px;
   `,
-};
+}
 
-export default ScreenBase;
+export default ScreenBase

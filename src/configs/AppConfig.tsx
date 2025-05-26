@@ -1,19 +1,19 @@
-import { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 
-import useFcmToken from '~/configs/useFcmToken.tsx';
-import { initNative } from '~/utils/app.util.ts';
+import useFcmToken from '~/configs/useFcmToken.tsx'
+import { initNative } from '~/utils/app.util.ts'
 
 function AppConfig() {
-  useFcmToken();
+  useFcmToken()
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
-    initNative(link => navigate(link));
-  }, []);
+    initNative((link) => navigate(link))
+  }, [])
 
-  return <Outlet />;
+  return <Outlet />
 }
 
-export default AppConfig;
+export default AppConfig

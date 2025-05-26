@@ -1,59 +1,59 @@
-import { css } from '@emotion/react';
-import { Drawer } from 'antd';
-import { useEffect } from 'react';
+import { css } from '@emotion/react'
+import { Drawer } from 'antd'
+import { useEffect } from 'react'
 
-import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
-import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import FormBase, { FormItem, useForm } from '~/components/forms/FormBase.tsx';
-import InputFile from '~/components/inputs/InputFile.tsx';
-import InputNumeric from '~/components/inputs/InputNumeric.tsx';
-import Select from '~/components/inputs/Select.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useSchoolGrades from '~/hooks/useSchoolGrades.ts';
-import Container from '~/layouts/Container.tsx';
-import SelectSchool from '~/pages/more/school-grades/SelectSchool.tsx';
+import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
+import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import FormBase, { FormItem, useForm } from '~/components/forms/FormBase.tsx'
+import InputFile from '~/components/inputs/InputFile.tsx'
+import InputNumeric from '~/components/inputs/InputNumeric.tsx'
+import Select from '~/components/inputs/Select.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useSchoolGrades from '~/hooks/useSchoolGrades.ts'
+import Container from '~/layouts/Container.tsx'
+import SelectSchool from '~/pages/more/school-grades/SelectSchool.tsx'
 import {
   type SchoolGradeBody,
   SchoolGradeType,
-} from '~/types/school-grades.type.ts';
-import rules from '~/utils/rules.util.ts';
+} from '~/types/school-grades.type.ts'
+import rules from '~/utils/rules.util.ts'
 
-import type { DrawerProps } from 'antd';
+import type { DrawerProps } from 'antd'
 
 interface Props extends Omit<DrawerProps, 'onClose'> {
-  onClose?: () => void;
+  onClose?: () => void
 }
 
 const TYPES: Array<{ value: SchoolGradeType; label: string }> = [
   { value: SchoolGradeType.MIDTERM, label: '중간고사' },
   { value: SchoolGradeType.FINAL, label: '기말고사' },
   { value: SchoolGradeType.MOCK, label: '모의고사' },
-];
+]
 
 function DrawerSchoolGrade({ children, title, onClose, ...props }: Props) {
-  const [form] = useForm<SchoolGradeBody>();
+  const [form] = useForm<SchoolGradeBody>()
 
   const {
     state: { selected },
     handleCreate,
     handleUpdate,
     handleSelected,
-  } = useSchoolGrades();
+  } = useSchoolGrades()
 
   const handleClose = () => {
-    onClose?.();
-    form.resetFields();
-    handleSelected(undefined);
-  };
+    onClose?.()
+    form.resetFields()
+    handleSelected(undefined)
+  }
 
   useEffect(() => {
     if (selected) {
-      const { attachment, school, ...values } = selected;
-      form.setFieldsValue({ ...values });
+      const { attachment, school, ...values } = selected
+      form.setFieldsValue({ ...values })
     }
-  }, [selected]);
+  }, [selected])
 
   return (
     <Drawer
@@ -79,14 +79,14 @@ function DrawerSchoolGrade({ children, title, onClose, ...props }: Props) {
         <FormBase
           form={form}
           initialValues={{}}
-          onFinish={async values => {
+          onFinish={async (values) => {
             if (selected) {
-              await handleUpdate({ id: selected.id, ...values });
+              await handleUpdate({ id: selected.id, ...values })
             } else {
-              await handleCreate(values);
+              await handleCreate(values)
             }
 
-            handleClose();
+            handleClose()
           }}
         >
           <Flex
@@ -218,7 +218,7 @@ function DrawerSchoolGrade({ children, title, onClose, ...props }: Props) {
         </FormBase>
       </Container>
     </Drawer>
-  );
+  )
 }
 
 const styles = {
@@ -268,6 +268,6 @@ const styles = {
   formItem: css`
     flex: 1;
   `,
-};
+}
 
-export default DrawerSchoolGrade;
+export default DrawerSchoolGrade

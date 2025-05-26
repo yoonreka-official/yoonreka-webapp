@@ -1,21 +1,21 @@
-import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { css } from '@emotion/react'
+import { useEffect, useState } from 'react'
 
-import IconArrowDown24 from '~/assets/svg/icon_arrow_down_24.svg?react';
-import CardBase from '~/components/cards/CardBase.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import IconArrowDown24 from '~/assets/svg/icon_arrow_down_24.svg?react'
+import CardBase from '~/components/cards/CardBase.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
-import type { CardBaseProps } from '~/components/cards/CardBase.tsx';
+import type { CardBaseProps } from '~/components/cards/CardBase.tsx'
 
 export interface CardCollapseProps extends CardBaseProps {
-  id?: string;
-  title?: ReactNode;
-  value?: boolean;
-  onChange?: (open: boolean) => void;
+  id?: string
+  title?: ReactNode
+  value?: boolean
+  onChange?: (open: boolean) => void
 }
 
 function CardCollapse({
@@ -26,22 +26,22 @@ function CardCollapse({
   value,
   onChange,
 }: CardCollapseProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   const toggle = () => {
-    setOpen(!open);
-    onChange?.(!open);
-  };
+    setOpen(!open)
+    onChange?.(!open)
+  }
 
   useEffect(() => {
     if (value) {
-      setOpen(value);
+      setOpen(value)
     }
 
     return () => {
-      setOpen(false);
-    };
-  }, [value]);
+      setOpen(false)
+    }
+  }, [value])
 
   return (
     <CardBase id={id} className={className} css={styles.cardCollapse}>
@@ -61,7 +61,7 @@ function CardCollapse({
         <div css={styles.body}>{children}</div>
       </div>
     </CardBase>
-  );
+  )
 }
 
 const styles = {
@@ -94,6 +94,6 @@ const styles = {
     margin-top: 10px;
     white-space: pre-line;
   `,
-};
+}
 
-export default CardCollapse;
+export default CardCollapse

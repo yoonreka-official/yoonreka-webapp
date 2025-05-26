@@ -1,60 +1,60 @@
-import { css } from '@emotion/react';
-import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { css } from '@emotion/react'
+import { useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
-import IconBell24 from '~/assets/svg/icon_bell_24.svg?react';
-import Flex from '~/components/display/Flex.tsx';
-import SelectYearMonth from '~/components/inputs/SelectYearMonth.tsx';
-import DrawerNotifications from '~/components/notifications/DrawerNotifications.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useNotifications from '~/hooks/useNotifications.ts';
-import useSchedules from '~/hooks/useSchedules.ts';
+import IconBell24 from '~/assets/svg/icon_bell_24.svg?react'
+import Flex from '~/components/display/Flex.tsx'
+import SelectYearMonth from '~/components/inputs/SelectYearMonth.tsx'
+import DrawerNotifications from '~/components/notifications/DrawerNotifications.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useNotifications from '~/hooks/useNotifications.ts'
+import useSchedules from '~/hooks/useSchedules.ts'
 
-const SHOW_NOTIFICATIONS_MODAL = 'notifications';
+const SHOW_NOTIFICATIONS_MODAL = 'notifications'
 
 function ScheduleHeader() {
-  const [params] = useSearchParams();
-  const redirectTo = params.get('to');
-  const modal = params.get('modal');
+  const [params] = useSearchParams()
+  const redirectTo = params.get('to')
+  const modal = params.get('modal')
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const { state, handleSetMonth, handleSetDate } = useSchedules();
+  const { state, handleSetMonth, handleSetDate } = useSchedules()
   const {
     state: { hasNew: hasNewNotification },
-  } = useNotifications();
+  } = useNotifications()
 
-  const isOpen = modal === SHOW_NOTIFICATIONS_MODAL;
+  const isOpen = modal === SHOW_NOTIFICATIONS_MODAL
 
   // const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
     navigate(`/?modal=${SHOW_NOTIFICATIONS_MODAL}`, {
       replace: false,
-    });
-  };
+    })
+  }
 
   useEffect(() => {
     // ? 푸시알림을 탭해서 앱에 진입한 경우
     if (redirectTo === SHOW_NOTIFICATIONS_MODAL) {
       // 1. 강제로 히스토리 변경 (replaceState로 초기화)
-      window.history.replaceState({}, '', '/');
+      window.history.replaceState({}, '', '/')
       // 2. 가짜 히스토리 추가 (크롬 최적화 방지)
       setTimeout(() => {
-        window.history.pushState({}, '', `/?modal=temp`);
-      }, 50);
+        window.history.pushState({}, '', `/?modal=temp`)
+      }, 50)
 
       // 1. 쿼리 초기화후 홈 페이지에서 새로운 히스토리 시작
       setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 200);
+        navigate('/', { replace: true })
+      }, 200)
 
       // 2. 홈페이지에서 알림 모달 오픈 히스토리 푸시
       setTimeout(() => {
-        handleOpen();
-      }, 400);
+        handleOpen()
+      }, 400)
     }
-  }, [redirectTo, navigate, window.history]);
+  }, [redirectTo, navigate, window.history])
 
   // useEffect(() => {
   //   // * modal 쿼리 감지시 알림 모달 on/off
@@ -63,8 +63,8 @@ function ScheduleHeader() {
 
   useEffect(() => {
     const handlePopState = () => {
-      navigate('/', { replace: false });
-    };
+      navigate('/', { replace: false })
+    }
 
     // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     //   event.preventDefault();
@@ -72,25 +72,25 @@ function ScheduleHeader() {
     // };
 
     if (isOpen) {
-      window.addEventListener('popstate', handlePopState);
+      window.addEventListener('popstate', handlePopState)
     } else {
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('popstate', handlePopState)
     }
 
     // return () => {
     //   window.removeEventListener('popstate', handlePopState);
     //   console.log('CLEAN UP!');
     // };
-  }, [isOpen]);
+  }, [isOpen])
 
   return (
     <header css={styles.header}>
       <Flex items="center" justify="space-between">
         <SelectYearMonth
           value={state.selectedMonth}
-          onChange={date => {
-            handleSetMonth(date);
-            handleSetDate(date);
+          onChange={(date) => {
+            handleSetMonth(date)
+            handleSetDate(date)
           }}
         />
 
@@ -103,11 +103,11 @@ function ScheduleHeader() {
       <DrawerNotifications
         open={isOpen}
         onClose={() => {
-          navigate(-1);
+          navigate(-1)
         }}
       />
     </header>
-  );
+  )
 }
 
 const styles = {
@@ -136,6 +136,6 @@ const styles = {
     background: ${COLORS.TAG.RED};
     border-radius: 50%;
   `,
-};
+}
 
-export default ScheduleHeader;
+export default ScheduleHeader

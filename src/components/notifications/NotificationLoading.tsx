@@ -1,6 +1,6 @@
-import { Skeleton } from 'antd';
+import { Skeleton } from 'antd'
 
-import Flex from '~/components/display/Flex.tsx';
+import Flex from '~/components/display/Flex.tsx'
 
 function NotificationLoading() {
   return (
@@ -27,7 +27,7 @@ function NotificationLoading() {
         active
       />
     </Flex>
-  );
+  )
 }
 
-export default NotificationLoading;
+export default NotificationLoading

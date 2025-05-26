@@ -1,26 +1,26 @@
-import { css } from '@emotion/react';
-import { Tabs } from 'antd';
-import { useState } from 'react';
+import { css } from '@emotion/react'
+import { Tabs } from 'antd'
+import { useState } from 'react'
 
-import IconSetting24 from '~/assets/svg/icon_setting_24.svg?react';
-import Headline from '~/components/typography/Headline.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import DrawerConfig from '~/pages/more/config/DrawerConfig.tsx';
+import IconSetting24 from '~/assets/svg/icon_setting_24.svg?react'
+import Headline from '~/components/typography/Headline.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import DrawerConfig from '~/pages/more/config/DrawerConfig.tsx'
 
-export type MoreTabKey = 'invoice' | 'school';
+export type MoreTabKey = 'invoice' | 'school'
 
 const MORE_TABS: Array<{ key: MoreTabKey; label: string }> = [
   { key: 'invoice', label: '회비' },
   { key: 'school', label: '학교 성적' },
-];
+]
 
 interface Props {
-  value?: MoreTabKey;
-  onChange?: (value: MoreTabKey) => void;
+  value?: MoreTabKey
+  onChange?: (value: MoreTabKey) => void
 }
 
 function MoreHeader({ value, onChange }: Props) {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false)
 
   return (
     <header css={styles.header}>
@@ -37,14 +37,14 @@ function MoreHeader({ value, onChange }: Props) {
         css={styles.tabs}
         indicator={{ align: 'center', size: 168 }}
         items={MORE_TABS}
-        onChange={activeKey => {
-          onChange?.(activeKey as MoreTabKey);
+        onChange={(activeKey) => {
+          onChange?.(activeKey as MoreTabKey)
         }}
       />
 
       <DrawerConfig open={open} onClose={() => setOpen(false)} />
     </header>
-  );
+  )
 }
 
 const styles = {
@@ -114,6 +114,6 @@ const styles = {
       }
     }
   `,
-};
+}
 
-export default MoreHeader;
+export default MoreHeader

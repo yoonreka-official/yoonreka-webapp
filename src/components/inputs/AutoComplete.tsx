@@ -1,16 +1,16 @@
-import { css } from '@emotion/react';
-import { Select } from 'antd';
+import { css } from '@emotion/react'
+import { Select } from 'antd'
 
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { SelectProps } from 'antd';
+import type { SelectProps } from 'antd'
 
 export interface AutoCompleteProps extends SelectProps {
-  id?: string;
+  id?: string
 }
 
 function AutoComplete({ ...props }: AutoCompleteProps) {
-  return <Select css={styles.autoComplete} suffixIcon={null} {...props} />;
+  return <Select css={styles.autoComplete} suffixIcon={null} {...props} />
 }
 
 const styles = {
@@ -48,6 +48,6 @@ const styles = {
       }
     }
   `,
-};
+}
 
-export default AutoComplete;
+export default AutoComplete

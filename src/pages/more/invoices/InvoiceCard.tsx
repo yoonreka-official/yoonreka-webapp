@@ -1,42 +1,42 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
-import Flex from '~/components/display/Flex';
-import StatusTag from '~/components/utils/StatusTag.tsx';
-import useInvoices from '~/hooks/useInvoices.ts';
-import { InvoiceType, InvoiceState } from '~/types/invoice.type.ts';
-import { formatDate, formatNumber } from '~/utils/format.util.ts';
+import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
+import Flex from '~/components/display/Flex'
+import StatusTag from '~/components/utils/StatusTag.tsx'
+import useInvoices from '~/hooks/useInvoices.ts'
+import { InvoiceType, InvoiceState } from '~/types/invoice.type.ts'
+import { formatDate, formatNumber } from '~/utils/format.util.ts'
 
-import type { Invoice } from '~/types/invoice.type.ts';
+import type { Invoice } from '~/types/invoice.type.ts'
 
 interface Props {
-  invoice: Invoice;
+  invoice: Invoice
 }
 
 const renderStatus = (state: InvoiceState) => {
   switch (state) {
     case InvoiceState.PAID:
-      return <StatusTag status="info">납부 완료</StatusTag>;
+      return <StatusTag status="info">납부 완료</StatusTag>
     case InvoiceState.PENDING:
-      return <StatusTag status="default">납부 확인중</StatusTag>;
+      return <StatusTag status="default">납부 확인중</StatusTag>
     case InvoiceState.FAILED:
     default:
-      return <StatusTag status="danger">미납</StatusTag>;
+      return <StatusTag status="danger">미납</StatusTag>
   }
-};
+}
 
 const getPriceLabel = (type: InvoiceType) => {
   switch (type) {
     case InvoiceType.BOOK:
-      return '교재비';
+      return '교재비'
     case InvoiceType.LECTURE:
     default:
-      return '월 회비';
+      return '월 회비'
   }
-};
+}
 
 function InvoiceCard({ invoice }: Props) {
-  const { handleSelectedInvoice } = useInvoices();
+  const { handleSelectedInvoice } = useInvoices()
 
   return (
     <div css={styles.card}>
@@ -65,7 +65,7 @@ function InvoiceCard({ invoice }: Props) {
         </ButtonPrimary>
       )}
     </div>
-  );
+  )
 }
 
 const styles = {
@@ -109,6 +109,6 @@ const styles = {
   button: css`
     margin-top: 12px;
   `,
-};
+}
 
-export default InvoiceCard;
+export default InvoiceCard

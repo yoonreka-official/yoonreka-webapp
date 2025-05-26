@@ -1,54 +1,54 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import ButtonNav from '~/components/buttons/ButtonNav.tsx';
-import CardInvoice from '~/components/notifications/CardInvoice.tsx';
-import CardNotification from '~/components/notifications/CardNotification.tsx';
-import NotificationLoading from '~/components/notifications/NotificationLoading.tsx';
-import Body from '~/components/typography/Body.tsx';
-import NoData from '~/components/utils/NoData.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useNotifications from '~/hooks/useNotifications.ts';
-import useScroll from '~/hooks/useScroll.ts';
-import Container from '~/layouts/Container.tsx';
-import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts';
+import ButtonNav from '~/components/buttons/ButtonNav.tsx'
+import CardInvoice from '~/components/notifications/CardInvoice.tsx'
+import CardNotification from '~/components/notifications/CardNotification.tsx'
+import NotificationLoading from '~/components/notifications/NotificationLoading.tsx'
+import Body from '~/components/typography/Body.tsx'
+import NoData from '~/components/utils/NoData.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useNotifications from '~/hooks/useNotifications.ts'
+import useScroll from '~/hooks/useScroll.ts'
+import Container from '~/layouts/Container.tsx'
+import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
 import {
   NotificationType,
   NotificationTypeName,
-} from '~/types/notification.type.ts';
+} from '~/types/notification.type.ts'
 
 import type {
   Notification,
   NotificationParams,
-} from '~/types/notification.type.ts';
+} from '~/types/notification.type.ts'
 
 const getNotificationTypeLabel = (type: NotificationType | 'ALL') => {
   switch (type) {
     case NotificationType.NEW_MATERIAL:
-      return '학습자료 ';
+      return '학습자료 '
     case NotificationType.INVOICE_DUE:
-      return '회비 ';
+      return '회비 '
     case NotificationType.NEW_NOTICE:
-      return '공지사항 ';
+      return '공지사항 '
     default:
-      return '';
+      return ''
   }
-};
+}
 
 function NotificationList() {
   const {
     state: { isLoading, list, selectedType, pageInfo, params },
     setReadId,
     fetchData,
-  } = useNotifications();
+  } = useNotifications()
 
   const { scrollTo, getCurrentPosition } = useScroll({
     selector: '.drawerNotificationsRoot .ant-drawer-body',
-  });
+  })
 
   const renderNotification = (item: Notification) => {
     // ? 화면에 그릴 때, 읽은 ID로 저장.
     // ! 단, 실제 읽음 처리는 모달 닫을 뗴 해야함
-    setReadId(item.id);
+    setReadId(item.id)
 
     // eslint-disable-next-line no-underscore-dangle
     switch (item.link?.__typename) {
@@ -63,7 +63,7 @@ function NotificationList() {
             isNew={item.isNew}
             type={NotificationTypeName.MATERIAL}
           />
-        );
+        )
       case NotificationTypeName.NOTICE:
         return (
           <CardNotification
@@ -76,7 +76,7 @@ function NotificationList() {
             link={item.notice!.link}
             type={NotificationTypeName.NOTICE}
           />
-        );
+        )
       case NotificationTypeName.LECTURE_INVOICE:
         return (
           <CardInvoice
@@ -86,18 +86,18 @@ function NotificationList() {
             invoiceType={item.lectureInvoice!.type}
             isNew={item.isNew}
           />
-        );
+        )
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   if (isLoading && params?.pagination.offset === 0) {
     return (
       <Container css={styles.notificationContainer}>
         <NotificationLoading />
       </Container>
-    );
+    )
   }
 
   return (
@@ -113,31 +113,31 @@ function NotificationList() {
         />
       )}
 
-      {list.map(item => renderNotification(item))}
+      {list.map((item) => renderNotification(item))}
 
       {pageInfo.hasNextPage && (
         <ButtonNav
           onClick={async () => {
-            const pos = getCurrentPosition();
+            const pos = getCurrentPosition()
 
-            const perPage = DEFAULT_PAGINATION.limit;
-            const current = params?.pagination.offset || 0;
+            const perPage = DEFAULT_PAGINATION.limit
+            const current = params?.pagination.offset || 0
             const newParams: NotificationParams = {
               pagination: {
                 limit: perPage,
                 offset: current + perPage,
               },
-            };
+            }
 
             if (selectedType !== 'ALL') {
               newParams.filter = {
                 types: [selectedType],
-              };
+              }
             }
 
-            await fetchData(newParams);
+            await fetchData(newParams)
             if (pos) {
-              scrollTo(pos);
+              scrollTo(pos)
             }
           }}
         >
@@ -145,7 +145,7 @@ function NotificationList() {
         </ButtonNav>
       )}
     </Container>
-  );
+  )
 }
 
 const styles = {
@@ -159,6 +159,6 @@ const styles = {
       height: 20px;
     }
   `,
-};
+}
 
-export default NotificationList;
+export default NotificationList

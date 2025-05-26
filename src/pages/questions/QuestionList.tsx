@@ -1,19 +1,19 @@
-import { useMemo } from 'react';
+import { useMemo } from 'react'
 
-import Body from '~/components/typography/Body.tsx';
-import NoData from '~/components/utils/NoData.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useQuestions from '~/hooks/useQuestions.ts';
-import CardQuestion from '~/pages/questions/CardQuestion.tsx';
+import Body from '~/components/typography/Body.tsx'
+import NoData from '~/components/utils/NoData.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useQuestions from '~/hooks/useQuestions.ts'
+import CardQuestion from '~/pages/questions/CardQuestion.tsx'
 
 function QuestionList() {
   const {
     state: { list, selectedLectureId },
-  } = useQuestions();
+  } = useQuestions()
 
   const questions = useMemo(() => {
-    return list.filter(item => item.lecture?.id === selectedLectureId);
-  }, [list, selectedLectureId]);
+    return list.filter((item) => item.lecture?.id === selectedLectureId)
+  }, [list, selectedLectureId])
 
   return (
     selectedLectureId && (
@@ -31,14 +31,14 @@ function QuestionList() {
           />
         ) : (
           <div>
-            {questions.map(question => (
+            {questions.map((question) => (
               <CardQuestion key={question.id} question={question} />
             ))}
           </div>
         )}
       </>
     )
-  );
+  )
 }
 
-export default QuestionList;
+export default QuestionList

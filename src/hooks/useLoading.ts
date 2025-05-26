@@ -1,31 +1,31 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react'
 
-import { useAppDispatch } from '~/stores';
-import { toggleLoading as toggleLoadingAction } from '~/stores/LayoutSlice.ts';
+import { useAppDispatch } from '~/stores'
+import { toggleLoading as toggleLoadingAction } from '~/stores/LayoutSlice.ts'
 
 const useLoading = (isLoading?: boolean) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
   const toggleLoading = useCallback(
     (toggle: boolean) => {
-      dispatch(toggleLoadingAction(toggle));
+      dispatch(toggleLoadingAction(toggle))
     },
     [dispatch],
-  );
+  )
 
   useEffect(() => {
     if (typeof isLoading !== 'undefined') {
       if (isLoading) {
-        toggleLoading(true);
+        toggleLoading(true)
       } else {
         setTimeout(() => {
-          toggleLoading(false);
-        }, 300);
+          toggleLoading(false)
+        }, 300)
       }
     }
-  }, [isLoading, toggleLoading]);
+  }, [isLoading, toggleLoading])
 
-  return { toggleLoading };
-};
+  return { toggleLoading }
+}
 
-export default useLoading;
+export default useLoading

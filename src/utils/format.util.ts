@@ -1,53 +1,53 @@
-import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 
-import type { Gender } from '~/types/auth.type.ts';
-import type { NullableString } from '~/types/utils/nullable.type.ts';
+import type { Gender } from '~/types/auth.type.ts'
+import type { NullableString } from '~/types/utils/nullable.type.ts'
 
 export const formattedNumberWithUnits = (value: number): string => {
   if (value >= 1e12) {
-    return formatUnit(value, 1e12, 'T');
+    return formatUnit(value, 1e12, 'T')
   }
 
   if (value >= 1e9) {
-    return formatUnit(value, 1e9, 'B');
+    return formatUnit(value, 1e9, 'B')
   }
 
   if (value >= 1e6) {
-    return formatUnit(value, 1e6, 'M');
+    return formatUnit(value, 1e6, 'M')
   }
 
   if (value >= 1e3) {
-    return formatUnit(value, 1e3, 'K');
+    return formatUnit(value, 1e3, 'K')
   }
 
-  return value.toString();
-};
+  return value.toString()
+}
 
 const formatUnit = (value: number, divider: number, unit: string): string => {
-  const result = value / divider;
+  const result = value / divider
 
   return result % 1 === 0
     ? `${result.toFixed(0)}${unit}`
-    : `${result.toFixed(1)}${unit}`;
-};
+    : `${result.toFixed(1)}${unit}`
+}
 
 export const formatDate = (
   value?: NullableString | number,
   format = 'YYYY-MM-DD HH:mm:ss',
   fallback = '-',
 ) => {
-  if (!value) return fallback;
-  return dayjs(value).format(format);
-};
+  if (!value) return fallback
+  return dayjs(value).format(format)
+}
 
-export const formatNumber = (value: number) => value.toLocaleString();
+export const formatNumber = (value: number) => value.toLocaleString()
 
 export const formatMobileNumber = (mobile?: NullableString) => {
-  if (!mobile) return;
-  return mobile.replace(/(\d{3})(\d{4})(\d{4}|\*{4})/, '$1-$2-$3');
-};
+  if (!mobile) return
+  return mobile.replace(/(\d{3})(\d{4})(\d{4}|\*{4})/, '$1-$2-$3')
+}
 
 export const formatGender = (gender?: Gender) => {
-  if (!gender) return;
-  return gender === 'MALE' ? '남' : '여';
-};
+  if (!gender) return
+  return gender === 'MALE' ? '남' : '여'
+}

@@ -1,8 +1,8 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
-import { appolo } from '~/utils/apollo.util.ts';
+import { appolo } from '~/utils/apollo.util.ts'
 
-import type { GetMyLessonsFilter, Lesson } from '~/types/schedules.type.ts';
+import type { GetMyLessonsFilter, Lesson } from '~/types/schedules.type.ts'
 
 export const getMyLessons = (filter: GetMyLessonsFilter) => {
   return appolo.query<{ myLessons: Lesson[] }>({
@@ -28,5 +28,5 @@ export const getMyLessons = (filter: GetMyLessonsFilter) => {
     `,
     fetchPolicy: 'no-cache',
     variables: { filter },
-  });
-};
+  })
+}

@@ -1,15 +1,15 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import { COLORS, FONT_WEIGHT } from '~/configs/theme.ts';
+import { COLORS, FONT_WEIGHT } from '~/configs/theme.ts'
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
 interface BodyProps {
-  children?: ReactNode;
-  className?: string;
-  color?: string;
-  size?: 14 | 16 | 18;
-  weight?: 'regular' | 'medium' | 'semibold' | 'bold';
+  children?: ReactNode
+  className?: string
+  color?: string
+  size?: 14 | 16 | 18
+  weight?: 'regular' | 'medium' | 'semibold' | 'bold'
 }
 
 function Body({
@@ -27,32 +27,32 @@ function Body({
     >
       {children}
     </div>
-  );
+  )
 }
 
 export function getFontWeight(weight: BodyProps['weight']) {
   switch (weight) {
     case 'bold':
-      return FONT_WEIGHT.BOLD;
+      return FONT_WEIGHT.BOLD
     case 'semibold':
-      return FONT_WEIGHT.SEMI_BOLD;
+      return FONT_WEIGHT.SEMI_BOLD
     case 'medium':
-      return FONT_WEIGHT.MEDIUM;
+      return FONT_WEIGHT.MEDIUM
     case 'regular':
     default:
-      return FONT_WEIGHT.REGULAR;
+      return FONT_WEIGHT.REGULAR
   }
 }
 
 function getLineHeight(size: BodyProps['size']) {
   switch (size) {
     case 14:
-      return 20;
+      return 20
     case 18:
-      return 26;
+      return 26
     case 16:
     default:
-      return 22;
+      return 22
   }
 }
 
@@ -63,6 +63,6 @@ const styles = {
     font-weight: ${getFontWeight(weight)};
     letter-spacing: -0.2px;
   `,
-};
+}
 
-export default Body;
+export default Body

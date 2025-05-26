@@ -1,15 +1,15 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import CardBase from '~/components/cards/CardBase.tsx';
-import Flex from '~/components/display/Flex.tsx';
+import CardBase from '~/components/cards/CardBase.tsx'
+import Flex from '~/components/display/Flex.tsx'
 
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react'
 
 export interface NoDataProps {
-  description?: ReactNode;
-  footer?: ReactNode;
-  height?: CSSProperties['height'];
-  disableWrapper?: boolean;
+  description?: ReactNode
+  footer?: ReactNode
+  height?: CSSProperties['height']
+  disableWrapper?: boolean
 }
 
 function NoData({
@@ -39,7 +39,7 @@ function NoData({
     >
       <NoDataInner description={description} footer={footer} />
     </Flex>
-  );
+  )
 }
 
 function NoDataInner({
@@ -57,7 +57,7 @@ function NoDataInner({
 
       {footer && <div>{footer}</div>}
     </Flex>
-  );
+  )
 }
 
-export default NoData;
+export default NoData

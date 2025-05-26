@@ -1,13 +1,13 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
-import { appolo } from '~/utils/apollo.util.ts';
+import { appolo } from '~/utils/apollo.util.ts'
 
-export type DeviceType = 'ANDROID' | 'IOS';
+export type DeviceType = 'ANDROID' | 'IOS'
 
 export interface UserDeviceInput {
-  token: string;
-  type: DeviceType;
-  userAgent: string;
+  token: string
+  type: DeviceType
+  userAgent: string
 }
 
 export const upsertUserDevice = (input: UserDeviceInput) => {
@@ -22,5 +22,5 @@ export const upsertUserDevice = (input: UserDeviceInput) => {
     variables: {
       input,
     },
-  });
-};
+  })
+}

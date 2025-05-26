@@ -1,46 +1,46 @@
-import { useAppDispatch, useAppSelector } from '~/stores';
+import { useAppDispatch, useAppSelector } from '~/stores'
 import {
   fetchNotifications,
   readNotifications,
   setType,
-} from '~/stores/NotificationSlice.ts';
+} from '~/stores/NotificationSlice.ts'
 
 import type {
   NotificationParams,
   NotificationType,
-} from '~/types/notification.type.ts';
+} from '~/types/notification.type.ts'
 
 const useNotifications = () => {
-  const state = useAppSelector(state => state.notification);
+  const state = useAppSelector((state) => state.notification)
 
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
   const fetchData = async (params?: NotificationParams) => {
     try {
-      await dispatch(fetchNotifications(params));
+      await dispatch(fetchNotifications(params))
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+  }
 
   const setReadId = (id: string) => {
-    const readIds = JSON.parse(window.localStorage.getItem('readIds') || '[]');
+    const readIds = JSON.parse(window.localStorage.getItem('readIds') || '[]')
     if (!readIds.includes(id)) {
-      readIds.push(id);
+      readIds.push(id)
     }
 
-    window.localStorage.setItem('readIds', JSON.stringify(readIds));
-  };
+    window.localStorage.setItem('readIds', JSON.stringify(readIds))
+  }
 
   const handleMarkAsRead = () => {
-    dispatch(readNotifications());
-  };
+    dispatch(readNotifications())
+  }
 
   const handleChangeType = (activeKey: NotificationType | 'ALL') => {
-    dispatch(setType(activeKey));
-  };
+    dispatch(setType(activeKey))
+  }
 
-  return { state, fetchData, setReadId, handleChangeType, handleMarkAsRead };
-};
+  return { state, fetchData, setReadId, handleChangeType, handleMarkAsRead }
+}
 
-export default useNotifications;
+export default useNotifications

@@ -1,0 +1,17 @@
+mutation AnalyzePrivateFileMetadata(
+  $key: String!
+  $filename: String!
+  $mimeType: String!
+  $size: Int!
+) {
+  analyzePrivateFileMetadata(
+    key: $key
+    filename: $filename
+    mimeType: $mimeType
+    size: $size
+  ) {
+    id
+    mimeType
+    url
+  }
+}

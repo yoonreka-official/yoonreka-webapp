@@ -1,4 +1,4 @@
-import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts';
+import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts'
 
 export enum InvoiceMethod {
   CARD = 'CARD',
@@ -19,51 +19,51 @@ export enum InvoiceType {
 }
 
 export interface InvoiceParams {
-  lectureIds?: string[];
-  methods?: InvoiceMethod[];
-  states?: InvoiceState[];
-  types?: InvoiceType[];
+  lectureIds?: string[]
+  methods?: InvoiceMethod[]
+  states?: InvoiceState[]
+  types?: InvoiceType[]
 }
 
 export interface InvoiceRequestBody {
-  lectureInvoiceId: string;
-  method: InvoiceMethod;
-  userMemo?: string;
+  lectureInvoiceId: string
+  method: InvoiceMethod
+  userMemo?: string
 }
 
 export interface InvoiceBook {
-  id: string;
-  price: number;
-  title: string;
+  id: string
+  price: number
+  title: string
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  __typename: 'Book';
+  __typename: 'Book'
 }
 
 export interface InvoiceLecture {
-  id: string;
-  title: string;
+  id: string
+  title: string
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  __typename: 'Lecture';
+  __typename: 'Lecture'
 }
 
 export interface Invoice {
-  id: string;
-  state: InvoiceState;
-  type: InvoiceType;
-  method: Nullable<InvoiceMethod>;
-  paidAt: NullableString;
-  price: number;
+  id: string
+  state: InvoiceState
+  type: InvoiceType
+  method: Nullable<InvoiceMethod>
+  paidAt: NullableString
+  price: number
 
-  userMemo: NullableString;
-  isRepeat: boolean;
-  dueDate: string;
-  comment: NullableString;
+  userMemo: NullableString
+  isRepeat: boolean
+  dueDate: string
+  comment: NullableString
 
-  books: Nullable<InvoiceBook[]>;
-  lecture: Nullable<InvoiceLecture>;
+  books: Nullable<InvoiceBook[]>
+  lecture: Nullable<InvoiceLecture>
 
-  createdAt: number;
-  updatedAt: number;
+  createdAt: number
+  updatedAt: number
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  __typename: 'LectureInvoice';
+  __typename: 'LectureInvoice'
 }

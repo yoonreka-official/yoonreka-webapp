@@ -1,18 +1,18 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import IconArrowRight24 from '~/assets/svg/icon_arrow_right_24.svg?react';
-import CardBase from '~/components/cards/CardBase.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import IconArrowRight24 from '~/assets/svg/icon_arrow_right_24.svg?react'
+import CardBase from '~/components/cards/CardBase.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
 interface CardConfigProps {
-  title?: string;
-  children: ReactNode;
-  dense?: boolean;
+  title?: string
+  children: ReactNode
+  dense?: boolean
 }
 
 function CardConfig({ title, children, dense }: CardConfigProps) {
@@ -28,14 +28,14 @@ function CardConfig({ title, children, dense }: CardConfigProps) {
 
       <div>{children}</div>
     </CardBase>
-  );
+  )
 }
 
 interface CardConfigButtonProps {
-  children: ReactNode;
-  color?: string;
-  suffix?: ReactNode;
-  onClick?: () => void;
+  children: ReactNode
+  color?: string
+  suffix?: ReactNode
+  onClick?: () => void
 }
 
 export function CardConfigButton({
@@ -55,7 +55,7 @@ export function CardConfigButton({
         <IconArrowRight24 />
       </Flex>
     </button>
-  );
+  )
 }
 
 const styles = {
@@ -78,6 +78,6 @@ const styles = {
     align-items: center;
     justify-content: space-between;
   `,
-};
+}
 
-export default CardConfig;
+export default CardConfig

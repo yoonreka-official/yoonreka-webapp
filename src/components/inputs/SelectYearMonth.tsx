@@ -1,73 +1,73 @@
-import { css } from '@emotion/react';
-import { Divider } from 'antd';
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { css } from '@emotion/react'
+import { Divider } from 'antd'
+import dayjs from 'dayjs'
+import { useEffect, useState } from 'react'
 
-import IconArrowDown24 from '~/assets/svg/icon_arrow_down_24.svg?react';
-import Flex from '~/components/display/Flex.tsx';
-import BottomSheet from '~/components/modals/BottomSheet.tsx';
-import Headline from '~/components/typography/Headline.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import { formatDate } from '~/utils/format.util.ts';
+import IconArrowDown24 from '~/assets/svg/icon_arrow_down_24.svg?react'
+import Flex from '~/components/display/Flex.tsx'
+import BottomSheet from '~/components/modals/BottomSheet.tsx'
+import Headline from '~/components/typography/Headline.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import { formatDate } from '~/utils/format.util.ts'
 
-import type { Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs'
 
-const START_YEAR = 2000;
-const END_YEAR = new Date().getFullYear() + 10;
-const YEARS: number[] = [];
+const START_YEAR = 2000
+const END_YEAR = new Date().getFullYear() + 10
+const YEARS: number[] = []
 // eslint-disable-next-line no-plusplus
 for (let i = START_YEAR; i <= END_YEAR; i++) {
-  YEARS.push(i);
+  YEARS.push(i)
 }
-const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
 interface Props {
-  value?: Dayjs;
-  onChange?: (value: Dayjs) => void;
+  value?: Dayjs
+  onChange?: (value: Dayjs) => void
 }
 
-const today = dayjs();
+const today = dayjs()
 
 function SelectYearMonth({ value, onChange }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [year, setYear] = useState<number>(today.year());
-  const [month, setMonth] = useState<number>(today.month());
-  const [internalValue, setInternalValue] = useState<string>();
+  const [isOpen, setIsOpen] = useState(false)
+  const [year, setYear] = useState<number>(today.year())
+  const [month, setMonth] = useState<number>(today.month())
+  const [internalValue, setInternalValue] = useState<string>()
 
   const getFormattedValue = (val?: string) => {
-    return formatDate(val || `${year}-${month}`, 'YYYY. MM');
-  };
+    return formatDate(val || `${year}-${month}`, 'YYYY. MM')
+  }
 
   const handleClose = () => {
-    const mergedValue = `${year}-${month}`;
-    onChange?.(dayjs(mergedValue));
-    setInternalValue(getFormattedValue(mergedValue));
-    setIsOpen(false);
-  };
+    const mergedValue = `${year}-${month}`
+    onChange?.(dayjs(mergedValue))
+    setInternalValue(getFormattedValue(mergedValue))
+    setIsOpen(false)
+  }
 
   const setScroll = () => {
-    const yearElement = document.getElementById(`year-${year}`);
-    const monthElement = document.getElementById(`month-${month}`);
+    const yearElement = document.getElementById(`year-${year}`)
+    const monthElement = document.getElementById(`month-${month}`)
 
     yearElement?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'center',
-    });
+    })
     monthElement?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'center',
-    });
-  };
+    })
+  }
 
   useEffect(() => {
-    setScroll();
-  }, [isOpen, year, month]);
+    setScroll()
+  }, [isOpen, year, month])
 
   useEffect(() => {
-    setInternalValue(dayjs(value).format('YYYY. MM'));
-  }, [value]);
+    setInternalValue(dayjs(value).format('YYYY. MM'))
+  }, [value])
 
   return (
     <>
@@ -85,13 +85,13 @@ function SelectYearMonth({ value, onChange }: Props) {
         <Flex css={styles.itemWrapper}>
           <ul css={[styles.selectItem]}>
             <li style={{ height: 84 }} />
-            {YEARS.map(yearValue => (
+            {YEARS.map((yearValue) => (
               <li key={yearValue}>
                 <button
                   id={`year-${yearValue}`}
                   css={[yearValue === year && styles.selected]}
                   onClick={() => {
-                    setYear(yearValue);
+                    setYear(yearValue)
                   }}
                 >
                   {yearValue}
@@ -105,13 +105,13 @@ function SelectYearMonth({ value, onChange }: Props) {
 
           <ul css={[styles.selectItem]}>
             <li style={{ height: 84 }} />
-            {MONTHS.map(monthValue => (
+            {MONTHS.map((monthValue) => (
               <li key={monthValue}>
                 <button
                   id={`month-${monthValue}`}
                   css={[monthValue === month && styles.selected]}
                   onClick={() => {
-                    setMonth(monthValue);
+                    setMonth(monthValue)
                   }}
                 >
                   {`${monthValue}`.padStart(2, '0')}
@@ -123,7 +123,7 @@ function SelectYearMonth({ value, onChange }: Props) {
         </Flex>
       </BottomSheet>
     </>
-  );
+  )
 }
 
 const styles = {
@@ -195,6 +195,6 @@ const styles = {
     //font-weight: 600;
     border-radius: 8px;
   `,
-};
+}
 
-export default SelectYearMonth;
+export default SelectYearMonth

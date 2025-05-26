@@ -1,33 +1,33 @@
-import ButtonSecondary from '~/components/buttons/ButtonSecondary.tsx';
-import CardCollapse from '~/components/cards/CardCollapse.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import { EmptyData, gradeStyles } from '~/pages/grades/CardDailyGrade.tsx';
-import { SchoolGradeType } from '~/types/school-grades.type.ts';
+import ButtonSecondary from '~/components/buttons/ButtonSecondary.tsx'
+import CardCollapse from '~/components/cards/CardCollapse.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import { EmptyData, gradeStyles } from '~/pages/grades/CardDailyGrade.tsx'
+import { SchoolGradeType } from '~/types/school-grades.type.ts'
 
-import type { SchoolGrade } from '~/types/school-grades.type.ts';
+import type { SchoolGrade } from '~/types/school-grades.type.ts'
 
 interface Props {
-  schoolGrade: SchoolGrade;
-  onUpdate?: (grade: SchoolGrade) => void;
+  schoolGrade: SchoolGrade
+  onUpdate?: (grade: SchoolGrade) => void
 }
 
 const getTestName = (type: SchoolGradeType) => {
   switch (type) {
     case SchoolGradeType.MOCK:
-      return '모의고사';
+      return '모의고사'
     case SchoolGradeType.FINAL:
-      return '기말고사';
+      return '기말고사'
     case SchoolGradeType.MIDTERM:
-      return '중간고사';
+      return '중간고사'
     default:
-      return '';
+      return ''
   }
-};
+}
 
 function CardSchoolGrade({ schoolGrade, onUpdate }: Props) {
-  const type = getTestName(schoolGrade.type);
+  const type = getTestName(schoolGrade.type)
 
   return (
     <CardCollapse
@@ -61,7 +61,7 @@ function CardSchoolGrade({ schoolGrade, onUpdate }: Props) {
         수정하기
       </ButtonSecondary>
     </CardCollapse>
-  );
+  )
 }
 
 function GradeRow({ label, value }: { label: string; value?: string }) {
@@ -81,7 +81,7 @@ function GradeRow({ label, value }: { label: string; value?: string }) {
         </Caption>
       </Flex>
     </Flex>
-  );
+  )
 }
 
-export default CardSchoolGrade;
+export default CardSchoolGrade

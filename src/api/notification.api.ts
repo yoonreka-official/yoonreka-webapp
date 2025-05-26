@@ -1,11 +1,11 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
-import { appolo } from '~/utils/apollo.util.ts';
+import { appolo } from '~/utils/apollo.util.ts'
 
 import type {
   NotificationParams,
   NotificationResponse,
-} from '~/types/notification.type.ts';
+} from '~/types/notification.type.ts'
 
 export const getNotifications = async ({
   pagination,
@@ -16,7 +16,7 @@ export const getNotifications = async ({
       myNotificationPagination: { totalCount, edges, pageInfo },
     },
   } = await appolo.query<{
-    myNotificationPagination: NotificationResponse;
+    myNotificationPagination: NotificationResponse
   }>({
     query: gql`
       # 알림
@@ -142,11 +142,11 @@ export const getNotifications = async ({
       // ? NotificationType 필터
       filter,
     },
-  });
+  })
 
   return {
     totalCount,
     pageInfo,
-    data: edges.map(edge => edge.node),
-  };
-};
+    data: edges.map((edge) => edge.node),
+  }
+}

@@ -1,12 +1,12 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import useInvoices from '~/hooks/useInvoices.ts';
-import { InvoiceType } from '~/types/invoice.type';
+import useInvoices from '~/hooks/useInvoices.ts'
+import { InvoiceType } from '~/types/invoice.type'
 
 function InvoiceNotice() {
   const {
     state: { invoiceType },
-  } = useInvoices();
+  } = useInvoices()
 
   return (
     <div css={styles.noticeBox}>
@@ -23,7 +23,7 @@ function InvoiceNotice() {
         </ul>
       )}
     </div>
-  );
+  )
 }
 
 const styles = {
@@ -67,6 +67,6 @@ const styles = {
     line-height: 20px; /* 142.857% */
     letter-spacing: -0.2px;
   `,
-};
+}
 
-export default InvoiceNotice;
+export default InvoiceNotice

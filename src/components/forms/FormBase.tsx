@@ -1,15 +1,15 @@
-import { css } from '@emotion/react';
-import { Form } from 'antd';
+import { css } from '@emotion/react'
+import { Form } from 'antd'
 
-import IconInput20 from '~/assets/svg/icon_input_20.svg?react';
-import { COLORS } from '~/configs/theme.ts';
+import IconInput20 from '~/assets/svg/icon_input_20.svg?react'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { FormItemProps, FormProps } from 'antd';
-import type { ReactNode } from 'react';
+import type { FormItemProps, FormProps } from 'antd'
+import type { ReactNode } from 'react'
 
 export interface BaseFormProps<FormValues>
   extends Omit<FormProps<FormValues>, 'children'> {
-  children?: ReactNode;
+  children?: ReactNode
 }
 
 function FormBase<FormValues>({
@@ -33,7 +33,7 @@ function FormBase<FormValues>({
     >
       {children}
     </Form>
-  );
+  )
 }
 
 export function FormItem({ children, ...props }: FormItemProps) {
@@ -41,7 +41,7 @@ export function FormItem({ children, ...props }: FormItemProps) {
     <Form.Item css={formItemStyle} hasFeedback {...props}>
       {children}
     </Form.Item>
-  );
+  )
 }
 
 const formItemStyle = css`
@@ -86,8 +86,8 @@ const formItemStyle = css`
     line-height: 18px; /* 150% */
     letter-spacing: -0.2px;
   }
-`;
+`
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export const { useForm, useWatch, useFormInstance } = Form;
-export default FormBase;
+export const { useForm, useWatch, useFormInstance } = Form
+export default FormBase

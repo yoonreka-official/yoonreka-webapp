@@ -1,30 +1,30 @@
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom/client'
 
-import DialogConfirm from '~/components/modals/DialogConfirm.tsx';
-import DialogMessage from '~/components/modals/DialogMessage.tsx';
+import DialogConfirm from '~/components/modals/DialogConfirm.tsx'
+import DialogMessage from '~/components/modals/DialogMessage.tsx'
 
-import type { ReactNode } from 'react';
-import type { Root } from 'react-dom/client';
+import type { ReactNode } from 'react'
+import type { Root } from 'react-dom/client'
 
-import type { BottomSheetProps } from '~/components/modals/BottomSheet.tsx';
-import type { DialogMessageProps } from '~/components/modals/DialogConfirm.tsx';
+import type { BottomSheetProps } from '~/components/modals/BottomSheet.tsx'
+import type { DialogMessageProps } from '~/components/modals/DialogConfirm.tsx'
 
-export const DIALOG_DOM_ID = '__dialog__';
+export const DIALOG_DOM_ID = '__dialog__'
 
 const message = ({
   title,
   content,
   confirmLabel,
 }: Omit<BottomSheetProps, 'children'> & {
-  content: ReactNode;
+  content: ReactNode
 }): Promise<void> => {
-  const place = document.getElementById(DIALOG_DOM_ID);
+  const place = document.getElementById(DIALOG_DOM_ID)
 
-  let dialogResolver: (() => void) | null = null;
+  let dialogResolver: (() => void) | null = null
 
   const open = () => {
     if (place) {
-      const root = ReactDOM.createRoot(place);
+      const root = ReactDOM.createRoot(place)
       root.render(
         <DialogMessage
           title={title}
@@ -33,40 +33,40 @@ const message = ({
         >
           {content}
         </DialogMessage>,
-      );
+      )
     }
 
-    return new Promise<void>(resolve => {
-      dialogResolver = resolve;
-    });
-  };
+    return new Promise<void>((resolve) => {
+      dialogResolver = resolve
+    })
+  }
 
   const handleClose = (root: Root) => {
-    root.unmount();
+    root.unmount()
 
     if (dialogResolver) {
-      dialogResolver();
+      dialogResolver()
     }
-  };
+  }
 
-  return open();
-};
+  return open()
+}
 
 const confirm = ({
   title,
   content,
   danger,
 }: Omit<DialogMessageProps, 'children'> & {
-  content: ReactNode;
-  danger?: boolean;
+  content: ReactNode
+  danger?: boolean
 }) => {
-  const place = document.getElementById(DIALOG_DOM_ID);
+  const place = document.getElementById(DIALOG_DOM_ID)
 
-  let confirmResolver: ((value: boolean) => void) | null = null;
+  let confirmResolver: ((value: boolean) => void) | null = null
 
   const open = () => {
     if (place) {
-      const root = ReactDOM.createRoot(place);
+      const root = ReactDOM.createRoot(place)
       root.render(
         <DialogConfirm
           title={title}
@@ -76,35 +76,35 @@ const confirm = ({
         >
           {content}
         </DialogConfirm>,
-      );
+      )
     }
 
-    return new Promise<boolean>(resolve => {
-      confirmResolver = resolve;
-    });
-  };
+    return new Promise<boolean>((resolve) => {
+      confirmResolver = resolve
+    })
+  }
 
   const handleClose = (root: Root) => {
-    root.unmount();
-  };
+    root.unmount()
+  }
 
   const handleConfirm = (root: Root) => {
     if (confirmResolver) {
-      confirmResolver(true);
+      confirmResolver(true)
     }
-    handleClose(root);
-  };
+    handleClose(root)
+  }
 
   const handleCancel = (root: Root) => {
     if (confirmResolver) {
-      confirmResolver(false);
+      confirmResolver(false)
     }
-    handleClose(root);
-  };
+    handleClose(root)
+  }
 
-  return open();
-};
+  return open()
+}
 
-const dialog = { message, confirm };
+const dialog = { message, confirm }
 
-export default dialog;
+export default dialog

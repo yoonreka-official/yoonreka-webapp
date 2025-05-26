@@ -1,15 +1,15 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import IconDownload from '~/assets/svg/icon_download.svg?react';
-import IconPdf from '~/assets/svg/icon_pdf.svg?react';
-import Flex from '~/components/display/Flex.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import { downloadFromUrl } from '~/utils/file.util.ts';
+import IconDownload from '~/assets/svg/icon_download.svg?react'
+import IconPdf from '~/assets/svg/icon_pdf.svg?react'
+import Flex from '~/components/display/Flex.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import { downloadFromUrl } from '~/utils/file.util.ts'
 
-import type { AttachmentFile } from '~/types/lectures.type.ts';
+import type { AttachmentFile } from '~/types/lectures.type.ts'
 
 interface Props {
-  attachment: AttachmentFile;
+  attachment: AttachmentFile
 }
 
 function ButtonAttachment({ attachment }: Props) {
@@ -17,7 +17,7 @@ function ButtonAttachment({ attachment }: Props) {
     <button
       css={styles.fileButton}
       onClick={() => {
-        downloadFromUrl(attachment.url, attachment.filename);
+        downloadFromUrl(attachment.url, attachment.filename)
         // download(attachment.url, attachment.filename);
       }}
     >
@@ -35,7 +35,7 @@ function ButtonAttachment({ attachment }: Props) {
         <IconDownload />
       </Flex>
     </button>
-  );
+  )
 }
 
 const styles = {
@@ -89,6 +89,6 @@ const styles = {
       }
     }
   `,
-};
+}
 
-export default ButtonAttachment;
+export default ButtonAttachment

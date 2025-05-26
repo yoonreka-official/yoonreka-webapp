@@ -1,20 +1,20 @@
-import type { CSSProperties, PropsWithChildren } from 'react';
+import type { CSSProperties, PropsWithChildren } from 'react'
 
 export interface FlexProps extends PropsWithChildren {
-  id?: string;
-  className?: string;
-  style?: CSSProperties;
+  id?: string
+  className?: string
+  style?: CSSProperties
 
-  direction?: CSSProperties['flexDirection'];
-  flex?: CSSProperties['flex'];
-  gap?: CSSProperties['gap'];
-  inline?: boolean;
-  items?: CSSProperties['alignItems'];
-  justify?: CSSProperties['justifyContent'];
-  shrink?: CSSProperties['flexShrink'];
-  wrap?: CSSProperties['flexWrap'];
+  direction?: CSSProperties['flexDirection']
+  flex?: CSSProperties['flex']
+  gap?: CSSProperties['gap']
+  inline?: boolean
+  items?: CSSProperties['alignItems']
+  justify?: CSSProperties['justifyContent']
+  shrink?: CSSProperties['flexShrink']
+  wrap?: CSSProperties['flexWrap']
 
-  height?: CSSProperties['height'];
+  height?: CSSProperties['height']
 }
 
 function Flex({
@@ -51,7 +51,7 @@ function Flex({
     >
       {children}
     </div>
-  );
+  )
 }
 
-export default Flex;
+export default Flex

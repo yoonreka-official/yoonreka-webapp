@@ -1,27 +1,27 @@
-import { css } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { css } from '@emotion/react'
+import { useEffect, useState } from 'react'
 
-import IconArrowDown24 from '~/assets/svg/icon_arrow_down_24.svg?react';
-import IconExpandRight24 from '~/assets/svg/icon_expand_right_24.svg?react';
-import { useFormInstance } from '~/components/forms/FormBase.tsx';
-import BottomSheet from '~/components/modals/BottomSheet.tsx';
-import Body from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import IconArrowDown24 from '~/assets/svg/icon_arrow_down_24.svg?react'
+import IconExpandRight24 from '~/assets/svg/icon_expand_right_24.svg?react'
+import { useFormInstance } from '~/components/forms/FormBase.tsx'
+import BottomSheet from '~/components/modals/BottomSheet.tsx'
+import Body from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { SelectProps } from 'antd';
+import type { SelectProps } from 'antd'
 
 export interface SelectOption {
-  label: string;
-  value: string;
+  label: string
+  value: string
 }
 
 interface Props extends Omit<SelectProps, 'onChange'> {
-  options?: SelectOption[];
-  defaultValue?: string;
-  placeholder?: string;
-  value?: string;
-  isInput?: boolean;
-  onChange?: (value?: string, option?: SelectOption) => void;
+  options?: SelectOption[]
+  defaultValue?: string
+  placeholder?: string
+  value?: string
+  isInput?: boolean
+  onChange?: (value?: string, option?: SelectOption) => void
 }
 
 function Select({
@@ -33,46 +33,44 @@ function Select({
   isInput,
   onChange,
 }: Props) {
-  const form = useFormInstance();
+  const form = useFormInstance()
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   const [selected, setSelected] = useState<SelectOption | undefined>(
-    options.find(option => option.value === defaultValue),
-  );
+    options.find((option) => option.value === defaultValue),
+  )
 
   const setScroll = () => {
-    const selectedElement = document.getElementById(
-      `option-${selected?.value}`,
-    );
+    const selectedElement = document.getElementById(`option-${selected?.value}`)
     selectedElement?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'center',
-    });
-  };
+    })
+  }
 
   const handleClose = () => {
-    setIsOpen(false);
-  };
+    setIsOpen(false)
+  }
 
   useEffect(() => {
-    setScroll();
-  }, [isOpen]);
+    setScroll()
+  }, [isOpen])
 
   useEffect(() => {
     if (!value) {
       // setSelected(undefined);
-      return;
+      return
     }
 
-    setSelected(options.find(option => option.value === value));
-  }, [value, options]);
+    setSelected(options.find((option) => option.value === value))
+  }, [value, options])
 
   useEffect(() => {
     // TODO: form error 감지 처리
     // console.log(form?.getFieldError(id));
-  }, [form]);
+  }, [form])
 
   return (
     <>
@@ -109,14 +107,14 @@ function Select({
       >
         <div css={styles.itemWrapper}>
           <ul>
-            {options.map(option => (
+            {options.map((option) => (
               <li key={option.value}>
                 <button
                   id={`option-${option.value}`}
                   css={[value === option.value && styles.selected]}
                   onClick={() => {
-                    handleClose();
-                    onChange?.(option.value, option);
+                    handleClose()
+                    onChange?.(option.value, option)
                   }}
                 >
                   {option.label}
@@ -129,7 +127,7 @@ function Select({
         </div>
       </BottomSheet>
     </>
-  );
+  )
 }
 
 const styles = {
@@ -207,6 +205,6 @@ const styles = {
     //font-weight: 600;
     border-radius: 8px;
   `,
-};
+}
 
-export default Select;
+export default Select

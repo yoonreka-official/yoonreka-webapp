@@ -1,8 +1,8 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
-import { appolo } from '~/utils/apollo.util.ts';
+import { appolo } from '~/utils/apollo.util.ts'
 
-import type { LectureDetail } from '~/types/lectures.type.ts';
+import type { LectureDetail } from '~/types/lectures.type.ts'
 
 export const getLectureById = (myLectureId: string) => {
   return appolo.query<{ myLecture: LectureDetail }>({
@@ -29,5 +29,5 @@ export const getLectureById = (myLectureId: string) => {
     `,
     fetchPolicy: 'no-cache',
     variables: { myLectureId },
-  });
-};
+  })
+}

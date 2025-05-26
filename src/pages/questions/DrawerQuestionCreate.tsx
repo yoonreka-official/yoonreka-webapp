@@ -1,67 +1,67 @@
-import { css } from '@emotion/react';
-import { Drawer } from 'antd';
-import { useEffect } from 'react';
+import { css } from '@emotion/react'
+import { Drawer } from 'antd'
+import { useEffect } from 'react'
 
-import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
-import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
-import Flex from '~/components/display/Flex.tsx';
+import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
+import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
+import Flex from '~/components/display/Flex.tsx'
 import FormBase, {
   FormItem,
   useForm,
   useWatch,
-} from '~/components/forms/FormBase.tsx';
-import InputSegmented from '~/components/inputs/InputSegmented.tsx';
-import InputText from '~/components/inputs/InputText.tsx';
-import InputTextArea from '~/components/inputs/InputTextArea.tsx';
-import Select from '~/components/inputs/Select.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useAuth from '~/hooks/useAuth.tsx';
-import useQuestions from '~/hooks/useQuestions.ts';
-import Container from '~/layouts/Container.tsx';
-import { QuestionUser } from '~/types/question.type.ts';
-import rules from '~/utils/rules.util.ts';
+} from '~/components/forms/FormBase.tsx'
+import InputSegmented from '~/components/inputs/InputSegmented.tsx'
+import InputText from '~/components/inputs/InputText.tsx'
+import InputTextArea from '~/components/inputs/InputTextArea.tsx'
+import Select from '~/components/inputs/Select.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useAuth from '~/hooks/useAuth.tsx'
+import useQuestions from '~/hooks/useQuestions.ts'
+import Container from '~/layouts/Container.tsx'
+import { QuestionUser } from '~/types/question.type.ts'
+import rules from '~/utils/rules.util.ts'
 
-import type { DrawerProps } from 'antd';
+import type { DrawerProps } from 'antd'
 
-import type { QuestionBody } from '~/types/question.type.ts';
+import type { QuestionBody } from '~/types/question.type.ts'
 
 interface Props extends Omit<DrawerProps, 'onClose'> {
-  onClose?: () => void;
+  onClose?: () => void
 }
 
 const TYPES: Array<{ value: QuestionUser; label: string }> = [
   { value: QuestionUser.STUDENT, label: '학생이에요' },
   { value: QuestionUser.PARENT, label: '학무모예요' },
-];
+]
 
 function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
-  const [form] = useForm<QuestionBody>();
+  const [form] = useForm<QuestionBody>()
 
-  const type = useWatch('who', form);
+  const type = useWatch('who', form)
 
   const {
     state: { authUser },
-  } = useAuth();
+  } = useAuth()
 
   const {
     state: { selectedUserType, selectedLectureId },
     handleCreateQuestion,
-  } = useQuestions();
+  } = useQuestions()
 
   const handleClose = () => {
-    onClose?.();
-    form.resetFields();
-  };
+    onClose?.()
+    form.resetFields()
+  }
 
   useEffect(() => {
     // ? 질문하기 목록에서 선택한 사용자 유형 자동 선택 - 학생/학부모
-    form.setFieldValue('who', selectedUserType);
+    form.setFieldValue('who', selectedUserType)
 
     // ? 선택한 강의 자동선택
     if (selectedLectureId) {
-      form.setFieldValue('lectureId', selectedLectureId);
+      form.setFieldValue('lectureId', selectedLectureId)
     }
-  }, [selectedUserType, selectedLectureId]);
+  }, [selectedUserType, selectedLectureId])
 
   return (
     <Drawer
@@ -89,9 +89,9 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
           initialValues={{
             who: QuestionUser.STUDENT,
           }}
-          onFinish={async values => {
-            await handleCreateQuestion(values);
-            handleClose();
+          onFinish={async (values) => {
+            await handleCreateQuestion(values)
+            handleClose()
           }}
         >
           <Flex
@@ -108,7 +108,7 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
               <FormItem label="수업" name="lectureId" rules={[rules.required]}>
                 <Select
                   placeholder="수강중인 수업을 선택해주세요."
-                  options={authUser?.lectures.map(item => ({
+                  options={authUser?.lectures.map((item) => ({
                     label: item.title,
                     value: item.id,
                   }))}
@@ -151,7 +151,7 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
         </FormBase>
       </Container>
     </Drawer>
-  );
+  )
 }
 
 const styles = {
@@ -197,6 +197,6 @@ const styles = {
     padding: 64px 14px 12px;
     background: #fff;
   `,
-};
+}
 
-export default DrawerQuestionCreate;
+export default DrawerQuestionCreate

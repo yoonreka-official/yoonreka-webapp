@@ -1,24 +1,24 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-import BottomSheet from '~/components/modals/BottomSheet.tsx';
-import Body from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import BottomSheet from '~/components/modals/BottomSheet.tsx'
+import Body from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { BottomSheetProps } from '~/components/modals/BottomSheet.tsx';
+import type { BottomSheetProps } from '~/components/modals/BottomSheet.tsx'
 
 export interface DialogMessageProps extends Omit<BottomSheetProps, 'open'> {
-  onConfirm?: () => void;
+  onConfirm?: () => void
 }
 
 function DialogMessage({ children, onConfirm, ...props }: DialogMessageProps) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(true)
 
   const handleClose = () => {
-    setOpen(false);
+    setOpen(false)
     setTimeout(() => {
-      onConfirm?.();
-    }, 400);
-  };
+      onConfirm?.()
+    }, 400)
+  }
 
   return (
     <BottomSheet
@@ -32,7 +32,7 @@ function DialogMessage({ children, onConfirm, ...props }: DialogMessageProps) {
         {children}
       </Body>
     </BottomSheet>
-  );
+  )
 }
 
-export default DialogMessage;
+export default DialogMessage

@@ -1,5 +1,5 @@
-import type { AttachmentFile } from '~/types/lectures.type.ts';
-import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts';
+import type { AttachmentFile } from '~/types/lectures.type.ts'
+import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts'
 
 /** 출석 상태 */
 export enum AttendanceStatus {
@@ -22,66 +22,66 @@ export enum GradeType {
 }
 
 export interface MyLessonGrade {
-  gradeType: GradeType;
-  attendanceStatus: AttendanceStatus;
-  data: LectureGradeData[];
+  gradeType: GradeType
+  attendanceStatus: AttendanceStatus
+  data: LectureGradeData[]
 
-  comment: string;
+  comment: string
 
-  createdAt: number;
-  updatedAt: number;
+  createdAt: number
+  updatedAt: number
 }
 
 export interface LectureGradeLesson {
-  attachment: Nullable<AttachmentFile>;
-  date: string;
-  myLessonGrade: Nullable<MyLessonGrade>;
-  topGrades: LectureTopGrade[];
-  topThirtyPercentGrades: LectureTopGrade[];
+  attachment: Nullable<AttachmentFile>
+  date: string
+  myLessonGrade: Nullable<MyLessonGrade>
+  topGrades: LectureTopGrade[]
+  topThirtyPercentGrades: LectureTopGrade[]
 }
 
 export interface LectureGradeData {
-  id: string;
-  label: string;
-  maxValue: NullableString;
-  type: string;
-  value: NullableString;
-  value2: NullableString;
+  id: string
+  label: string
+  maxValue: NullableString
+  type: string
+  value: NullableString
+  value2: NullableString
 }
 
 export interface LectureGradeFormLabel {
-  id: string;
-  type: string;
-  value: string;
+  id: string
+  type: string
+  value: string
 }
 
 export interface GradeFormLabelGroup {
-  type: string;
-  children: LectureGradeFormLabel[];
+  type: string
+  children: LectureGradeFormLabel[]
 }
 
 export interface LectureTopGrade {
-  labelId: string;
-  value: number;
+  labelId: string
+  value: number
 }
 
 export interface LectureLabelComment {
-  labelId: string;
-  comment: string;
+  labelId: string
+  comment: string
 }
 
 export interface LectureGradeDetail {
-  id: string;
-  title: string;
-  gradeFormLabels: LectureGradeFormLabel[];
-  lessons: LectureGradeLesson[];
-  myLabelComments: LectureLabelComment[];
+  id: string
+  title: string
+  gradeFormLabels: LectureGradeFormLabel[]
+  lessons: LectureGradeLesson[]
+  myLabelComments: LectureLabelComment[]
 }
 
 export interface LectureGradeStatistics extends LectureGradeData {
-  date: string;
-  comment?: string;
-  score: Nullable<number>;
-  top30: number;
-  highest: number;
+  date: string
+  comment?: string
+  score: Nullable<number>
+  top30: number
+  highest: number
 }

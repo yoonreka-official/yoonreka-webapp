@@ -1,8 +1,8 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import ImageProfile from '~/assets/images/login/img_login_profile.png';
-import ImageLogo from '~/assets/images/login/img_logo.png';
-import Flex from '~/components/display/Flex.tsx';
+import ImageProfile from '~/assets/images/login/img_login_profile.png'
+import ImageLogo from '~/assets/images/login/img_logo.png'
+import Flex from '~/components/display/Flex.tsx'
 
 function LoginHeader() {
   return (
@@ -12,7 +12,7 @@ function LoginHeader() {
         <img alt="logo" css={styles.logo} src={ImageLogo} />
       </Flex>
     </header>
-  );
+  )
 }
 
 const styles = {
@@ -28,6 +28,6 @@ const styles = {
   logo: css`
     width: 183px;
   `,
-};
+}
 
-export default LoginHeader;
+export default LoginHeader

@@ -4,14 +4,14 @@ export enum QuestionUser {
 }
 
 export interface QuestionParams {
-  answered?: boolean;
-  whoes: QuestionUser;
+  answered?: boolean
+  whoes: QuestionUser
 }
 
 export interface QuestionBody {
-  who: QuestionUser;
-  lectureId: string;
-  title: string;
-  description: string;
-  bookInfo?: string;
+  who: QuestionUser
+  lectureId: string
+  title: string
+  description: string
+  bookInfo?: string
 }

@@ -1,16 +1,16 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
 export interface StatusTagProps {
-  status?: 'default' | 'warning' | 'danger' | 'success' | 'info';
-  children?: ReactNode;
+  status?: 'default' | 'warning' | 'danger' | 'success' | 'info'
+  children?: ReactNode
 }
 
 function StatusTag({ children, status = 'default' }: StatusTagProps) {
-  return <span css={[styles.tag, styles[status]]}>{children}</span>;
+  return <span css={[styles.tag, styles[status]]}>{children}</span>
 }
 
 const styles = {
@@ -56,6 +56,6 @@ const styles = {
     color: ${COLORS.POINT.PRIMARY};
     background: ${COLORS.BG.BACKGROUND_TEXT};
   `,
-};
+}
 
-export default StatusTag;
+export default StatusTag

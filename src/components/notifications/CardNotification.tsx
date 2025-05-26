@@ -1,28 +1,28 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import ImageEducation from '~/assets/images/notification/img_education.png';
-import ImageNotice from '~/assets/images/notification/img_notice.png';
-import ImagePayment from '~/assets/images/notification/img_payment.png';
-import CardCollapse from '~/components/cards/CardCollapse.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import ButtonAttachment from '~/components/notifications/ButtonAttachment.tsx';
-import Body from '~/components/typography/Body.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import { NotificationTypeName } from '~/types/notification.type.ts';
-import { formatDate } from '~/utils/format.util.ts';
+import ImageEducation from '~/assets/images/notification/img_education.png'
+import ImageNotice from '~/assets/images/notification/img_notice.png'
+import ImagePayment from '~/assets/images/notification/img_payment.png'
+import CardCollapse from '~/components/cards/CardCollapse.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import ButtonAttachment from '~/components/notifications/ButtonAttachment.tsx'
+import Body from '~/components/typography/Body.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import { NotificationTypeName } from '~/types/notification.type.ts'
+import { formatDate } from '~/utils/format.util.ts'
 
-import type { AttachmentFile } from '~/types/lectures.type.ts';
-import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts';
+import type { AttachmentFile } from '~/types/lectures.type.ts'
+import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts'
 
 interface Props {
-  type: NotificationTypeName;
-  title: string;
-  createdAt: number;
-  description: string;
-  attachments: Nullable<AttachmentFile[]>;
-  link?: NullableString;
-  isNew?: boolean;
+  type: NotificationTypeName
+  title: string
+  createdAt: number
+  description: string
+  attachments: Nullable<AttachmentFile[]>
+  link?: NullableString
+  isNew?: boolean
 }
 
 function CardNotification({
@@ -76,20 +76,20 @@ function CardNotification({
         </div>
       )}
     </CardCollapse>
-  );
+  )
 }
 
 const getIcon = (type: NotificationTypeName) => {
   switch (type) {
     case NotificationTypeName.MATERIAL:
-      return ImageEducation;
+      return ImageEducation
     case NotificationTypeName.LECTURE_INVOICE:
-      return ImagePayment;
+      return ImagePayment
     case NotificationTypeName.NOTICE:
     default:
-      return ImageNotice;
+      return ImageNotice
   }
-};
+}
 
 const notificationStyles = {
   newLabel: css`
@@ -114,6 +114,6 @@ const notificationStyles = {
     color: ${COLORS.POINT.PRIMARY};
     word-break: break-all;
   `,
-};
+}
 
-export default CardNotification;
+export default CardNotification

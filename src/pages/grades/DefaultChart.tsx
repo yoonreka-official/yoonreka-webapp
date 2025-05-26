@@ -4,36 +4,38 @@ import {
   LinearScale,
   LineElement,
   PointElement,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
+} from 'chart.js'
+import { Line } from 'react-chartjs-2'
 
-import { COLORS } from '~/configs/theme.ts';
-import useGrades from '~/hooks/useGrades.ts';
-import { formatDate } from '~/utils/format.util.ts';
+import { COLORS } from '~/configs/theme.ts'
+import useGrades from '~/hooks/useGrades.ts'
+import { formatDate } from '~/utils/format.util.ts'
 
-import type { ChartOptions } from 'chart.js';
+import type { ChartOptions } from 'chart.js'
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement)
 
 function DefaultChart() {
   const {
     state: { labelColor, statistics },
-  } = useGrades();
+  } = useGrades()
 
-  const labels = statistics?.map(item => formatDate(item.date, 'D일')) || ['1'];
+  const labels = statistics?.map((item) => formatDate(item.date, 'D일')) || [
+    '1',
+  ]
 
   const data = {
     labels,
     datasets: [
       {
         label: 'Dataset 1',
-        data: statistics?.map(item => item.score),
+        data: statistics?.map((item) => item.score),
         borderColor: labelColor,
         backgroundColor: labelColor,
         pointBackgroundColor: labelColor,
       },
     ],
-  };
+  }
 
   const options: ChartOptions<'line'> = {
     responsive: true,
@@ -81,11 +83,11 @@ function DefaultChart() {
           color: COLORS.FONT['20'],
           callback(_, index) {
             if (statistics && statistics.length < 9) {
-              return formatDate(statistics?.[index]?.date, 'D일');
+              return formatDate(statistics?.[index]?.date, 'D일')
             }
 
             if (index % 2 === 0) {
-              return formatDate(statistics?.[index]?.date, 'D일');
+              return formatDate(statistics?.[index]?.date, 'D일')
             }
           },
         },
@@ -95,9 +97,9 @@ function DefaultChart() {
     plugins: {
       legend: { display: false },
     },
-  };
+  }
 
-  return <Line data={data} options={options} />;
+  return <Line data={data} options={options} />
 }
 
-export default DefaultChart;
+export default DefaultChart

@@ -1,17 +1,12 @@
-import { gql } from '@apollo/client';
-import axios from 'axios';
+import { gql } from '@apollo/client'
 
-import { appolo } from '~/utils/apollo.util.ts';
-import { getCookie } from '~/utils/cookie.util.ts';
+import { appolo } from '~/utils/apollo.util.ts'
 
-import type { AttachmentFile } from '~/types/lectures.type.ts';
 import type {
   FileMetaBody,
   FileMetaResponse,
   PresignedUrlData,
-} from '~/types/utils/file.type.ts';
-
-const FILE_ENDPOINT = `${import.meta.env.VITE_API_URL}/api/files`;
+} from '~/types/utils/file.type.ts'
 
 export const getPresignedUrl = async () => {
   return appolo.mutate<{ generatePrivateFilePutObjectUrl: PresignedUrlData }>({
@@ -23,29 +18,29 @@ export const getPresignedUrl = async () => {
         }
       }
     `,
-  });
-};
+  })
+}
 
 export async function uploadPresignedUrl(
   url: string,
   file: File,
   onProgress?: (progress: number) => void,
 ) {
-  const xhr = new XMLHttpRequest();
+  const xhr = new XMLHttpRequest()
   return new Promise<void>((resolve, reject) => {
-    xhr.open('PUT', url);
-    xhr.upload.onprogress = event => {
-      onProgress?.(event.loaded / event.total);
-    };
+    xhr.open('PUT', url)
+    xhr.upload.onprogress = (event) => {
+      onProgress?.(event.loaded / event.total)
+    }
     xhr.onload = () => {
       if (xhr.status !== 200) {
-        reject(new Error(`AWS에 이미지 업로드 중 실패: ${xhr.status}`));
-        return;
+        reject(new Error(`AWS에 이미지 업로드 중 실패: ${xhr.status}`))
+        return
       }
-      resolve();
-    };
-    xhr.send(file);
-  });
+      resolve()
+    }
+    xhr.send(file)
+  })
 }
 
 export const updateFileMeta = async (body: FileMetaBody) => {
@@ -75,26 +70,5 @@ export const updateFileMeta = async (body: FileMetaBody) => {
       }
     `,
     variables: body,
-  });
-};
-
-/**
- * ! Deprecated - 예전 파일 업로드 API
- * @param file
- * @param isPublic
- */
-export const uploadFile = (file: File, isPublic = true) => {
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('isPublic', isPublic ? 'true' : 'false');
-
-  const accessToken = getCookie('accessToken');
-
-  return axios.post<AttachmentFile>(FILE_ENDPOINT, formData, {
-    headers: {
-      /* eslint-disable @typescript-eslint/naming-convention */
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-};
+  })
+}

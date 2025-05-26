@@ -1,23 +1,23 @@
-import { css } from '@emotion/react';
-import { Drawer } from 'antd';
-import { useState } from 'react';
+import { css } from '@emotion/react'
+import { Drawer } from 'antd'
+import { useState } from 'react'
 
-import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useAuth from '~/hooks/useAuth.tsx';
-import Container from '~/layouts/Container.tsx';
+import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useAuth from '~/hooks/useAuth.tsx'
+import Container from '~/layouts/Container.tsx'
 import CardConfig, {
   CardConfigButton,
-} from '~/pages/more/config/CardConfig.tsx';
-import DrawerConfigMyInfo from '~/pages/more/config/DrawerConfigMyInfo.tsx';
-import DrawerConfigNotification from '~/pages/more/config/DrawerConfigNotification.tsx';
+} from '~/pages/more/config/CardConfig.tsx'
+import DrawerConfigMyInfo from '~/pages/more/config/DrawerConfigMyInfo.tsx'
+import DrawerConfigNotification from '~/pages/more/config/DrawerConfigNotification.tsx'
 
-import type { DrawerProps } from 'antd';
+import type { DrawerProps } from 'antd'
 
 interface Props extends Omit<DrawerProps, 'onClose'> {
-  onClose?: () => void;
+  onClose?: () => void
 }
 
 function DrawerConfig({ children, onClose, ...props }: Props) {
@@ -25,14 +25,14 @@ function DrawerConfig({ children, onClose, ...props }: Props) {
     state: { notificationConfig },
     handleLogout,
     handleWithdraw,
-  } = useAuth();
+  } = useAuth()
 
-  const [isMyInfoOpen, setIsMyInfoOpen] = useState(false);
-  const [isNotificationModeOpen, setIsNotificationModeOpen] = useState(false);
+  const [isMyInfoOpen, setIsMyInfoOpen] = useState(false)
+  const [isNotificationModeOpen, setIsNotificationModeOpen] = useState(false)
 
   const handleClose = () => {
-    onClose?.();
-  };
+    onClose?.()
+  }
 
   return (
     <Drawer
@@ -112,7 +112,7 @@ function DrawerConfig({ children, onClose, ...props }: Props) {
         onClose={() => setIsNotificationModeOpen(false)}
       />
     </Drawer>
-  );
+  )
 }
 
 const styles = {
@@ -155,6 +155,6 @@ const styles = {
   container: css`
     padding: 64px 14px 12px;
   `,
-};
+}
 
-export default DrawerConfig;
+export default DrawerConfig

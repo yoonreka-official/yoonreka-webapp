@@ -1,16 +1,16 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import { getFontWeight } from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import { getFontWeight } from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
 interface CaptionProps {
-  children?: ReactNode;
-  className?: string;
-  color?: string;
-  size?: 10 | 12;
-  weight?: 'regular' | 'medium' | 'semibold' | 'bold';
+  children?: ReactNode
+  className?: string
+  color?: string
+  size?: 10 | 12
+  weight?: 'regular' | 'medium' | 'semibold' | 'bold'
 }
 
 function Caption({
@@ -28,26 +28,26 @@ function Caption({
     >
       {children}
     </div>
-  );
+  )
 }
 
 function getLineHeight(size: CaptionProps['size']) {
   switch (size) {
     case 10:
-      return 14;
+      return 14
     case 12:
     default:
-      return 18;
+      return 18
   }
 }
 
 function getLetterSpacing(size: CaptionProps['size']) {
   switch (size) {
     case 10:
-      return '-0.1px';
+      return '-0.1px'
     case 12:
     default:
-      return '-0.2px';
+      return '-0.2px'
   }
 }
 
@@ -58,6 +58,6 @@ const styles = {
     letter-spacing: ${getLetterSpacing(size)};
     line-height: ${getLineHeight(size)}px;
   `,
-};
+}
 
-export default Caption;
+export default Caption

@@ -1,106 +1,106 @@
-import { css } from '@emotion/react';
-import { Divider } from 'antd';
-import { useEffect, useState } from 'react';
+import { css } from '@emotion/react'
+import { Divider } from 'antd'
+import { useEffect, useState } from 'react'
 
-import ButtonNav from '~/components/buttons/ButtonNav.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import BottomSheet from '~/components/modals/BottomSheet.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import ButtonNav from '~/components/buttons/ButtonNav.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import BottomSheet from '~/components/modals/BottomSheet.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-const TIMES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-const MINUTES: number[] = [];
+const TIMES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+const MINUTES: number[] = []
 // eslint-disable-next-line no-plusplus
 for (let i = 0; i <= 59; i++) {
-  MINUTES.push(i);
+  MINUTES.push(i)
 }
 
 interface Props {
-  id: string;
-  value?: string;
-  disabled?: boolean;
-  onChange?: (value: string) => void;
+  id: string
+  value?: string
+  disabled?: boolean
+  onChange?: (value: string) => void
 }
 
 const formatNumberPad = (value?: number) => {
-  if (typeof value === 'undefined') return '--';
-  return value.toString().padStart(2, '0');
-};
+  if (typeof value === 'undefined') return '--'
+  return value.toString().padStart(2, '0')
+}
 
 const optimizeTime = (time?: number, meridiem?: 'AM' | 'PM') => {
-  if (time === 0 && meridiem === 'PM') return 12;
-  if (time === 12 && meridiem === 'AM') return 0;
-  return time;
-};
+  if (time === 0 && meridiem === 'PM') return 12
+  if (time === 12 && meridiem === 'AM') return 0
+  return time
+}
 
 function SelectTime({ id, value, disabled, onChange }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [time, setTime] = useState<number>();
-  const [minute, setMinute] = useState<number>();
-  const [meridiem, setMeridiem] = useState<'AM' | 'PM'>();
-  const [internalValue, setInternalValue] = useState<string>();
+  const [isOpen, setIsOpen] = useState(false)
+  const [time, setTime] = useState<number>()
+  const [minute, setMinute] = useState<number>()
+  const [meridiem, setMeridiem] = useState<'AM' | 'PM'>()
+  const [internalValue, setInternalValue] = useState<string>()
 
   const getFormattedValue = () => {
-    const t = optimizeTime(time, meridiem);
-    if (time !== t) setTime(t);
+    const t = optimizeTime(time, meridiem)
+    if (time !== t) setTime(t)
 
-    return `${formatNumberPad(t)}:${formatNumberPad(minute)} ${meridiem || '--'}`;
-  };
+    return `${formatNumberPad(t)}:${formatNumberPad(minute)} ${meridiem || '--'}`
+  }
 
   const handleClose = () => {
-    const mergedValue = getFormattedValue();
-    setInternalValue(mergedValue);
+    const mergedValue = getFormattedValue()
+    setInternalValue(mergedValue)
 
     if (mergedValue !== '--:-- --') {
-      onChange?.(mergedValue);
+      onChange?.(mergedValue)
     }
 
-    setIsOpen(false);
-  };
+    setIsOpen(false)
+  }
 
   const setScroll = () => {
-    const yearElement = document.getElementById(`${id}-time-${time}`);
-    const monthElement = document.getElementById(`${id}-minute-${minute}`);
+    const yearElement = document.getElementById(`${id}-time-${time}`)
+    const monthElement = document.getElementById(`${id}-minute-${minute}`)
     const meridiemElement = document.getElementById(
       `${id}-meridiem-${meridiem}`,
-    );
+    )
 
     yearElement?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'center',
-    });
+    })
     monthElement?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'center',
-    });
+    })
     meridiemElement?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'center',
-    });
-  };
+    })
+  }
 
   useEffect(() => {
-    setScroll();
-  }, [isOpen, time, minute, meridiem]);
+    setScroll()
+  }, [isOpen, time, minute, meridiem])
 
   useEffect(() => {
     if (value) {
-      const [t, _meridiem] = value.split(' ');
-      const [_time, _min] = t.split(':');
-      setTime(Number(_time));
-      setMinute(Number(_min));
-      setMeridiem(_meridiem as 'AM' | 'PM');
-      setInternalValue(value);
+      const [t, _meridiem] = value.split(' ')
+      const [_time, _min] = t.split(':')
+      setTime(Number(_time))
+      setMinute(Number(_min))
+      setMeridiem(_meridiem as 'AM' | 'PM')
+      setInternalValue(value)
     } else {
-      setTime(undefined);
-      setMinute(undefined);
-      setMeridiem(undefined);
-      setInternalValue(undefined);
-      setInternalValue(getFormattedValue());
+      setTime(undefined)
+      setMinute(undefined)
+      setMeridiem(undefined)
+      setInternalValue(undefined)
+      setInternalValue(getFormattedValue())
     }
-  }, [value]);
+  }, [value])
 
   return (
     <>
@@ -121,13 +121,13 @@ function SelectTime({ id, value, disabled, onChange }: Props) {
         <Flex css={styles.itemWrapper}>
           <ul css={[styles.selectItem]}>
             <li style={{ height: 84 }} />
-            {TIMES.map(timeValue => (
+            {TIMES.map((timeValue) => (
               <li key={timeValue}>
                 <button
                   id={`${id}-time-${timeValue}`}
                   css={[timeValue === time && styles.selected]}
                   onClick={() => {
-                    setTime(timeValue);
+                    setTime(timeValue)
                   }}
                 >
                   {`${timeValue}`.padStart(2, '0')}
@@ -141,13 +141,13 @@ function SelectTime({ id, value, disabled, onChange }: Props) {
 
           <ul css={[styles.selectItem]}>
             <li style={{ height: 84 }} />
-            {MINUTES.map(minuteValue => (
+            {MINUTES.map((minuteValue) => (
               <li key={minuteValue}>
                 <button
                   id={`${id}-minute-${minuteValue}`}
                   css={[minuteValue === minute && styles.selected]}
                   onClick={() => {
-                    setMinute(minuteValue);
+                    setMinute(minuteValue)
                   }}
                 >
                   {`${minuteValue}`.padStart(2, '0')}
@@ -166,7 +166,7 @@ function SelectTime({ id, value, disabled, onChange }: Props) {
                 id={`${id}-meridiem-AM`}
                 css={[meridiem === 'AM' && styles.selected]}
                 onClick={() => {
-                  setMeridiem('AM');
+                  setMeridiem('AM')
                 }}
               >
                 AM
@@ -177,7 +177,7 @@ function SelectTime({ id, value, disabled, onChange }: Props) {
                 id={`${id}-meridiem-PM`}
                 css={[meridiem === 'PM' && styles.selected]}
                 onClick={() => {
-                  setMeridiem('PM');
+                  setMeridiem('PM')
                 }}
               >
                 PM
@@ -188,7 +188,7 @@ function SelectTime({ id, value, disabled, onChange }: Props) {
         </Flex>
       </BottomSheet>
     </>
-  );
+  )
 }
 
 const styles = {
@@ -257,6 +257,6 @@ const styles = {
     //font-weight: 600;
     border-radius: 8px;
   `,
-};
+}
 
-export default SelectTime;
+export default SelectTime

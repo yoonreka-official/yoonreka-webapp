@@ -1,13 +1,13 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import { COLORS, FONT_WEIGHT } from '~/configs/theme.ts';
+import { COLORS, FONT_WEIGHT } from '~/configs/theme.ts'
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from 'react'
 
 interface HeadlineProps {
-  children?: ReactNode;
-  className?: string;
-  color?: string;
+  children?: ReactNode
+  className?: string
+  color?: string
 }
 
 function Headline({
@@ -19,7 +19,7 @@ function Headline({
     <h1 className={className} css={styles.headline} style={{ color }}>
       {children}
     </h1>
-  );
+  )
 }
 
 const styles = {
@@ -29,6 +29,6 @@ const styles = {
     line-height: 28px;
     font-weight: ${FONT_WEIGHT.BOLD};
   `,
-};
+}
 
-export default Headline;
+export default Headline

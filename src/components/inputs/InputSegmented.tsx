@@ -1,12 +1,12 @@
-import { css } from '@emotion/react';
-import { Segmented } from 'antd';
+import { css } from '@emotion/react'
+import { Segmented } from 'antd'
 
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { SegmentedProps } from 'antd';
+import type { SegmentedProps } from 'antd'
 
 export interface InputSegmentedProps<T> extends SegmentedProps<T> {
-  isInput?: boolean;
+  isInput?: boolean
 }
 
 function InputSegmented<T>({ isInput, ...props }: InputSegmentedProps<T>) {
@@ -16,7 +16,7 @@ function InputSegmented<T>({ isInput, ...props }: InputSegmentedProps<T>) {
       block
       {...props}
     />
-  );
+  )
 }
 
 const styles = {
@@ -74,6 +74,6 @@ const styles = {
       line-height: 44px;
     }
   `,
-};
+}
 
-export default InputSegmented;
+export default InputSegmented

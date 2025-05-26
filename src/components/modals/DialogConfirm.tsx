@@ -1,19 +1,19 @@
-import { css } from '@emotion/react';
-import { useState } from 'react';
+import { css } from '@emotion/react'
+import { useState } from 'react'
 
-import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
-import ButtonSecondary from '~/components/buttons/ButtonSecondary.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import BottomSheet from '~/components/modals/BottomSheet.tsx';
-import Body from '~/components/typography/Body.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
+import ButtonSecondary from '~/components/buttons/ButtonSecondary.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import BottomSheet from '~/components/modals/BottomSheet.tsx'
+import Body from '~/components/typography/Body.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { BottomSheetProps } from '~/components/modals/BottomSheet.tsx';
+import type { BottomSheetProps } from '~/components/modals/BottomSheet.tsx'
 
 export interface DialogMessageProps extends Omit<BottomSheetProps, 'open'> {
-  danger?: boolean;
-  onConfirm?: () => void;
-  onClose?: () => void;
+  danger?: boolean
+  onConfirm?: () => void
+  onClose?: () => void
 }
 
 function DialogConfirm({
@@ -23,18 +23,18 @@ function DialogConfirm({
   onClose,
   ...props
 }: DialogMessageProps) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(true)
 
   const handleClose = (isConfirm?: boolean) => {
-    setOpen(false);
+    setOpen(false)
     setTimeout(() => {
       if (isConfirm) {
-        onConfirm?.();
+        onConfirm?.()
       } else {
-        onClose?.();
+        onClose?.()
       }
-    }, 100);
-  };
+    }, 100)
+  }
 
   return (
     <BottomSheet
@@ -46,7 +46,7 @@ function DialogConfirm({
           <ButtonPrimary
             css={[styles.button, danger && styles.danger]}
             onClick={() => {
-              handleClose(true);
+              handleClose(true)
             }}
           >
             확인
@@ -55,7 +55,7 @@ function DialogConfirm({
             css={styles.button}
             style={{ height: 50 }}
             onClick={() => {
-              handleClose();
+              handleClose()
             }}
           >
             취소
@@ -63,14 +63,14 @@ function DialogConfirm({
         </Flex>
       }
       onClose={() => {
-        handleClose();
+        handleClose()
       }}
     >
       <Body color={COLORS.FONT['70']} size={14}>
         {children}
       </Body>
     </BottomSheet>
-  );
+  )
 }
 
 const styles = {
@@ -95,6 +95,6 @@ const styles = {
     background: ${COLORS.STATUS['01']};
     border-color: ${COLORS.STATUS['01']};
   `,
-};
+}
 
-export default DialogConfirm;
+export default DialogConfirm

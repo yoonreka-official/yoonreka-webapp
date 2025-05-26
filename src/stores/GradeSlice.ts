@@ -1,38 +1,38 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { getLectureGrades } from '~/api/grades.api.ts';
-import { COLORS } from '~/configs/theme.ts';
-import { GradeType } from '~/types/grades.type.ts';
-import calculator from '~/utils/calculator.util.ts';
+import { getLectureGrades } from '~/api/grades.api.ts'
+import { COLORS } from '~/configs/theme.ts'
+import { GradeType } from '~/types/grades.type.ts'
+import calculator from '~/utils/calculator.util.ts'
 
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit'
 
 import type {
   GradeFormLabelGroup,
   LectureGradeDetail,
   LectureGradeFormLabel,
   LectureGradeStatistics,
-} from '~/types/grades.type.ts';
-import type { Nullable } from '~/types/utils/nullable.type.ts';
+} from '~/types/grades.type.ts'
+import type { Nullable } from '~/types/utils/nullable.type.ts'
 
-export type GradeTab = 'daily' | 'total';
+export type GradeTab = 'daily' | 'total'
 
-const DEFAULT_COLOR = COLORS.STATUS['06'];
+const DEFAULT_COLOR = COLORS.STATUS['06']
 
 export interface GradeState {
-  isLoading: boolean;
+  isLoading: boolean
 
-  lecture: Nullable<LectureGradeDetail>;
+  lecture: Nullable<LectureGradeDetail>
 
-  activeTab: GradeTab;
-  gradeType: GradeType;
+  activeTab: GradeTab
+  gradeType: GradeType
 
-  labelGroups: GradeFormLabelGroup[];
-  testLabels: LectureGradeFormLabel[];
-  selectedLabel?: LectureGradeFormLabel & { comment?: string };
-  labelColor?: string;
+  labelGroups: GradeFormLabelGroup[]
+  testLabels: LectureGradeFormLabel[]
+  selectedLabel?: LectureGradeFormLabel & { comment?: string }
+  labelColor?: string
 
-  statistics?: LectureGradeStatistics[];
+  statistics?: LectureGradeStatistics[]
 }
 
 const initialState: GradeState = {
@@ -45,7 +45,7 @@ const initialState: GradeState = {
   testLabels: [],
   labelColor: DEFAULT_COLOR,
   isLoading: true,
-};
+}
 
 export const fetchGradesByLectureId = createAsyncThunk<
   LectureGradeDetail,
@@ -54,98 +54,98 @@ export const fetchGradesByLectureId = createAsyncThunk<
   'grade/fetchGradesByLectureId',
   async ({ lectureId, gradeType }, { rejectWithValue }) => {
     try {
-      const { data } = await getLectureGrades(lectureId, gradeType);
-      return Promise.resolve(data.myLecture);
+      const { data } = await getLectureGrades(lectureId, gradeType)
+      return Promise.resolve(data.myLecture)
     } catch (err) {
-      return rejectWithValue(err);
+      return rejectWithValue(err)
     }
   },
-);
+)
 
 const GradeSlice = createSlice({
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(fetchGradesByLectureId.pending, state => {
-        state.isLoading = true;
+      .addCase(fetchGradesByLectureId.pending, (state) => {
+        state.isLoading = true
       })
 
       .addCase(fetchGradesByLectureId.fulfilled, (state, action) => {
-        const lecture = action.payload;
+        const lecture = action.payload
 
-        state.lecture = lecture;
+        state.lecture = lecture
 
         if (lecture) {
           // ? 데일리 성적 출력시 사용할 라벨 그룹
-          const labelGroups: GradeFormLabelGroup[] = [];
-          state.lecture.gradeFormLabels.forEach(label => {
+          const labelGroups: GradeFormLabelGroup[] = []
+          state.lecture.gradeFormLabels.forEach((label) => {
             const labelGroup = labelGroups.find(
-              item => item.type === label.type,
-            );
+              (item) => item.type === label.type,
+            )
             if (labelGroup) {
-              labelGroup.children.push(label);
+              labelGroup.children.push(label)
             } else {
-              labelGroups.push({ type: label.type, children: [label] });
+              labelGroups.push({ type: label.type, children: [label] })
             }
-          });
-          state.labelGroups = labelGroups;
+          })
+          state.labelGroups = labelGroups
 
           // ? 누적 성적 그래프 태그 기본값 설정
-          state.testLabels = lecture.gradeFormLabels.filter(item => {
+          state.testLabels = lecture.gradeFormLabels.filter((item) => {
             return action.meta.arg.gradeType === GradeType.DEFAULT
               ? item.type === '테스트'
-              : item.type === '과제성적';
-          });
+              : item.type === '과제성적'
+          })
         }
-        state.isLoading = false;
+        state.isLoading = false
       })
 
-      .addCase(fetchGradesByLectureId.rejected, state => {
-        state.lecture = null;
-        state.isLoading = false;
-      });
+      .addCase(fetchGradesByLectureId.rejected, (state) => {
+        state.lecture = null
+        state.isLoading = false
+      })
   },
   initialState,
   name: 'lecture',
   reducers: {
     setActiveTab: (state, action: PayloadAction<GradeTab>) => {
-      state.activeTab = action.payload;
+      state.activeTab = action.payload
     },
 
     setGradeType: (state, action: PayloadAction<GradeType>) => {
-      state.gradeType = action.payload;
+      state.gradeType = action.payload
     },
 
     setLabel: (
       state,
       action: PayloadAction<LectureGradeFormLabel | undefined>,
     ) => {
-      const selectedLabel = action.payload;
+      const selectedLabel = action.payload
 
-      state.selectedLabel = selectedLabel;
+      state.selectedLabel = selectedLabel
 
       // ? 차트 데이터 계산
-      const data: LectureGradeStatistics[] = [];
+      const data: LectureGradeStatistics[] = []
 
       if (state.lecture && selectedLabel) {
         state.selectedLabel = {
           ...selectedLabel,
           comment: state.lecture.myLabelComments.find(
-            item => item.labelId === selectedLabel.id,
+            (item) => item.labelId === selectedLabel.id,
           )?.comment,
-        };
+        }
 
-        state.lecture.lessons.forEach(lesson => {
+        state.lecture.lessons.forEach((lesson) => {
           const gradeData = lesson.myLessonGrade?.data?.find(
-            item => item.id === selectedLabel.id,
-          );
+            (item) => item.id === selectedLabel.id,
+          )
 
           const top30Data = lesson.topThirtyPercentGrades.find(
-            item => item.labelId === selectedLabel.id,
-          );
+            (item) => item.labelId === selectedLabel.id,
+          )
 
           const highestData = lesson.topGrades.find(
-            item => item.labelId === selectedLabel.id,
-          );
+            (item) => item.labelId === selectedLabel.id,
+          )
 
           data.push({
             id: selectedLabel.id,
@@ -160,21 +160,21 @@ const GradeSlice = createSlice({
               calculator.rates(gradeData?.value, gradeData?.maxValue) || null,
             top30: calculator.rates(top30Data?.value, gradeData?.maxValue),
             highest: calculator.rates(highestData?.value, gradeData?.maxValue),
-          });
-        });
+          })
+        })
       }
 
       const chartLength =
-        data.filter(item => item.value && item.maxValue).length > 8 ? 16 : 8;
-      state.statistics = data.filter((_, i) => i < chartLength);
+        data.filter((item) => item.value && item.maxValue).length > 8 ? 16 : 8
+      state.statistics = data.filter((_, i) => i < chartLength)
     },
 
     setLabelColor: (state, action: PayloadAction<string | undefined>) => {
-      state.labelColor = action.payload;
+      state.labelColor = action.payload
     },
   },
-});
+})
 
 export const { setActiveTab, setGradeType, setLabel, setLabelColor } =
-  GradeSlice.actions;
-export default GradeSlice;
+  GradeSlice.actions
+export default GradeSlice

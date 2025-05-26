@@ -1,25 +1,25 @@
-import { css } from '@emotion/react';
-import { Tabs } from 'antd';
+import { css } from '@emotion/react'
+import { Tabs } from 'antd'
 
-import Headline from '~/components/typography/Headline.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useGrades from '~/hooks/useGrades.ts';
+import Headline from '~/components/typography/Headline.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useGrades from '~/hooks/useGrades.ts'
 
-import type { GradeTab } from '~/stores/GradeSlice.ts';
+import type { GradeTab } from '~/stores/GradeSlice.ts'
 
 const GRADE_TABS: Array<{
-  key: GradeTab;
-  label: string;
+  key: GradeTab
+  label: string
 }> = [
   { key: 'daily', label: '데일리 성적' },
   { key: 'total', label: '누적 성적' },
-];
+]
 
 function GradeHeader() {
   const {
     state: { activeTab },
     handleChangeTab,
-  } = useGrades();
+  } = useGrades()
 
   return (
     <header css={styles.header}>
@@ -32,10 +32,10 @@ function GradeHeader() {
         defaultActiveKey={activeTab}
         indicator={{ align: 'center', size: 168 }}
         items={GRADE_TABS}
-        onChange={activeKey => handleChangeTab(activeKey as GradeTab)}
+        onChange={(activeKey) => handleChangeTab(activeKey as GradeTab)}
       />
     </header>
-  );
+  )
 }
 
 const styles = {
@@ -103,6 +103,6 @@ const styles = {
       }
     }
   `,
-};
+}
 
-export default GradeHeader;
+export default GradeHeader

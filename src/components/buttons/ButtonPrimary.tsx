@@ -1,12 +1,12 @@
-import { css } from '@emotion/react';
-import { Button } from 'antd';
+import { css } from '@emotion/react'
+import { Button } from 'antd'
 
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { ButtonProps } from 'antd';
+import type { ButtonProps } from 'antd'
 
 interface ButtonPrimaryProps extends Omit<ButtonProps, 'type' | 'size'> {
-  size?: 'small' | 'medium';
+  size?: 'small' | 'medium'
 }
 
 function ButtonPrimary({
@@ -24,7 +24,7 @@ function ButtonPrimary({
     >
       {children}
     </Button>
-  );
+  )
 }
 
 const styles = {
@@ -56,6 +56,6 @@ const styles = {
     height: 52px;
     font-weight: 700;
   `,
-};
+}
 
-export default ButtonPrimary;
+export default ButtonPrimary

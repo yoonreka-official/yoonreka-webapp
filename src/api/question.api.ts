@@ -1,8 +1,8 @@
-import { gql } from '@apollo/client';
+import { gql } from '@apollo/client'
 
-import { appolo } from '~/utils/apollo.util.ts';
+import { appolo } from '~/utils/apollo.util.ts'
 
-import type { QuestionBody, QuestionParams } from '~/types/question.type.ts';
+import type { QuestionBody, QuestionParams } from '~/types/question.type.ts'
 
 export const getMyQuestions = (filter: QuestionParams) => {
   // eslint-disable-next-line
@@ -29,8 +29,8 @@ export const getMyQuestions = (filter: QuestionParams) => {
     `,
     fetchPolicy: 'no-cache',
     variables: { filter },
-  });
-};
+  })
+}
 
 export const createQuestion = (input: QuestionBody) => {
   return appolo.mutate({
@@ -44,5 +44,5 @@ export const createQuestion = (input: QuestionBody) => {
     variables: {
       input,
     },
-  });
-};
+  })
+}

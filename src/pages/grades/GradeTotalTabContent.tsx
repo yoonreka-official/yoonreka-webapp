@@ -1,16 +1,16 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import Flex from '~/components/display/Flex.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useGrades from '~/hooks/useGrades.ts';
-import DefaultChart from '~/pages/grades/DefaultChart.tsx';
-import { formatDate } from '~/utils/format.util.ts';
+import Flex from '~/components/display/Flex.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useGrades from '~/hooks/useGrades.ts'
+import DefaultChart from '~/pages/grades/DefaultChart.tsx'
+import { formatDate } from '~/utils/format.util.ts'
 
 function GradeTotalTabContent() {
   const {
     state: { selectedLabel, statistics },
-  } = useGrades();
+  } = useGrades()
 
   return (
     <Flex direction="column" gap={28} style={{ marginTop: 28 }}>
@@ -95,7 +95,7 @@ function GradeTotalTabContent() {
         </div>
       </section>
     </Flex>
-  );
+  )
 }
 const styles = {
   container: css`
@@ -138,6 +138,6 @@ const styles = {
       letter-spacing: -0.2px;
     }
   `,
-};
+}
 
-export default GradeTotalTabContent;
+export default GradeTotalTabContent

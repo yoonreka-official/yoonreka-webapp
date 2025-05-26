@@ -1,17 +1,17 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import CardBase from '~/components/cards/CardBase.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useSchedules from '~/hooks/useSchedules.ts';
-import ScheduleLesson from '~/pages/schedules/ScheduleLesson.tsx';
+import CardBase from '~/components/cards/CardBase.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useSchedules from '~/hooks/useSchedules.ts'
+import ScheduleLesson from '~/pages/schedules/ScheduleLesson.tsx'
 
 function ScheduleDailyLessons() {
   const {
     state: { selectedDate, selectedEvents },
-  } = useSchedules();
+  } = useSchedules()
 
   return (
     selectedDate && (
@@ -37,7 +37,7 @@ function ScheduleDailyLessons() {
         </Flex>
       </CardBase>
     )
-  );
+  )
 }
 
 const styles = {
@@ -46,6 +46,6 @@ const styles = {
     padding-bottom: 4px;
     margin-bottom: 10px;
   `,
-};
+}
 
-export default ScheduleDailyLessons;
+export default ScheduleDailyLessons

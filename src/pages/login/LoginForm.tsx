@@ -1,22 +1,22 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import FormBase, { FormItem, useForm } from '~/components/forms/FormBase.tsx';
-import Checkbox from '~/components/inputs/Checkbox.tsx';
-import InputPassword from '~/components/inputs/InputPassword.tsx';
-import InputText from '~/components/inputs/InputText.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useAuth from '~/hooks/useAuth.tsx';
-import dialog from '~/utils/dialog.util.tsx';
-import rules from '~/utils/rules.util.ts';
+import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import FormBase, { FormItem, useForm } from '~/components/forms/FormBase.tsx'
+import Checkbox from '~/components/inputs/Checkbox.tsx'
+import InputPassword from '~/components/inputs/InputPassword.tsx'
+import InputText from '~/components/inputs/InputText.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useAuth from '~/hooks/useAuth.tsx'
+import dialog from '~/utils/dialog.util.tsx'
+import rules from '~/utils/rules.util.ts'
 
-import type { LoginInput } from '~/types/auth.type.ts';
+import type { LoginInput } from '~/types/auth.type.ts'
 
 function LoginForm() {
-  const [form] = useForm<LoginInput>();
+  const [form] = useForm<LoginInput>()
 
-  const { handleLogin } = useAuth();
+  const { handleLogin } = useAuth()
 
   return (
     <FormBase form={form} onFinish={handleLogin}>
@@ -49,7 +49,7 @@ function LoginForm() {
         </button>
       </Flex>
     </FormBase>
-  );
+  )
 }
 
 const styles = {
@@ -67,6 +67,6 @@ const styles = {
       color: ${COLORS.POINT.PRIMARY};
     }
   `,
-};
+}
 
-export default LoginForm;
+export default LoginForm

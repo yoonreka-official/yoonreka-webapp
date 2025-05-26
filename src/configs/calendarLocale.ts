@@ -1,4 +1,4 @@
-import type { PickerLocale } from 'antd/es/date-picker/generatePicker';
+import type { PickerLocale } from 'antd/es/date-picker/generatePicker'
 
 const locale: PickerLocale = {
   dateFormat: 'YYYY-MM-DD',
@@ -55,6 +55,6 @@ const locale: PickerLocale = {
     placeholder: '시간을 선택하세요',
   },
   weekFormat: 'YYYY-wo',
-};
+}
 
-export default locale;
+export default locale

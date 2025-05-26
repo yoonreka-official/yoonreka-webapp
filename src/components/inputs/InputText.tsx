@@ -1,19 +1,19 @@
-import { css } from '@emotion/react';
-import { Input } from 'antd';
+import { css } from '@emotion/react'
+import { Input } from 'antd'
 
-import IconClear20 from '~/assets/svg/icon_clear_20.svg?react';
-import { useFormInstance } from '~/components/forms/FormBase.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import IconClear20 from '~/assets/svg/icon_clear_20.svg?react'
+import { useFormInstance } from '~/components/forms/FormBase.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { InputProps } from 'antd';
+import type { InputProps } from 'antd'
 
 export interface InputTextProps
   extends Omit<InputProps, 'size' | 'status' | 'value'> {
-  value?: string;
+  value?: string
 }
 
 function InputText({ id, value, allowClear = true, ...props }: InputTextProps) {
-  const form = useFormInstance();
+  const form = useFormInstance()
 
   return (
     <Input
@@ -27,7 +27,7 @@ function InputText({ id, value, allowClear = true, ...props }: InputTextProps) {
       }
       {...props}
     />
-  );
+  )
 }
 
 export const textInputStyle = css`
@@ -103,10 +103,10 @@ export const textInputStyle = css`
       background: ${COLORS.BG.BACKGROUND};
     }
   }
-`;
+`
 
 export const clearIcon = css`
   margin: 0 !important;
-`;
+`
 
-export default InputText;
+export default InputText

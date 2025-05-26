@@ -1,15 +1,15 @@
-import { css } from '@emotion/react';
+import { css } from '@emotion/react'
 
-import { COLORS } from '~/configs/theme.ts';
+import { COLORS } from '~/configs/theme.ts'
 
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react'
 
 export interface ButtonNavProps {
-  children?: ReactNode;
-  className?: string;
-  disabled?: boolean;
-  style?: CSSProperties;
-  onClick?: () => void;
+  children?: ReactNode
+  className?: string
+  disabled?: boolean
+  style?: CSSProperties
+  onClick?: () => void
 }
 
 function ButtonNav({
@@ -29,7 +29,7 @@ function ButtonNav({
     >
       {children}
     </button>
-  );
+  )
 }
 
 const buttonNavStyles = css`
@@ -54,6 +54,6 @@ const buttonNavStyles = css`
     background: ${COLORS.BG['03']};
     color: ${COLORS.BG['04']};
   }
-`;
+`
 
-export default ButtonNav;
+export default ButtonNav

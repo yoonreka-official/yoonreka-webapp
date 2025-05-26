@@ -10,8 +10,8 @@ module.exports = {
     'airbnb/hooks',
     'plugin:prettier/recommended',
     'plugin:react/recommended',
-    "plugin:import/recommended",
-    "plugin:import/typescript",
+    'plugin:import/recommended',
+    'plugin:import/typescript',
   ],
   globals: {
     JSX: true,
@@ -20,15 +20,16 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
-      "jsx": true // JSX 지원하도록 설정
+      jsx: true, // JSX 지원하도록 설정
     },
-    sourceType: "module", // eslint-plugin-import 필수 설정 1
+    sourceType: 'module', // eslint-plugin-import 필수 설정 1
     ecmaVersion: 2020, // eslint-plugin-import 필수 설정 2
   },
 
   plugins: ['@typescript-eslint', 'react-hooks', 'prettier', 'perfectionist'],
   root: true,
   rules: {
+    '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/consistent-type-imports': [
       'warn',
       {
@@ -37,6 +38,18 @@ module.exports = {
     ],
     '@typescript-eslint/naming-convention': [
       'warn',
+      {
+        selector: 'enumMember',
+        format: ['PascalCase'], // 또는 'strictCamelCase'
+      },
+      {
+        selector: 'property',
+        format: ['camelCase'],
+        filter: {
+          regex: '^__typename$',
+          match: false,
+        },
+      },
       {
         selector: 'default',
         format: ['camelCase'],
@@ -76,14 +89,14 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': [
       'warn',
       {
-        "args": "all",
-        "argsIgnorePattern": "^_",
-        "caughtErrors": "none",
-        "caughtErrorsIgnorePattern": "^_",
-        "destructuredArrayIgnorePattern": "^_",
-        "varsIgnorePattern": "^_",
-        "ignoreRestSiblings": true
-      }
+        args: 'all',
+        argsIgnorePattern: '^_',
+        caughtErrors: 'none',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
     ],
     'comma-dangle': 0,
     'consistent-return': 0,
@@ -93,7 +106,6 @@ module.exports = {
     'jsx-a11y/click-events-have-key-events': 0,
     'jsx-a11y/no-static-element-interactions': 0,
     'no-console': 0,
-    'no-extra-semi': 0,
     'no-nested-ternary': 0,
     'no-param-reassign': ['error', { props: false }],
     'no-shadow': 0,
@@ -151,7 +163,15 @@ module.exports = {
           primary: '{key,id,title,label}',
           secondary: '{path,}',
         },
-        groups: ['primary', 'secondary', 'form1', 'form2', 'unknown', 'shorthand', 'callback'],
+        groups: [
+          'primary',
+          'secondary',
+          'form1',
+          'form2',
+          'unknown',
+          'shorthand',
+          'callback',
+        ],
         ignoreCase: true,
         ignorePattern: [],
         order: 'asc',
@@ -161,7 +181,10 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'off',
     'react/no-unused-prop-types': 0,
     'react/button-has-type': 0,
-    'react/jsx-curly-brace-presence': [1, { children: 'never', props: 'never' }],
+    'react/jsx-curly-brace-presence': [
+      1,
+      { children: 'never', props: 'never' },
+    ],
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
     'react/jsx-props-no-spreading': 0,
     'react/jsx-sort-props': 0,
@@ -174,8 +197,8 @@ module.exports = {
   },
 
   settings: {
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
     'import/resolver': {
       typescript: {
@@ -186,5 +209,5 @@ module.exports = {
         extensions: ['.ts', '.tsx'],
       },
     },
-  }
-};
+  },
+}

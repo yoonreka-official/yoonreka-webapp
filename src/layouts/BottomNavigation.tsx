@@ -1,14 +1,14 @@
-import { css } from '@emotion/react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { css } from '@emotion/react'
+import { NavLink, useLocation } from 'react-router-dom'
 
-import IconGrades from '~/assets/svg/icon_grades.svg?react';
-import IconMore from '~/assets/svg/icon_more.svg?react';
-import IconQuestions from '~/assets/svg/icon_questions.svg?react';
-import IconSchedules from '~/assets/svg/icon_schedules.svg?react';
-import IconStudies from '~/assets/svg/icon_studies.svg?react';
-import Flex from '~/components/display/Flex.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import { COLORS, LAYOUT } from '~/configs/theme.ts';
+import IconGrades from '~/assets/svg/icon_grades.svg?react'
+import IconMore from '~/assets/svg/icon_more.svg?react'
+import IconQuestions from '~/assets/svg/icon_questions.svg?react'
+import IconSchedules from '~/assets/svg/icon_schedules.svg?react'
+import IconStudies from '~/assets/svg/icon_studies.svg?react'
+import Flex from '~/components/display/Flex.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import { COLORS, LAYOUT } from '~/configs/theme.ts'
 
 const NAV_ITEMS = [
   {
@@ -36,15 +36,15 @@ const NAV_ITEMS = [
     path: '/more',
     icon: <IconMore />,
   },
-];
+]
 
 function BottomNavigation() {
-  const { pathname } = useLocation();
+  const { pathname } = useLocation()
 
   return (
     <nav css={styles.bottomNavigation}>
       <Flex justify="space-between">
-        {NAV_ITEMS.map(item => (
+        {NAV_ITEMS.map((item) => (
           <NavLink key={item.path} to={item.path}>
             <Flex
               css={styles.navItem(item.path === pathname)}
@@ -63,7 +63,7 @@ function BottomNavigation() {
         ))}
       </Flex>
     </nav>
-  );
+  )
 }
 
 const styles = {
@@ -100,6 +100,6 @@ const styles = {
       color: ${active ? COLORS.POINT.PRIMARY : COLORS.FONT['20']};
     }
   `,
-};
+}
 
-export default BottomNavigation;
+export default BottomNavigation

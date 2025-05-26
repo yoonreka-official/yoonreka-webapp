@@ -1,15 +1,15 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Outlet } from 'react-router-dom'
 
-import AppConfig from '~/configs/AppConfig.tsx';
-import RootBoundary from '~/errors/RootBoundary';
-import AuthGuard from '~/guards/AuthGuard';
-import LayoutDefault from '~/layouts/LayoutDefault.tsx';
-import GradesPage from '~/pages/grades';
-import LecturesPage from '~/pages/lectures';
-import LoginPage from '~/pages/login';
-import MorePage from '~/pages/more';
-import QuestionsPage from '~/pages/questions';
-import SchedulesPage from '~/pages/schedules';
+import AppConfig from '~/configs/AppConfig.tsx'
+import RootBoundary from '~/errors/RootBoundary'
+import AuthGuard from '~/guards/AuthGuard'
+import LayoutDefault from '~/layouts/LayoutDefault.tsx'
+import GradesPage from '~/pages/grades'
+import LecturesPage from '~/pages/lectures'
+import LoginPage from '~/pages/login'
+import MorePage from '~/pages/more'
+import QuestionsPage from '~/pages/questions'
+import SchedulesPage from '~/pages/schedules'
 
 // const LoginPage = lazy(() => import('~/pages/login'));
 //
@@ -68,6 +68,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+])
 
-export default router;
+export default router

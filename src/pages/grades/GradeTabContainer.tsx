@@ -1,22 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect } from 'react'
 
-import useGrades from '~/hooks/useGrades.ts';
-import useScroll from '~/hooks/useScroll.ts';
-import GradeDailyTab from '~/pages/grades/GradeDailyTab.tsx';
-import GradeTotalTab from '~/pages/grades/GradeTotalTab.tsx';
+import useGrades from '~/hooks/useGrades.ts'
+import useScroll from '~/hooks/useScroll.ts'
+import GradeDailyTab from '~/pages/grades/GradeDailyTab.tsx'
+import GradeTotalTab from '~/pages/grades/GradeTotalTab.tsx'
 
 function GradeTabContainer() {
   const {
     state: { activeTab },
-  } = useGrades();
+  } = useGrades()
 
-  const { reset: scrollReset } = useScroll();
+  const { reset: scrollReset } = useScroll()
 
   useEffect(() => {
-    scrollReset();
-  }, [activeTab]);
+    scrollReset()
+  }, [activeTab])
 
-  return activeTab === 'daily' ? <GradeDailyTab /> : <GradeTotalTab />;
+  return activeTab === 'daily' ? <GradeDailyTab /> : <GradeTotalTab />
 }
 
-export default GradeTabContainer;
+export default GradeTabContainer

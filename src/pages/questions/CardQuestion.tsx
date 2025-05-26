@@ -1,35 +1,35 @@
-import { css } from '@emotion/react';
-import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { css } from '@emotion/react'
+import dayjs from 'dayjs'
+import { useEffect, useState } from 'react'
 
-import CardBase from '~/components/cards/CardBase.tsx';
-import Flex from '~/components/display/Flex.tsx';
-import Body from '~/components/typography/Body.tsx';
-import Caption from '~/components/typography/Caption.tsx';
-import StatusTag from '~/components/utils/StatusTag.tsx';
-import { COLORS } from '~/configs/theme.ts';
+import CardBase from '~/components/cards/CardBase.tsx'
+import Flex from '~/components/display/Flex.tsx'
+import Body from '~/components/typography/Body.tsx'
+import Caption from '~/components/typography/Caption.tsx'
+import StatusTag from '~/components/utils/StatusTag.tsx'
+import { COLORS } from '~/configs/theme.ts'
 
-import type { CardBaseProps } from '~/components/cards/CardBase.tsx';
+import type { CardBaseProps } from '~/components/cards/CardBase.tsx'
 
 export interface CardQuestionProps extends CardBaseProps {
   // eslint-disable-next-line
-  question: any;
-  onChange?: (open: boolean) => void;
+  question: any
+  onChange?: (open: boolean) => void
 }
 
 function CardQuestion({ question, className, onChange }: CardQuestionProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   const toggle = () => {
-    setOpen(!open);
-    onChange?.(!open);
-  };
+    setOpen(!open)
+    onChange?.(!open)
+  }
 
   useEffect(() => {
     return () => {
-      setOpen(false);
-    };
-  }, []);
+      setOpen(false)
+    }
+  }, [])
 
   return (
     <CardBase className={className} css={styles.cardCollapse}>
@@ -80,7 +80,7 @@ function CardQuestion({ question, className, onChange }: CardQuestionProps) {
         )}
       </div>
     </CardBase>
-  );
+  )
 }
 
 const styles = {
@@ -148,6 +148,6 @@ const styles = {
     color: ${COLORS.POINT.PRIMARY};
     word-break: break-all;
   `,
-};
+}
 
-export default CardQuestion;
+export default CardQuestion

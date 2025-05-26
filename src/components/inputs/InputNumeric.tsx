@@ -1,11 +1,11 @@
-import { Input } from 'antd';
-import isInt from 'validator/es/lib/isInt';
+import { Input } from 'antd'
+import isInt from 'validator/es/lib/isInt'
 
-import IconClear20 from '~/assets/svg/icon_clear_20.svg?react';
-import { useFormInstance } from '~/components/forms/FormBase.tsx';
-import { clearIcon, textInputStyle } from '~/components/inputs/InputText.tsx';
+import IconClear20 from '~/assets/svg/icon_clear_20.svg?react'
+import { useFormInstance } from '~/components/forms/FormBase.tsx'
+import { clearIcon, textInputStyle } from '~/components/inputs/InputText.tsx'
 
-import type { InputProps } from 'antd';
+import type { InputProps } from 'antd'
 
 const ALLOW_KEYS = [
   'Backspace',
@@ -19,11 +19,11 @@ const ALLOW_KEYS = [
   'Control',
   'Meta',
   // '.',
-];
+]
 
 export interface InputNumericProps
   extends Omit<InputProps, 'size' | 'status' | 'inputMode' | 'onChange'> {
-  onChange?: (value?: number) => void;
+  onChange?: (value?: number) => void
 }
 
 function InputNumeric({
@@ -34,7 +34,7 @@ function InputNumeric({
   onChange,
   ...props
 }: InputNumericProps) {
-  const form = useFormInstance();
+  const form = useFormInstance()
 
   return (
     <Input
@@ -48,35 +48,35 @@ function InputNumeric({
         ) : undefined
       }
       type="tel"
-      onChange={e => {
+      onChange={(e) => {
         if (!e.target.value) {
-          onChange?.(undefined);
-          return;
+          onChange?.(undefined)
+          return
         }
 
         if (Number.isNaN(Number(e.target.value))) {
-          return;
+          return
         }
 
-        onChange?.(Number(e.target.value));
+        onChange?.(Number(e.target.value))
       }}
-      onKeyDown={event => {
+      onKeyDown={(event) => {
         if (ALLOW_KEYS.includes(event.key)) {
-          console.log(1);
-          return;
+          console.log(1)
+          return
         }
 
         if (!isInt(event.key)) {
-          console.log(2);
-          event.preventDefault();
-          return;
+          console.log(2)
+          event.preventDefault()
+          return
         }
-        console.log(3);
-        onKeyDown?.(event);
+        console.log(3)
+        onKeyDown?.(event)
       }}
       {...props}
     />
-  );
+  )
 }
 
-export default InputNumeric;
+export default InputNumeric

@@ -1,17 +1,17 @@
-import InputSegmented from '~/components/inputs/InputSegmented.tsx';
-import useInvoices from '~/hooks/useInvoices.ts';
-import { InvoiceType } from '~/types/invoice.type.ts';
+import InputSegmented from '~/components/inputs/InputSegmented.tsx'
+import useInvoices from '~/hooks/useInvoices.ts'
+import { InvoiceType } from '~/types/invoice.type.ts'
 
 const INVOICE_TYPES: Array<{ value: InvoiceType; label: string }> = [
   { value: InvoiceType.LECTURE, label: '원비' },
   { value: InvoiceType.BOOK, label: '교재비' },
-];
+]
 
 function InvoiceFilter() {
   const {
     state: { invoiceType },
     handleInvoiceType,
-  } = useInvoices();
+  } = useInvoices()
 
   return (
     <div>
@@ -21,7 +21,7 @@ function InvoiceFilter() {
         onChange={handleInvoiceType}
       />
     </div>
-  );
+  )
 }
 
-export default InvoiceFilter;
+export default InvoiceFilter

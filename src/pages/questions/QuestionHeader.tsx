@@ -1,32 +1,32 @@
-import { css } from '@emotion/react';
-import { Tabs } from 'antd';
-import { useEffect, useState } from 'react';
+import { css } from '@emotion/react'
+import { Tabs } from 'antd'
+import { useEffect, useState } from 'react'
 
-import IconQuestions from '~/assets/svg/icon_questions.svg?react';
-import ButtonNav from '~/components/buttons/ButtonNav.tsx';
-import Headline from '~/components/typography/Headline.tsx';
-import { COLORS } from '~/configs/theme.ts';
-import useQuestions from '~/hooks/useQuestions.ts';
-import useScroll from '~/hooks/useScroll.ts';
-import DrawerQuestionCreate from '~/pages/questions/DrawerQuestionCreate.tsx';
-import { QuestionUser } from '~/types/question.type.ts';
+import IconQuestions from '~/assets/svg/icon_questions.svg?react'
+import ButtonNav from '~/components/buttons/ButtonNav.tsx'
+import Headline from '~/components/typography/Headline.tsx'
+import { COLORS } from '~/configs/theme.ts'
+import useQuestions from '~/hooks/useQuestions.ts'
+import useScroll from '~/hooks/useScroll.ts'
+import DrawerQuestionCreate from '~/pages/questions/DrawerQuestionCreate.tsx'
+import { QuestionUser } from '~/types/question.type.ts'
 
 const QUESTION_TABS = [
   { key: QuestionUser.STUDENT, label: '학생' },
   { key: QuestionUser.PARENT, label: '학부모' },
-];
+]
 
 function QuestionHeader() {
-  const [type, setType] = useState<string>(QuestionUser.STUDENT);
-  const [open, setOpen] = useState<boolean>(false);
+  const [type, setType] = useState<string>(QuestionUser.STUDENT)
+  const [open, setOpen] = useState<boolean>(false)
 
-  const { fetchData } = useQuestions();
+  const { fetchData } = useQuestions()
 
-  const { reset: scrollReset } = useScroll();
+  const { reset: scrollReset } = useScroll()
 
   useEffect(() => {
-    scrollReset();
-  }, [type]);
+    scrollReset()
+  }, [type])
 
   return (
     <header css={styles.header}>
@@ -44,15 +44,15 @@ function QuestionHeader() {
         defaultActiveKey={QuestionUser.STUDENT}
         indicator={{ align: 'center', size: 168 }}
         items={QUESTION_TABS}
-        onChange={activeKey => {
-          setType(activeKey);
-          fetchData(activeKey as QuestionUser);
+        onChange={(activeKey) => {
+          setType(activeKey)
+          fetchData(activeKey as QuestionUser)
         }}
       />
 
       <DrawerQuestionCreate open={open} onClose={() => setOpen(false)} />
     </header>
-  );
+  )
 }
 
 const styles = {
@@ -122,6 +122,6 @@ const styles = {
       }
     }
   `,
-};
+}
 
-export default QuestionHeader;
+export default QuestionHeader

@@ -1,66 +1,66 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
-import { getMyQuestions } from '~/api/question.api.ts';
-import { QuestionUser } from '~/types/question.type.ts';
+import { getMyQuestions } from '~/api/question.api.ts'
+import { QuestionUser } from '~/types/question.type.ts'
 
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit'
 
 export interface QuestionState {
-  isLoading: boolean;
+  isLoading: boolean
   // eslint-disable-next-line
   list: any[];
 
-  selectedUserType: QuestionUser;
-  selectedLectureId?: string;
+  selectedUserType: QuestionUser
+  selectedLectureId?: string
 }
 
 const initialState: QuestionState = {
   list: [],
   isLoading: false,
   selectedUserType: QuestionUser.STUDENT,
-};
+}
 
 // eslint-disable-next-line
 export const fetchQuestions = createAsyncThunk<any[], QuestionUser>(
   'question/fetchMyQuestions',
   async (userType, { rejectWithValue }) => {
     try {
-      const { data } = await getMyQuestions({ whoes: userType });
-      return Promise.resolve(data.myInquiries);
+      const { data } = await getMyQuestions({ whoes: userType })
+      return Promise.resolve(data.myInquiries)
     } catch (err) {
-      return rejectWithValue(err);
+      return rejectWithValue(err)
     }
   },
-);
+)
 
 const QuestionSlice = createSlice({
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(fetchQuestions.pending, state => {
-        state.isLoading = true;
+      .addCase(fetchQuestions.pending, (state) => {
+        state.isLoading = true
       })
 
       .addCase(fetchQuestions.fulfilled, (state, action) => {
-        state.list = action.payload;
-        state.isLoading = false;
+        state.list = action.payload
+        state.isLoading = false
       })
 
-      .addCase(fetchQuestions.rejected, state => {
-        state.list = [];
-        state.isLoading = false;
-      });
+      .addCase(fetchQuestions.rejected, (state) => {
+        state.list = []
+        state.isLoading = false
+      })
   },
   initialState,
   name: 'question',
   reducers: {
     setLectureId: (state, action: PayloadAction<string | undefined>) => {
-      state.selectedLectureId = action.payload;
+      state.selectedLectureId = action.payload
     },
     setSelectedUserType: (state, action: PayloadAction<QuestionUser>) => {
-      state.selectedUserType = action.payload;
+      state.selectedUserType = action.payload
     },
   },
-});
+})
 
-export const { setLectureId, setSelectedUserType } = QuestionSlice.actions;
-export default QuestionSlice;
+export const { setLectureId, setSelectedUserType } = QuestionSlice.actions
+export default QuestionSlice
