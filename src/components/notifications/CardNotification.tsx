@@ -12,6 +12,7 @@ import { COLORS } from '~/configs/theme.ts'
 import { NotificationTypeName } from '~/types/notification.type.ts'
 import { formatDate } from '~/utils/format.util.ts'
 
+import clsx from 'clsx'
 import type { AttachmentFile } from '~/types/lectures.type.ts'
 import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts'
 
@@ -23,6 +24,7 @@ interface Props {
   attachments: Nullable<AttachmentFile[]>
   link?: NullableString
   isNew?: boolean
+  pinned?: boolean
 }
 
 export default function CardNotification({
@@ -33,9 +35,11 @@ export default function CardNotification({
   attachments,
   link,
   isNew,
+  pinned,
 }: Props) {
   return (
     <CardCollapse
+      className={clsx('relative', pinned && 'border-red-100 border')}
       title={
         <Flex direction="column" gap={4} justify="center">
           <Body size={14} weight="bold">
@@ -55,6 +59,8 @@ export default function CardNotification({
         </Flex>
       }
     >
+      {pinned && <span className="absolute top-0 right-0">📌</span>}
+
       {description}
 
       {link && (

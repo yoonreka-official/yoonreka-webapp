@@ -1,4 +1,6 @@
+import { useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
+import { useMemo } from 'react'
 
 import ButtonNav from '~/components/buttons/ButtonNav.tsx'
 import CardInvoice from '~/components/notifications/CardInvoice.tsx'
@@ -11,6 +13,8 @@ import useNotifications from '~/hooks/useNotifications.ts'
 import useScroll from '~/hooks/useScroll.ts'
 import Container from '~/layouts/Container.tsx'
 import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
+import { GetMyNoticesDocument } from '~/types/api'
+import { AttachmentFile } from '~/types/lectures.type'
 import {
   NotificationType,
   NotificationTypeName,
@@ -35,6 +39,14 @@ const getNotificationTypeLabel = (type: NotificationType | 'ALL') => {
 }
 
 export default function NotificationAllList() {
+  const { previousData, data = previousData } = useQuery(GetMyNoticesDocument, {
+    fetchPolicy: 'no-cache',
+  })
+  const pinnedNotices = useMemo(
+    () => data?.myNotices?.filter((notice) => notice.pinned) ?? [],
+    [data],
+  )
+
   const {
     state: { isLoading, list, selectedType, pageInfo, params },
     setReadId,
@@ -113,7 +125,25 @@ export default function NotificationAllList() {
         />
       )}
 
-      {list.map((item) => renderNotification(item))}
+      {pinnedNotices.map((notice) => (
+        <CardNotification
+          key={notice.id}
+          title={notice.title}
+          attachments={notice.attachments as unknown as AttachmentFile[]}
+          createdAt={notice.createdAt}
+          description={notice.description}
+          link={notice.link}
+          type={NotificationTypeName.NOTICE}
+          pinned={true}
+        />
+      ))}
+
+      {list
+        .filter(
+          (item) =>
+            !pinnedNotices.map(({ id }) => id).includes(item.notice?.id ?? ''),
+        )
+        .map((item) => renderNotification(item))}
 
       {pageInfo.hasNextPage && (
         <ButtonNav
@@ -150,7 +180,7 @@ export default function NotificationAllList() {
 
 const styles = {
   notificationContainer: css`
-    padding: 114px 14px 12px;
+    padding: 120px 14px 12px;
 
     &:after {
       content: '';

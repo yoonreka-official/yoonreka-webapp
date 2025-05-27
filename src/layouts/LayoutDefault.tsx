@@ -8,7 +8,7 @@ export default function LayoutDefault() {
   const isLoading = useAppSelector((state) => state.layout.isLoading)
 
   return (
-    <div className="h-full flex flex-col max-w-md mx-auto">
+    <div className="h-full flex flex-col max-w-md mx-auto relative">
       <main className="grow">
         <Outlet />
       </main>

@@ -3,7 +3,7 @@ import { Drawer, Tabs } from 'antd'
 import { useEffect } from 'react'
 
 import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
-import NotificationAllList from '~/components/notifications/NotificationList.tsx'
+import NotificationAllList from '~/components/notifications/NotificationAllList'
 import { COLORS } from '~/configs/theme.ts'
 import useNotifications from '~/hooks/useNotifications.ts'
 import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
@@ -58,6 +58,7 @@ function DrawerNotifications({
 
   return (
     <Drawer
+      getContainer={false}
       closable={false}
       css={styles.drawer}
       open={open}
@@ -128,6 +129,7 @@ const styles = {
     top: 0;
     left: 0;
     right: 0;
+    z-index: 1000;
   `,
 
   titleBar: css`

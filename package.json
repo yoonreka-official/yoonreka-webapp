@@ -18,6 +18,7 @@
     ]
   },
   "dependencies": {
+    "@ant-design/icons": "5.x",
     "@apollo/client": "^3.12.11",
     "@emotion/react": "^11.14.0",
     "@naverpay/react-pdf": "^0.3.4",

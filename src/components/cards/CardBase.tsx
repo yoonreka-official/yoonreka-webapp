@@ -18,7 +18,7 @@ function CardBase({ id, children, className }: CardBaseProps) {
 
 const styles = {
   cardBase: css`
-    padding: 16px;
+    padding: 14px 14px;
     background: #fff;
     border-radius: 20px;
     box-shadow: 0px 4px 20px 0px rgba(206, 218, 241, 0.4);

@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
 
+import { useMemo } from 'react'
 import NotificationLoading from '~/components/notifications/NotificationLoading.tsx'
 import Body from '~/components/typography/Body.tsx'
 import NoData from '~/components/utils/NoData.tsx'
@@ -20,7 +21,13 @@ export default function NoticeList() {
     fetchPolicy: 'no-cache',
   })
 
-  const notices = data?.myNotices ?? []
+  const { notices, pinnedNotices } = useMemo(() => {
+    const notices = data?.myNotices ?? []
+    return {
+      notices: notices.filter((notice) => !notice.pinned),
+      pinnedNotices: notices.filter((notice) => notice.pinned),
+    }
+  }, [data])
 
   if (loading) {
     return (
@@ -42,6 +49,19 @@ export default function NoticeList() {
         />
       )}
 
+      {pinnedNotices.map((notice) => (
+        <CardNotification
+          key={notice.id}
+          title={notice.title}
+          attachments={notice.attachments as unknown as AttachmentFile[]}
+          createdAt={notice.createdAt}
+          description={notice.description}
+          link={notice.link}
+          type={NotificationTypeName.NOTICE}
+          pinned={true}
+        />
+      ))}
+
       {notices.map((notice) => (
         <CardNotification
           key={notice.id}
@@ -59,7 +79,7 @@ export default function NoticeList() {
 
 const styles = {
   notificationContainer: css`
-    padding: 114px 14px 12px;
+    padding: 120px 14px 12px;
 
     &:after {
       content: '';

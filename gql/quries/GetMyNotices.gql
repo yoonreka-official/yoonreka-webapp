@@ -1,11 +1,11 @@
 query GetMyNotices {
   myNotices {
-    createdAt
-    description
     id
+    title
+    description
+    pinned
     isAll
     link
-    title
     updatedAt
     lectures {
       id
@@ -20,5 +20,6 @@ query GetMyNotices {
       updatedAt
       url
     }
+    createdAt
   }
 }

@@ -53,7 +53,7 @@ export default function LectureInvoiceList() {
 
 const styles = {
   notificationContainer: css`
-    padding: 114px 14px 12px;
+    padding: 120px 14px 12px;
 
     &:after {
       content: '';
