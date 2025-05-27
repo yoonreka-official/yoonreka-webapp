@@ -5,16 +5,14 @@ import {
   setLectureId,
   setSelectedUserType,
 } from '~/stores/QuestionSlice.ts'
-import { QuestionUser } from '~/types/question.type.ts'
-
-import type { QuestionBody } from '~/types/question.type.ts'
+import { ClientCreateInquiryInput, InquiryWho } from '~/types/api'
 
 const useQuestions = () => {
   const state = useAppSelector((state) => state.question)
 
   const dispatch = useAppDispatch()
 
-  const fetchData = async (userType = QuestionUser.STUDENT) => {
+  const fetchData = async (userType = InquiryWho.Student) => {
     handleChangeType(userType)
 
     try {
@@ -24,7 +22,7 @@ const useQuestions = () => {
     }
   }
 
-  const handleCreateQuestion = async (body: QuestionBody) => {
+  const handleCreateQuestion = async (body: ClientCreateInquiryInput) => {
     try {
       await createQuestion(body)
       handleLectureId(body.lectureId)
@@ -38,7 +36,7 @@ const useQuestions = () => {
     dispatch(setLectureId(id))
   }
 
-  const handleChangeType = (type: QuestionUser) => {
+  const handleChangeType = (type: InquiryWho) => {
     dispatch(setSelectedUserType(type))
   }
 

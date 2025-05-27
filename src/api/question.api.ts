@@ -2,7 +2,8 @@ import { gql } from '@apollo/client'
 
 import { appolo } from '~/utils/apollo.util.ts'
 
-import type { QuestionBody, QuestionParams } from '~/types/question.type.ts'
+import { ClientCreateInquiryInput, CreateInquiryDocument } from '~/types/api'
+import type { QuestionParams } from '~/types/question.type.ts'
 
 export const getMyQuestions = (filter: QuestionParams) => {
   // eslint-disable-next-line
@@ -32,17 +33,9 @@ export const getMyQuestions = (filter: QuestionParams) => {
   })
 }
 
-export const createQuestion = (input: QuestionBody) => {
+export const createQuestion = (input: ClientCreateInquiryInput) => {
   return appolo.mutate({
-    mutation: gql`
-      mutation CreateInquiry($input: ClientCreateInquiryInput!) {
-        createInquiry(input: $input) {
-          id
-        }
-      }
-    `,
-    variables: {
-      input,
-    },
+    mutation: CreateInquiryDocument,
+    variables: { input },
   })
 }

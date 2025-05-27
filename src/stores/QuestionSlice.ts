@@ -1,27 +1,27 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { getMyQuestions } from '~/api/question.api.ts'
-import { QuestionUser } from '~/types/question.type.ts'
 
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { InquiryWho } from '~/types/api'
 
 export interface QuestionState {
   isLoading: boolean
   // eslint-disable-next-line
-  list: any[];
+  list: any[]
 
-  selectedUserType: QuestionUser
+  selectedUserType: InquiryWho
   selectedLectureId?: string
 }
 
 const initialState: QuestionState = {
   list: [],
   isLoading: false,
-  selectedUserType: QuestionUser.STUDENT,
+  selectedUserType: InquiryWho.Student,
 }
 
 // eslint-disable-next-line
-export const fetchQuestions = createAsyncThunk<any[], QuestionUser>(
+export const fetchQuestions = createAsyncThunk<any[], InquiryWho>(
   'question/fetchMyQuestions',
   async (userType, { rejectWithValue }) => {
     try {
@@ -56,7 +56,7 @@ const QuestionSlice = createSlice({
     setLectureId: (state, action: PayloadAction<string | undefined>) => {
       state.selectedLectureId = action.payload
     },
-    setSelectedUserType: (state, action: PayloadAction<QuestionUser>) => {
+    setSelectedUserType: (state, action: PayloadAction<InquiryWho>) => {
       state.selectedUserType = action.payload
     },
   },

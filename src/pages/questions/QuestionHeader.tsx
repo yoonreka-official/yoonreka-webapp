@@ -1,6 +1,7 @@
 import { css } from '@emotion/react'
 import { Tabs } from 'antd'
 import { useEffect, useState } from 'react'
+import { InquiryWho } from '~/types/api'
 
 import IconQuestions from '~/assets/svg/icon_questions.svg?react'
 import ButtonNav from '~/components/buttons/ButtonNav.tsx'
@@ -8,16 +9,15 @@ import Headline from '~/components/typography/Headline.tsx'
 import { COLORS } from '~/configs/theme.ts'
 import useQuestions from '~/hooks/useQuestions.ts'
 import useScroll from '~/hooks/useScroll.ts'
-import DrawerQuestionCreate from '~/pages/questions/DrawerQuestionCreate.tsx'
-import { QuestionUser } from '~/types/question.type.ts'
+import { DrawerQuestionCreate } from '~/pages/questions/DrawerQuestionCreate.tsx'
 
 const QUESTION_TABS = [
-  { key: QuestionUser.STUDENT, label: '학생' },
-  { key: QuestionUser.PARENT, label: '학부모' },
+  { key: InquiryWho.Student, label: '학생' },
+  { key: InquiryWho.Parent, label: '학부모' },
 ]
 
 export default function QuestionHeader() {
-  const [type, setType] = useState<string>(QuestionUser.STUDENT)
+  const [type, setType] = useState<string>(InquiryWho.Student)
   const [open, setOpen] = useState<boolean>(false)
 
   const { fetchData } = useQuestions()
@@ -41,12 +41,12 @@ export default function QuestionHeader() {
 
       <Tabs
         css={styles.tabs}
-        defaultActiveKey={QuestionUser.STUDENT}
+        defaultActiveKey={InquiryWho.Student}
         indicator={{ align: 'center', size: 168 }}
         items={QUESTION_TABS}
         onChange={(activeKey) => {
           setType(activeKey)
-          fetchData(activeKey as QuestionUser)
+          fetchData(activeKey as InquiryWho)
         }}
       />
 

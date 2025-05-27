@@ -1,0 +1,5 @@
+mutation CreateInquiry($input: ClientCreateInquiryInput!) {
+  createInquiry(input: $input) {
+    id
+  }
+}

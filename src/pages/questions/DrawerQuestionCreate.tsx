@@ -18,23 +18,29 @@ import { COLORS } from '~/configs/theme.ts'
 import useAuth from '~/hooks/useAuth.tsx'
 import useQuestions from '~/hooks/useQuestions.ts'
 import Container from '~/layouts/Container.tsx'
-import { QuestionUser } from '~/types/question.type.ts'
 import rules from '~/utils/rules.util.ts'
 
 import type { DrawerProps } from 'antd'
 
+import InputFile from '~/components/inputs/InputFile'
+import { InquiryWho } from '~/types/api'
 import type { QuestionBody } from '~/types/question.type.ts'
 
 interface Props extends Omit<DrawerProps, 'onClose'> {
   onClose?: () => void
 }
 
-const TYPES: Array<{ value: QuestionUser; label: string }> = [
-  { value: QuestionUser.STUDENT, label: '학생이에요' },
-  { value: QuestionUser.PARENT, label: '학무모예요' },
+const TYPES: Array<{ value: InquiryWho; label: string }> = [
+  { value: InquiryWho.Student, label: '학생이에요' },
+  { value: InquiryWho.Parent, label: '학무모예요' },
 ]
 
-function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
+export function DrawerQuestionCreate({
+  children,
+  title,
+  onClose,
+  ...props
+}: Props) {
   const [form] = useForm<QuestionBody>()
 
   const type = useWatch('who', form)
@@ -87,7 +93,7 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
         <FormBase
           form={form}
           initialValues={{
-            who: QuestionUser.STUDENT,
+            who: InquiryWho.Student,
           }}
           onFinish={async (values) => {
             await handleCreateQuestion(values)
@@ -120,7 +126,7 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
                 <InputText placeholder="제목을 입력해주세요." />
               </FormItem>
 
-              {type === QuestionUser.STUDENT && (
+              {type === InquiryWho.Student && (
                 <FormItem label="문제" name="bookInfo">
                   <InputText placeholder="문제집 이름, 페이지, 번호를 적어주세요. (없으면 빈칸)" />
                 </FormItem>
@@ -135,6 +141,13 @@ function DrawerQuestionCreate({ children, title, onClose, ...props }: Props) {
                   placeholder={
                     '내용을 입력해 주세요.\n*현재 화면에서는 작성 중인 내용이 자동 저장되지 않습니다. 긴 문장은 다른 곳에서 작성 후 복사해 주세요.'
                   }
+                />
+              </FormItem>
+
+              <FormItem label="파일 첨부" name="fileIds">
+                <InputFile
+                  placeholder="PNG 또는 JPG만 업로드 가능해요."
+                  accept="image/png, image/jpeg"
                 />
               </FormItem>
             </section>
@@ -198,5 +211,3 @@ const styles = {
     background: #fff;
   `,
 }
-
-export default DrawerQuestionCreate

@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "prepare": "husky install",
     "preview": "vite preview",
-    "generate-types": "graphql-codegen --config codegen.ts && eslint './types/api.ts' --fix"
+    "generate-types": "graphql-codegen --config codegen.ts && eslint './src/types/api.ts' --fix"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [

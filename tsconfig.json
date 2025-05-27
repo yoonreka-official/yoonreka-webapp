@@ -25,6 +25,11 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src", "src/**/*.mdx", "./src/common/types/pagination.d.ts", "./src/svg.d.ts"],
+  "include": [
+    "src",
+    "src/**/*.mdx",
+    "./src/common/types/pagination.d.ts",
+    "./src/svg.d.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

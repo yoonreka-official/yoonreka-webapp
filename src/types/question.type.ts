@@ -1,17 +1,15 @@
-export enum QuestionUser {
-  PARENT = 'PARENT',
-  STUDENT = 'STUDENT',
-}
+import { InquiryWho } from '~/types/api'
 
 export interface QuestionParams {
   answered?: boolean
-  whoes: QuestionUser
+  whoes: InquiryWho
 }
 
 export interface QuestionBody {
-  who: QuestionUser
+  who: InquiryWho
   lectureId: string
   title: string
   description: string
   bookInfo?: string
+  fileIds?: string[]
 }
