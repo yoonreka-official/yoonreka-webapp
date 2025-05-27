@@ -11,15 +11,7 @@ import MorePage from '~/pages/more'
 import QuestionsPage from '~/pages/questions'
 import SchedulesPage from '~/pages/schedules'
 
-// const LoginPage = lazy(() => import('~/pages/login'));
-//
-// const SchedulesPage = lazy(() => import('~/pages/schedules'));
-// const LecturesPage = lazy(() => import('~/pages/lectures'));
-// const GradesPage = lazy(() => import('~/pages/grades'));
-// const QuestionsPage = lazy(() => import('~/pages/questions'));
-// const MorePage = lazy(() => import('~/pages/more'));
-
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: '/',
     element: <AppConfig />,
@@ -69,5 +61,3 @@ const router = createBrowserRouter([
     ],
   },
 ])
-
-export default router

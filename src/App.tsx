@@ -9,7 +9,7 @@ import { RouterProvider } from 'react-router-dom'
 
 import Spinner from '~/components/utils/Spinner.tsx'
 import antDesignTheme from '~/configs/antDesignTheme.ts'
-import router from '~/routes.tsx'
+import { router } from '~/routes.tsx'
 import { store } from '~/stores'
 
 const client = new ApolloClient({

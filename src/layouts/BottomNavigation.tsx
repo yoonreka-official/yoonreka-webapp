@@ -38,11 +38,11 @@ const NAV_ITEMS = [
   },
 ]
 
-function BottomNavigation() {
+export default function BottomNavigation() {
   const { pathname } = useLocation()
 
   return (
-    <nav css={styles.bottomNavigation}>
+    <nav css={styles.bottomNavigation} className="max-w-md mx-auto">
       <Flex justify="space-between">
         {NAV_ITEMS.map((item) => (
           <NavLink key={item.path} to={item.path}>
@@ -71,7 +71,7 @@ const styles = {
     position: fixed;
     height: ${LAYOUT.NAV_BAR_HEIGHT};
     bottom: 0;
-    width: 100vw;
+    width: 100%;
     left: 0;
     right: 0;
     padding: 8px 40px 12px;
@@ -101,5 +101,3 @@ const styles = {
     }
   `,
 }
-
-export default BottomNavigation

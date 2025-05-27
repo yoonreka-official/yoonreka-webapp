@@ -12,6 +12,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
+    'plugin:tailwindcss/recommended',
   ],
   globals: {
     JSX: true,
@@ -29,6 +30,8 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react-hooks', 'prettier', 'perfectionist'],
   root: true,
   rules: {
+    'tailwindcss/no-contradicting-classname': 'off',
+    'tailwindcss/enforces-shorthand': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/consistent-type-imports': [
       'warn',
