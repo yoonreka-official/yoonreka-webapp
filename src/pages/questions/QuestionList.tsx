@@ -6,7 +6,7 @@ import { COLORS } from '~/configs/theme.ts'
 import useQuestions from '~/hooks/useQuestions.ts'
 import CardQuestion from '~/pages/questions/CardQuestion.tsx'
 
-function QuestionList() {
+export default function QuestionList() {
   const {
     state: { list, selectedLectureId },
   } = useQuestions()
@@ -39,5 +39,3 @@ function QuestionList() {
     </div>
   )
 }
-
-export default QuestionList

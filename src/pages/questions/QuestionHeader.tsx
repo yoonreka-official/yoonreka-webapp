@@ -16,7 +16,7 @@ const QUESTION_TABS = [
   { key: QuestionUser.PARENT, label: '학부모' },
 ]
 
-function QuestionHeader() {
+export default function QuestionHeader() {
   const [type, setType] = useState<string>(QuestionUser.STUDENT)
   const [open, setOpen] = useState<boolean>(false)
 
@@ -123,5 +123,3 @@ const styles = {
     }
   `,
 }
-
-export default QuestionHeader
