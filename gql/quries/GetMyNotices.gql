@@ -1,0 +1,24 @@
+query GetMyNotices {
+  myNotices {
+    createdAt
+    description
+    id
+    isAll
+    link
+    title
+    updatedAt
+    lectures {
+      id
+      title
+    }
+    attachments {
+      createdAt
+      filename
+      id
+      mimeType
+      size
+      updatedAt
+      url
+    }
+  }
+}

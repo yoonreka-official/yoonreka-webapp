@@ -1,7 +1,7 @@
 import { css } from '@emotion/react'
 
 import useInvoices from '~/hooks/useInvoices.ts'
-import { InvoiceType } from '~/types/invoice.type'
+import { InvoiceType } from '~/types/api'
 
 function InvoiceNotice() {
   const {
@@ -12,7 +12,7 @@ function InvoiceNotice() {
     <div css={styles.noticeBox}>
       <h1 css={styles.title}>계좌이체 💡</h1>
 
-      {invoiceType === InvoiceType.LECTURE ? (
+      {invoiceType === InvoiceType.Lecture ? (
         <ul css={styles.content}>
           <li>고등부 문의: 메가스터디 중계 러셀 02) 6316-1010</li>
           <li>중등부: 신한은행 윤레카 ENLGISH 110-551-775941</li>

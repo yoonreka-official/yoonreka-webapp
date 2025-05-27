@@ -1,0 +1,27 @@
+name: Write Version to Release
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+
+jobs:
+  write_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get API Version
+        uses: sergeysova/jq-action@v2
+        id: version
+        with:
+          cmd: "curl https://api.yoonreka.app/__debug__ | jq '.version' --raw-output"
+      - name: Update Release Body
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          echo "release ${{ github.event.release.id }}"
+          echo "version ${{ steps.version.outputs.value }}"
+          gh api --method PATCH /repos/yoonreka-official/yoonreka-webapp/releases/${{ github.event.release.id }} -f body="### Requirements:
+          - \`yoonreka-api@${{ steps.version.outputs.value }}\`"

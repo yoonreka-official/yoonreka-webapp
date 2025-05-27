@@ -12,7 +12,7 @@ export interface ButtonNavProps {
   onClick?: () => void
 }
 
-function ButtonNav({
+export default function ButtonNav({
   children,
   className,
   disabled,
@@ -55,5 +55,3 @@ const buttonNavStyles = css`
     color: ${COLORS.BG['04']};
   }
 `
-
-export default ButtonNav

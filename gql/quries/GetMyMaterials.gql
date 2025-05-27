@@ -1,0 +1,22 @@
+query GetMyMaterials {
+  myMaterials {
+    attachments {
+      createdAt
+      filename
+      id
+      mimeType
+      size
+      updatedAt
+      url
+    }
+    description
+    id
+    lecture {
+      id
+      title
+    }
+    title
+    createdAt
+    updatedAt
+  }
+}

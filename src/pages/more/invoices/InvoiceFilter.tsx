@@ -1,10 +1,10 @@
 import InputSegmented from '~/components/inputs/InputSegmented.tsx'
 import useInvoices from '~/hooks/useInvoices.ts'
-import { InvoiceType } from '~/types/invoice.type.ts'
+import { InvoiceType } from '~/types/api'
 
 const INVOICE_TYPES: Array<{ value: InvoiceType; label: string }> = [
-  { value: InvoiceType.LECTURE, label: '원비' },
-  { value: InvoiceType.BOOK, label: '교재비' },
+  { value: InvoiceType.Lecture, label: '원비' },
+  { value: InvoiceType.Book, label: '교재비' },
 ]
 
 function InvoiceFilter() {

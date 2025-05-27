@@ -10,7 +10,7 @@ import type {
   NotificationType,
 } from '~/types/notification.type.ts'
 
-const useNotifications = () => {
+export default function useNotifications() {
   const state = useAppSelector((state) => state.notification)
 
   const dispatch = useAppDispatch()
@@ -42,5 +42,3 @@ const useNotifications = () => {
 
   return { state, fetchData, setReadId, handleChangeType, handleMarkAsRead }
 }
-
-export default useNotifications

@@ -5,7 +5,7 @@ import {
   setInvoiceType,
   setSelectedInvoice,
 } from '~/stores/InvoiceSlice.ts'
-import { InvoiceType } from '~/types/invoice.type.ts'
+import { InvoiceType } from '~/types/api'
 
 import type {
   Invoice,
@@ -20,7 +20,7 @@ const useInvoices = () => {
 
   const fetchData = async (params?: InvoiceParams) => {
     try {
-      await dispatch(fetchInvoices(params || { types: [InvoiceType.LECTURE] }))
+      await dispatch(fetchInvoices(params || { types: [InvoiceType.Lecture] }))
     } catch (e) {
       console.error(e)
     }

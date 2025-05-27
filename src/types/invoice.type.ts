@@ -1,4 +1,5 @@
 import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts'
+import { InvoiceType } from './api'
 
 export enum InvoiceMethod {
   CARD = 'CARD',
@@ -11,11 +12,6 @@ export enum InvoiceState {
   FAILED = 'FAILED', // 미납
   PAID = 'PAID', // 납부완료
   PENDING = 'PENDING', // 대기중
-}
-
-export enum InvoiceType {
-  LECTURE = 'LECTURE',
-  BOOK = 'BOOK',
 }
 
 export interface InvoiceParams {

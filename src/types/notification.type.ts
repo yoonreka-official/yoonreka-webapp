@@ -2,10 +2,10 @@ import type {
   InvoiceBook,
   InvoiceMethod,
   InvoiceState,
-  InvoiceType,
 } from '~/types/invoice.type.ts'
 import type { AttachmentFile } from '~/types/lectures.type.ts'
 import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts'
+import { InvoiceType } from './api'
 
 export type NotificationOrderKey = 'ID'
 
@@ -98,7 +98,7 @@ export interface NotificationLectureInvoice {
   state: InvoiceState
   price: number
   paidAt: number
-  dueDate: number
+  dueDate: string
   method: InvoiceMethod
   lecture: NotificationLecture
   books: InvoiceBook[]

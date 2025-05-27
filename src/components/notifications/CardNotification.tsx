@@ -25,7 +25,7 @@ interface Props {
   isNew?: boolean
 }
 
-function CardNotification({
+export default function CardNotification({
   type,
   title,
   createdAt,
@@ -115,5 +115,3 @@ const notificationStyles = {
     word-break: break-all;
   `,
 }
-
-export default CardNotification

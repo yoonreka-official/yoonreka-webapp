@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { getInvoices } from '~/api/invoice.api.ts'
-import { InvoiceType } from '~/types/invoice.type.ts'
 
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import type { InvoiceParams, Invoice } from '~/types/invoice.type.ts'
+import { InvoiceType } from '~/types/api'
+import type { Invoice, InvoiceParams } from '~/types/invoice.type.ts'
 
 export interface InvoiceState {
   isLoading: boolean
@@ -19,7 +19,7 @@ const initialState: InvoiceState = {
   list: [],
   isLoading: false,
 
-  invoiceType: InvoiceType.LECTURE,
+  invoiceType: InvoiceType.Lecture,
 }
 
 export const fetchInvoices = createAsyncThunk<Invoice[], InvoiceParams>(

@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "graphql.vscode-graphql-syntax",
+    "graphql.vscode-graphql",
+    "kumar-harsh.graphql-for-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint"
+  ]
+}

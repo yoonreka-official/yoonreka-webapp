@@ -8,7 +8,7 @@ interface Props {
   scrollRoot?: boolean
 }
 
-function Container({ children, className, scrollRoot }: Props) {
+export default function Container({ children, className, scrollRoot }: Props) {
   return (
     <div
       className={className}
@@ -33,5 +33,3 @@ const styles = {
     overflow-y: auto;
   `,
 }
-
-export default Container

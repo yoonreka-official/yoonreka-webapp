@@ -14,11 +14,13 @@ import { setToken } from '~/utils/apollo.util.ts'
 import { getCookie, removeCookie } from '~/utils/cookie.util.ts'
 import dialog from '~/utils/dialog.util.tsx'
 
+import { useApolloHelper } from '~/plugins/apollo/context'
 import type { LoginInput, UpdateUserBody } from '~/types/auth.type.ts'
 
 const useAuth = () => {
   const state = useAppSelector((state) => state.auth)
   const dispatch = useAppDispatch()
+  const { setToken: apolloSetToken } = useApolloHelper()
 
   const navigate = useNavigate()
 
@@ -78,6 +80,7 @@ const useAuth = () => {
     removeCookie('accessToken')
     removeCookie('refreshToken')
     setToken(undefined)
+    apolloSetToken(null)
   }
 
   const handleLogout = async () => {

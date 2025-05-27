@@ -10,9 +10,11 @@ import { getCookie } from '~/utils/cookie.util.ts'
 import type { PropsWithChildren } from 'react'
 
 import type { RootState } from '~/stores'
+import { useApolloHelper } from '~/plugins/apollo/context'
 
 function AuthGuard({ children }: PropsWithChildren) {
   const dispatch = useAppDispatch()
+  const { setToken } = useApolloHelper()
 
   const { authUser, isLoading } = useAppSelector(
     (state: RootState) => state.auth,
@@ -33,6 +35,7 @@ function AuthGuard({ children }: PropsWithChildren) {
       }
 
       setApolloToken(accessToken)
+      setToken(accessToken)
       await dispatch(fetchMe())
     })()
   }, [])

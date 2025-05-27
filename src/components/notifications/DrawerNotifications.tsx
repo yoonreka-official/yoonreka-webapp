@@ -3,7 +3,7 @@ import { Drawer, Tabs } from 'antd'
 import { useEffect } from 'react'
 
 import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
-import NotificationList from '~/components/notifications/NotificationList.tsx'
+import NotificationAllList from '~/components/notifications/NotificationList.tsx'
 import { COLORS } from '~/configs/theme.ts'
 import useNotifications from '~/hooks/useNotifications.ts'
 import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
@@ -11,6 +11,9 @@ import { NotificationType } from '~/types/notification.type.ts'
 import { native } from '~/utils/app.util.ts'
 
 import type { DrawerProps } from 'antd'
+import LectureInvoiceList from './LectureInvoiceList'
+import MaterialList from './MaterialList'
+import NoticeList from './NoticeList'
 
 interface Props extends Omit<DrawerProps, 'onClose'> {
   defaultActiveKey?: string
@@ -97,7 +100,15 @@ function DrawerNotifications({
         />
       </header>
 
-      <NotificationList />
+      {selectedType === NotificationType.NEW_MATERIAL ? (
+        <MaterialList />
+      ) : selectedType === NotificationType.NEW_NOTICE ? (
+        <NoticeList />
+      ) : selectedType === NotificationType.INVOICE_DUE ? (
+        <LectureInvoiceList />
+      ) : (
+        <NotificationAllList />
+      )}
     </Drawer>
   )
 }

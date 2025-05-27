@@ -4,10 +4,11 @@ import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
 import Flex from '~/components/display/Flex'
 import StatusTag from '~/components/utils/StatusTag.tsx'
 import useInvoices from '~/hooks/useInvoices.ts'
-import { InvoiceType, InvoiceState } from '~/types/invoice.type.ts'
+import { InvoiceState } from '~/types/invoice.type.ts'
 import { formatDate, formatNumber } from '~/utils/format.util.ts'
 
 import type { Invoice } from '~/types/invoice.type.ts'
+import { InvoiceType } from '~/types/api'
 
 interface Props {
   invoice: Invoice
@@ -27,9 +28,9 @@ const renderStatus = (state: InvoiceState) => {
 
 const getPriceLabel = (type: InvoiceType) => {
   switch (type) {
-    case InvoiceType.BOOK:
+    case InvoiceType.Book:
       return '교재비'
-    case InvoiceType.LECTURE:
+    case InvoiceType.Lecture:
     default:
       return '월 회비'
   }

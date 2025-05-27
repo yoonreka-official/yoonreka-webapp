@@ -97,7 +97,7 @@ export const fetchAuthUser = async (signal: AbortSignal) => {
 
     if (!res.data?.currentUser) {
       // eslint-disable-next-line
-      throw new Error('로그인 실패했습니다.');
+      throw new Error('로그인 실패했습니다.')
     }
 
     return res

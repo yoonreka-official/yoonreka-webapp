@@ -34,7 +34,7 @@ const getNotificationTypeLabel = (type: NotificationType | 'ALL') => {
   }
 }
 
-function NotificationList() {
+export default function NotificationAllList() {
   const {
     state: { isLoading, list, selectedType, pageInfo, params },
     setReadId,
@@ -160,5 +160,3 @@ const styles = {
     }
   `,
 }
-
-export default NotificationList

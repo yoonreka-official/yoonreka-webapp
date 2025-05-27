@@ -1,0 +1,20 @@
+query GetMyLectureInvoices {
+  myLectureInvoices {
+    id
+    price
+    state
+    type
+    paidAt
+    method
+    lecture {
+      id
+      title
+    }
+    dueDate
+    books {
+      id
+      title
+      price
+    }
+  }
+}

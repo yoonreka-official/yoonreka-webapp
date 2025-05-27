@@ -66,7 +66,7 @@ const isNewNotification = (item: Notification) => {
   return dayjs(item.createdAt).isAfter(time) && !readIds.includes(item.id)
 }
 
-const NotificationSlice = createSlice({
+export const NotificationSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchNotifications.pending, (state, action) => {
@@ -96,7 +96,6 @@ const NotificationSlice = createSlice({
 
         state.isLoading = false
       })
-
       .addCase(fetchNotifications.rejected, (state) => {
         // state.list = [];
         state.isLoading = false
@@ -122,4 +121,3 @@ const NotificationSlice = createSlice({
 })
 
 export const { readNotifications, setType } = NotificationSlice.actions
-export default NotificationSlice

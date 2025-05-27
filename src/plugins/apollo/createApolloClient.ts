@@ -1,13 +1,18 @@
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
+import {
+  ApolloClient,
+  createHttpLink,
+  DefaultOptions,
+  InMemoryCache,
+} from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 
-import type { DefaultOptions } from '@apollo/client'
-
-const makeLink = (
-  token?: string,
+export function createApolloClient(
+  getToken: () => Promise<string | null>,
   getHeaders?: () => Promise<Record<string, string>>,
-) => {
+  defaultOptions?: DefaultOptions,
+) {
   const authLink = setContext(async (_, { headers }) => {
+    const token = await getToken()
     return {
       headers: {
         ...headers,
@@ -16,30 +21,16 @@ const makeLink = (
       },
     }
   })
-
   const httpLink = createHttpLink({
     uri: `${import.meta.env.VITE_API_URL}/graphql`,
     fetch,
   })
 
-  return authLink.concat(httpLink)
-}
-
-const createApolloClient = (
-  token?: string,
-  getHeaders?: () => Promise<Record<string, string>>,
-  defaultOptions?: DefaultOptions,
-) => {
+  const link = authLink.concat(httpLink)
   const cache = new InMemoryCache()
   return new ApolloClient({
-    link: makeLink(token, getHeaders),
+    link,
     cache,
     defaultOptions,
   })
-}
-
-export const appolo = createApolloClient()
-
-export const setToken = (token?: string) => {
-  appolo.setLink(makeLink(token))
 }

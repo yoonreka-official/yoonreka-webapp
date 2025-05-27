@@ -7,8 +7,8 @@ import InvoiceCard from '~/pages/more/invoices/InvoiceCard.tsx'
 import InvoiceFilter from '~/pages/more/invoices/InvoiceFilter.tsx'
 import InvoiceNotice from '~/pages/more/invoices/InvoiceNotice.tsx'
 import InvoiceUpdateBottomSheet from '~/pages/more/invoices/InvoiceUpdateBottomSheet.tsx'
+import { InvoiceType } from '~/types/api'
 
-import type { InvoiceType } from '~/types/invoice.type.ts'
 import type { Nullable } from '~/types/utils/nullable.type.ts'
 
 function Invoices() {

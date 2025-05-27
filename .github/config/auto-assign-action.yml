@@ -1,0 +1,5 @@
+# Set addAssignees to 'author' to set the PR creator as the assignee.
+# https://github.com/kentaro-m/auto-assign-action#assign-author-as-assignee
+addAssignees: author
+# https://github.com/kentaro-m/auto-assign-action#filter-draft-prs
+runOnDraft: true

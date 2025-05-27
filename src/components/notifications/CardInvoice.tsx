@@ -8,13 +8,12 @@ import Flex from '~/components/display/Flex.tsx'
 import Body from '~/components/typography/Body.tsx'
 import Caption from '~/components/typography/Caption.tsx'
 import { COLORS } from '~/configs/theme.ts'
+import { InvoiceType } from '~/types/api'
 import { formatDate } from '~/utils/format.util.ts'
-
-import type { InvoiceType } from '~/types/invoice.type.ts'
 
 interface Props {
   title: string
-  createdAt: number
+  createdAt: string
   invoiceType?: InvoiceType
   isNew?: boolean
 }
