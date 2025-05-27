@@ -15,29 +15,28 @@ function QuestionList() {
     return list.filter((item) => item.lecture?.id === selectedLectureId)
   }, [list, selectedLectureId])
 
-  return (
-    selectedLectureId && (
-      // eslint-disable-next-line react/jsx-no-useless-fragment
-      <>
-        {!questions.length ? (
-          <NoData
-            description={
-              <Body color={COLORS.FONT['30']} size={14}>
-                등록된 질문이 없습니다.
-              </Body>
-            }
-            // height="80%"
-            disableWrapper
-          />
-        ) : (
-          <div>
-            {questions.map((question) => (
-              <CardQuestion key={question.id} question={question} />
-            ))}
-          </div>
-        )}
-      </>
+  if (!selectedLectureId) {
+    return null
+  }
+  if (!questions.length) {
+    return (
+      <NoData
+        description={
+          <Body color={COLORS.FONT['30']} size={14}>
+            등록된 질문이 없습니다.
+          </Body>
+        }
+        // height="80%"
+        disableWrapper
+      />
     )
+  }
+  return (
+    <div>
+      {questions.map((question) => (
+        <CardQuestion key={question.id} question={question} />
+      ))}
+    </div>
   )
 }
 
