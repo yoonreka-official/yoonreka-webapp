@@ -39,7 +39,7 @@ export default function CardNotification({
 }: Props) {
   return (
     <CardCollapse
-      className={clsx('relative', pinned && 'border-blue-300 border')}
+      className={clsx('relative', pinned && 'border-blue-400 border')}
       title={
         <Flex direction="column" gap={4} justify="center">
           <Body size={14} weight="bold">
@@ -59,8 +59,6 @@ export default function CardNotification({
         </Flex>
       }
     >
-      {pinned && <span className="absolute top-0 right-0">📌</span>}
-
       {description}
 
       {link && (

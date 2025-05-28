@@ -24,8 +24,10 @@ export default function NoticeList() {
   const { notices, pinnedNotices } = useMemo(() => {
     const notices = data?.myNotices ?? []
     return {
-      notices: notices.filter((notice) => !notice.pinned),
-      pinnedNotices: notices.filter((notice) => notice.pinned),
+      notices: notices.filter((notice) => !notice.pinnedAt),
+      pinnedNotices: notices
+        .filter((notice) => !!notice.pinnedAt)
+        .sort((a, b) => a.pinnedAt! - b.pinnedAt!),
     }
   }, [data])
 

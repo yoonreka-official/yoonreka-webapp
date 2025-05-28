@@ -3,7 +3,7 @@ query GetMyNotices {
     id
     title
     description
-    pinned
+    pinnedAt
     isAll
     link
     updatedAt

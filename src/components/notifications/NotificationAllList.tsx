@@ -43,7 +43,10 @@ export default function NotificationAllList() {
     fetchPolicy: 'no-cache',
   })
   const pinnedNotices = useMemo(
-    () => data?.myNotices?.filter((notice) => notice.pinned) ?? [],
+    () =>
+      (data?.myNotices?.filter((notice) => !!notice.pinnedAt) ?? []).sort(
+        (a, b) => a.pinnedAt! - b.pinnedAt!,
+      ),
     [data],
   )
 
