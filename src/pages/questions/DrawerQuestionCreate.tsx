@@ -71,6 +71,7 @@ export function DrawerQuestionCreate({
 
   return (
     <Drawer
+      getContainer={false}
       closable={false}
       css={styles.drawer}
       placement="right"

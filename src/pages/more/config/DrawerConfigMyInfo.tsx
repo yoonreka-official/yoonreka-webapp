@@ -32,6 +32,7 @@ function DrawerConfigMyInfo({ children, onClose, ...props }: Props) {
 
   return (
     <Drawer
+      getContainer={false}
       closable={false}
       css={styles.drawer}
       placement="right"
