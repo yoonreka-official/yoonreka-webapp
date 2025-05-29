@@ -6,13 +6,14 @@ interface Props {
   order: number
   size?: 12 | 14
   block?: boolean
+  color?: string | null
 }
 
 const MARKER = '✦'
 
-function ScheduleMarker({ order, size = 14, block = false }: Props) {
+function ScheduleMarker({ order, size = 14, block = false, color }: Props) {
   return (
-    <div css={[styles.marker({ order, size }), block && styles.block]}>
+    <div css={[styles.marker({ order, size, color }), block && styles.block]}>
       {MARKER}
     </div>
   )
@@ -31,7 +32,7 @@ const getMarkerColor = (order: number) => {
 }
 
 const styles = {
-  marker: ({ order, size }: Props) => css`
+  marker: ({ order, size, color }: Props) => css`
     text-align: center;
     font-family: Pretendard, sans-serif;
     font-size: ${size}px;
@@ -39,7 +40,7 @@ const styles = {
     font-weight: 400;
     line-height: 14px; /* 100% */
     letter-spacing: -0.2px;
-    color: ${getMarkerColor(order)};
+    color: ${color ?? getMarkerColor(order)};
   `,
 
   block: css`

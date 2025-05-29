@@ -17,6 +17,7 @@ export const getMyLessons = (filter: GetMyLessonsFilter) => {
           lecture {
             id
             title
+            color
             place
             book {
               id

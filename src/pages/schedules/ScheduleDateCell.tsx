@@ -32,7 +32,7 @@ function ScheduleDateCell({ lessons, date, selected }: Props) {
 
       <Flex>
         {events.map((_, i) => (
-          <ScheduleMarker key={i} order={i} />
+          <ScheduleMarker key={i} order={i} color={events[i].lecture.color} />
         ))}
       </Flex>
     </Flex>

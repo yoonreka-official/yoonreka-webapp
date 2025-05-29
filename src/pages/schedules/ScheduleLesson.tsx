@@ -20,7 +20,7 @@ function ScheduleCalendar({ index, lesson }: Props) {
     <Link to={`/grades?lectureId=${lesson.lecture.id}&date=${lesson.date}`}>
       <Flex key={index} direction="column" gap={2}>
         <Flex gap={4} items="center">
-          <ScheduleMarker order={index} block />
+          <ScheduleMarker order={index} block color={lesson.lecture.color} />
           <Body color="#313234" size={14} weight="bold">
             {lesson.lecture.title}
           </Body>

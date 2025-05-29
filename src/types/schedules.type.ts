@@ -13,6 +13,7 @@ export interface Lesson {
     id: string
     title: string
     place: string
+    color?: string | null
 
     book: {
       id: string
