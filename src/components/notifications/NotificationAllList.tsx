@@ -128,18 +128,19 @@ export default function NotificationAllList() {
         />
       )}
 
-      {pinnedNotices.map((notice) => (
-        <CardNotification
-          key={notice.id}
-          title={notice.title}
-          attachments={notice.attachments as unknown as AttachmentFile[]}
-          createdAt={notice.createdAt}
-          description={notice.description}
-          link={notice.link}
-          type={NotificationTypeName.NOTICE}
-          pinned={true}
-        />
-      ))}
+      {selectedType === 'ALL' &&
+        pinnedNotices.map((notice) => (
+          <CardNotification
+            key={notice.id}
+            title={notice.title}
+            attachments={notice.attachments as unknown as AttachmentFile[]}
+            createdAt={notice.createdAt}
+            description={notice.description}
+            link={notice.link}
+            type={NotificationTypeName.NOTICE}
+            pinned={true}
+          />
+        ))}
 
       {list
         .filter(

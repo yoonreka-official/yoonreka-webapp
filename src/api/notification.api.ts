@@ -59,6 +59,7 @@ export const getNotifications = async ({
                 }
               }
               lectureInvoice {
+                id
                 price
                 state
                 type
@@ -76,6 +77,7 @@ export const getNotifications = async ({
                 }
               }
               material {
+                id
                 attachments {
                   createdAt
                   filename
@@ -86,7 +88,6 @@ export const getNotifications = async ({
                   url
                 }
                 description
-                id
                 lecture {
                   id
                   title
@@ -97,9 +98,9 @@ export const getNotifications = async ({
               }
               createdAt
               notice {
+                id
                 createdAt
                 description
-                id
                 isAll
                 link
                 title
