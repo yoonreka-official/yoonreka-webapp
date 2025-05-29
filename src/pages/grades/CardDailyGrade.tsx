@@ -1,5 +1,7 @@
+import { useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
 import dayjs from 'dayjs'
+import { useMemo } from 'react'
 
 import CardCollapse from '~/components/cards/CardCollapse.tsx'
 import Flex from '~/components/display/Flex.tsx'
@@ -8,6 +10,7 @@ import Caption from '~/components/typography/Caption.tsx'
 import { COLORS } from '~/configs/theme.ts'
 import useAuth from '~/hooks/useAuth.tsx'
 import useGrades from '~/hooks/useGrades.ts'
+import { GetDailyGradeCommentDocument } from '~/types/api'
 import { AttendanceStatus } from '~/types/grades.type.ts'
 
 import type {
@@ -34,6 +37,14 @@ function CardDailyGrade({
   const {
     state: { labelGroups },
   } = useGrades()
+
+  const { data } = useQuery(GetDailyGradeCommentDocument)
+  const lessonGradeComment = useMemo(
+    () =>
+      data?.operation?.message ??
+      '궁금하신 점은 언제든지 학원으로 연락주시면 자세하게 안내해드리겠습니다.\n고등관_메가스터디 러셀 중계 : ☎︎ 02-6316-1010\n중등관_윤레카 ENGLISH : 📞 010-6330-0559',
+    [data],
+  )
 
   const title = `${dayjs(lesson.date).format('YYYY.MM.DD (ddd)')} 데일리 성적`
 
@@ -84,14 +95,7 @@ function CardDailyGrade({
 
       <section style={{ marginTop: 16 }}>
         <Caption color={COLORS.FONT['80']} size={12}>
-          <ul>
-            <li>
-              궁금하신 점은 언제든지 학원으로 연락주시면 자세하게
-              안내해드리겠습니다.
-            </li>
-            <li>고등관_메가스터디 러셀 중계 : ☎︎ 02-6316-1010</li>
-            <li>중등관_윤레카 ENGLISH : 📞 010-6330-0559</li>
-          </ul>
+          {lessonGradeComment}
         </Caption>
       </section>
     </CardCollapse>

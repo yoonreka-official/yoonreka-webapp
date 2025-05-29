@@ -179,6 +179,16 @@ export type AdminLessonFilterInput = {
   userIds?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
+export type AdminLessonGradeFilterInput = {
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lessonIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  retests?: InputMaybe<Array<Retest>>;
+  schoolIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  supplementaries?: InputMaybe<Array<Supplementary>>;
+  userIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
 export type AdminMaterialFilterInput = {
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   titleContains?: InputMaybe<Scalars['String']['input']>;
@@ -277,7 +287,8 @@ export type AdminUpdateNoticeInput = {
 
 export type AdminUpdateOperationInput = {
   id: Scalars['ID']['input'];
-  info: Array<OperationInfoInput>;
+  info?: InputMaybe<Array<OperationInfoInput>>;
+  message?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AdminUpdateSchoolInput = {
@@ -350,6 +361,8 @@ export type AdminUpsertLessonGradeInput = {
   formData?: InputMaybe<Array<LectureGradeFormDataInput>>;
   gradeType: GradeType;
   lessonId: Scalars['ID']['input'];
+  retest?: InputMaybe<Retest>;
+  supplementary?: InputMaybe<Supplementary>;
   userId: Scalars['ID']['input'];
 };
 
@@ -360,6 +373,8 @@ export type AdminUpsertManyLessonGradeInput = {
   gradeType: GradeType;
   ignoreEmptyValue?: InputMaybe<Scalars['Boolean']['input']>;
   lessonId: Scalars['ID']['input'];
+  retest?: InputMaybe<Retest>;
+  supplementary?: InputMaybe<Supplementary>;
   userId: Scalars['ID']['input'];
 };
 
@@ -924,10 +939,32 @@ export type LessonGrade = {
   data?: Maybe<Array<LectureGradeFormData>>;
   gradeType: GradeType;
   id: Scalars['ID']['output'];
+  lesson?: Maybe<Lesson>;
+  retest: Retest;
+  supplementary: Supplementary;
   /** 최근 수정 시각 */
   updatedAt: Scalars['Timestamp']['output'];
   user?: Maybe<User>;
 };
+
+export type LessonGradeEdge = {
+  __typename?: 'LessonGradeEdge';
+  cursor: Scalars['String']['output'];
+  node: LessonGrade;
+};
+
+export type LessonGradePagination = {
+  __typename?: 'LessonGradePagination';
+  edges: Array<LessonGradeEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export enum LessonGradeRelayOrder {
+  Id = 'ID',
+  RetestAt = 'RETEST_AT',
+  SupplementaryAt = 'SUPPLEMENTARY_AT'
+}
 
 export type LessonGradeStatistic = {
   __typename?: 'LessonGradeStatistic';
@@ -1404,6 +1441,8 @@ export type Operation = {
   createdAt: Scalars['Timestamp']['output'];
   id: Scalars['ID']['output'];
   info: Array<OperationInfo>;
+  message?: Maybe<Scalars['String']['output']>;
+  type: OperationType;
   /** 최근 수정 시각 */
   updatedAt: Scalars['Timestamp']['output'];
 };
@@ -1420,6 +1459,11 @@ export type OperationInfoInput = {
   type?: InputMaybe<Scalars['String']['input']>;
   value: Scalars['String']['input'];
 };
+
+export enum OperationType {
+  DailyGradeComment = 'DAILY_GRADE_COMMENT',
+  Wiki = 'WIKI'
+}
 
 export type PageInfo = {
   __typename?: 'PageInfo';
@@ -1465,7 +1509,6 @@ export type Query = {
   adminLecturePagination: LecturePagination;
   adminLesson: Lesson;
   adminLessonPagination: LessonPagination;
-  adminLessons: Array<Lesson>;
   adminMaterial: Material;
   adminMaterialPagination: MaterialPagination;
   adminNotice: Notice;
@@ -1478,10 +1521,13 @@ export type Query = {
   adminUser: User;
   adminUserPagination: UserPagination;
   adminUsers: Array<User>;
+  admin_lessonGradePagination: LessonGradePagination;
+  admin_lessons: Array<Lesson>;
   admin_operation: Operation;
   currentAdministrator?: Maybe<Administrator>;
   currentUser?: Maybe<User>;
   file?: Maybe<File>;
+  lessonGradeCommentOperation: Operation;
   /** 로그인 된 학생의 문의 목록 조회 */
   myInquiries: Array<Inquiry>;
   /** 수업 조회 (로그인된 학생이 수강중인 수업이 아니면 NULL 반환) */
@@ -1612,14 +1658,6 @@ export type QueryAdminLessonPaginationArgs = {
 };
 
 
-export type QueryAdminLessonsArgs = {
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<AdminLessonFilterInput>;
-  order?: InputMaybe<LessonRelayOrder>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
 export type QueryAdminMaterialArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1725,6 +1763,32 @@ export type QueryAdminUsersArgs = {
 };
 
 
+export type QueryAdmin_LessonGradePaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminLessonGradeFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<LessonGradeRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_LessonsArgs = {
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<AdminLessonFilterInput>;
+  order?: InputMaybe<LessonRelayOrder>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_OperationArgs = {
+  type: OperationType;
+};
+
+
 export type QueryFileArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1785,6 +1849,16 @@ export type QuerySchoolPaginationArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
 };
 
+/** 재시험 */
+export enum Retest {
+  /** 재시험 완료 */
+  Done = 'DONE',
+  /** 재시험 예정 */
+  Need = 'NEED',
+  /** 재시험 필요 없음 (통과) */
+  NoNeed = 'NO_NEED'
+}
+
 export type School = {
   __typename?: 'School';
   /** 최초 생성 시각 */
@@ -1835,6 +1909,16 @@ export enum SchoolType {
   Elementary = 'ELEMENTARY',
   High = 'HIGH',
   Middle = 'MIDDLE'
+}
+
+/** 보강 */
+export enum Supplementary {
+  /** 보강 완료 */
+  Done = 'DONE',
+  /** 보강 예정 */
+  Need = 'NEED',
+  /** 보강 필요 없음 */
+  NoNeed = 'NO_NEED'
 }
 
 export type Teacher = {
@@ -2004,6 +2088,13 @@ export type CreateInquiryMutationVariables = Exact<{
 
 export type CreateInquiryMutation = { __typename?: 'Mutation', createInquiry: { __typename?: 'Inquiry', id: string } };
 
+export type GetDailyGradeCommentQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetDailyGradeCommentQuery = { __typename?: 'Query', operation: { __typename?: 'Operation', id: string, message?: string | null } };
+
+export type DailyGradeComment_OperationFragment = { __typename?: 'Operation', id: string, message?: string | null };
+
 export type GetMyLectureInvoicesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2030,9 +2121,10 @@ export type GetMyNotificationsQueryVariables = Exact<{
 
 export type GetMyNotificationsQuery = { __typename?: 'Query', myNotificationPagination: { __typename?: 'NotificationPagination', totalCount: number, edges: Array<{ __typename?: 'NotificationEdge', cursor: string, node: { __typename?: 'Notification', id: string, createdAt: number, contents: string, title: string, link?: { __typename: 'LectureInvoice', id: string } | { __typename: 'Material', id: string } | { __typename: 'Notice', id: string } | null, lectureInvoice?: { __typename?: 'LectureInvoice', price: number, state: LectureInvoiceState, type: InvoiceType, paidAt?: number | null, method?: InvoiceMethod | null, dueDate: string, lecture?: { __typename?: 'Lecture', id: string, title: string } | null, books: Array<{ __typename?: 'Book', id: string, title: string, price?: number | null }> } | null, material?: { __typename?: 'Material', description: string, id: string, title: string, createdAt: number, updatedAt: number, attachments: Array<{ __typename?: 'PrivateFile', createdAt: number, filename?: string | null, id: string, mimeType: string, size: number, updatedAt: number, url: string }>, lecture?: { __typename?: 'Lecture', id: string, title: string } | null } | null, notice?: { __typename?: 'Notice', createdAt: number, description: string, id: string, isAll: boolean, link?: string | null, title: string, updatedAt: number, lectures: Array<{ __typename?: 'Lecture', id: string, title: string }>, attachments: Array<{ __typename?: 'PrivateFile', createdAt: number, filename?: string | null, id: string, mimeType: string, size: number, updatedAt: number, url: string }> } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean } } };
 
-
+export const DailyGradeComment_OperationFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DailyGradeComment_Operation"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Operation"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]} as unknown as DocumentNode<DailyGradeComment_OperationFragment, unknown>;
 export const AnalyzePrivateFileMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AnalyzePrivateFileMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"key"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filename"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"size"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"analyzePrivateFileMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"Variable","name":{"kind":"Name","value":"key"}}},{"kind":"Argument","name":{"kind":"Name","value":"filename"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filename"}}},{"kind":"Argument","name":{"kind":"Name","value":"mimeType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}}},{"kind":"Argument","name":{"kind":"Name","value":"size"},"value":{"kind":"Variable","name":{"kind":"Name","value":"size"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<AnalyzePrivateFileMetadataMutation, AnalyzePrivateFileMetadataMutationVariables>;
 export const CreateInquiryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInquiry"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientCreateInquiryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInquiry"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateInquiryMutation, CreateInquiryMutationVariables>;
+export const GetDailyGradeCommentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetDailyGradeComment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"operation"},"name":{"kind":"Name","value":"lessonGradeCommentOperation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DailyGradeComment_Operation"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DailyGradeComment_Operation"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Operation"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]} as unknown as DocumentNode<GetDailyGradeCommentQuery, GetDailyGradeCommentQueryVariables>;
 export const GetMyLectureInvoicesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyLectureInvoices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myLectureInvoices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"paidAt"}},{"kind":"Field","name":{"kind":"Name","value":"method"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"books"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}}]}}]}}]} as unknown as DocumentNode<GetMyLectureInvoicesQuery, GetMyLectureInvoicesQueryVariables>;
 export const GetMyMaterialsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetMyMaterialsQuery, GetMyMaterialsQueryVariables>;
 export const GetMyNoticesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyNotices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myNotices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"pinnedAt"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetMyNoticesQuery, GetMyNoticesQueryVariables>;

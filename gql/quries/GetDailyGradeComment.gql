@@ -1,0 +1,10 @@
+query GetDailyGradeComment {
+  operation: lessonGradeCommentOperation {
+    ...DailyGradeComment_Operation
+  }
+}
+
+fragment DailyGradeComment_Operation on Operation {
+  id
+  message
+}
