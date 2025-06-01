@@ -113,7 +113,7 @@ export default function ScheduleHeader() {
           }}
         />
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <button
             css={styles.notificationButton}
             onClick={() => handleOpenMessages()}

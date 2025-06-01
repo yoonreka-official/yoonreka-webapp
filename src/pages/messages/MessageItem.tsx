@@ -20,8 +20,13 @@ export function MessageItem({ userChat }: MessageItemProps) {
   }, [userChat.administrator, userChat.user.name])
 
   return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-2 px-1 text-[13px]">
+    <div
+      className={clsx('flex flex-col space-y-1 w-full', {
+        'items-end': !isTeacher,
+        'items-start': isTeacher,
+      })}
+    >
+      <div className="w-fit flex items-center gap-2 px-1 text-[13px]">
         <div className="font-medium">{name}</div>
         <div className="text-gray-400">
           {dayjs(userChat.createdAt).format('YYYY-MM-DD HH:mm')}
@@ -29,7 +34,7 @@ export function MessageItem({ userChat }: MessageItemProps) {
       </div>
 
       <div
-        className={clsx('rounded-lg px-3 py-3 ', {
+        className={clsx('rounded-lg px-3 py-3', {
           'border-blue-100 border bg-blue-50/50': isTeacher,
           'bg-white': !isTeacher,
         })}
