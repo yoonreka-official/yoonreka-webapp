@@ -1,7 +1,9 @@
 import { css } from '@emotion/react'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
+import { MessageFilled } from '@ant-design/icons'
+import { useQuery } from '@apollo/client'
 import IconBell24 from '~/assets/svg/icon_bell_24.svg?react'
 import Flex from '~/components/display/Flex.tsx'
 import SelectYearMonth from '~/components/inputs/SelectYearMonth.tsx'
@@ -9,13 +11,17 @@ import DrawerNotifications from '~/components/notifications/DrawerNotifications.
 import { COLORS } from '~/configs/theme.ts'
 import useNotifications from '~/hooks/useNotifications.ts'
 import useSchedules from '~/hooks/useSchedules.ts'
+import { GetUserChatsDocument } from '~/types/api'
+import { DrawerMessages } from '../messages/DrawerMessages'
 
 const SHOW_NOTIFICATIONS_MODAL = 'notifications'
+const SHOW_MESSAGES_MODAL = 'messages'
 
-function ScheduleHeader() {
+export default function ScheduleHeader() {
   const [params] = useSearchParams()
   const redirectTo = params.get('to')
   const modal = params.get('modal')
+  const { data } = useQuery(GetUserChatsDocument, { fetchPolicy: 'no-cache' })
 
   const navigate = useNavigate()
 
@@ -23,20 +29,40 @@ function ScheduleHeader() {
   const {
     state: { hasNew: hasNewNotification },
   } = useNotifications()
+  const [hasNewMessages, setHasNewMessages] = useState(false)
 
-  const isOpen = modal === SHOW_NOTIFICATIONS_MODAL
+  const isOpenNotification = modal === SHOW_NOTIFICATIONS_MODAL
+  const isOpenMessages = modal === SHOW_MESSAGES_MODAL
 
-  // const [open, setOpen] = useState(false);
-
-  const handleOpen = () => {
+  const handleOpenNotification = () => {
     navigate(`/?modal=${SHOW_NOTIFICATIONS_MODAL}`, {
       replace: false,
     })
   }
 
+  const handleOpenMessages = () => {
+    navigate(`/?modal=${SHOW_MESSAGES_MODAL}`, {
+      replace: false,
+    })
+  }
+
+  const resetNewMessages = useCallback(() => {
+    const lastSeenUserChatId = window.localStorage.getItem('lastSeenUserChatId')
+    const userChats = data?.userChats.edges.map((edge) => edge.node) ?? []
+    if (lastSeenUserChatId) {
+      const hasNew = userChats.some((chat) => +chat.id > +lastSeenUserChatId)
+      setHasNewMessages(hasNew)
+    } else {
+      setHasNewMessages(userChats.length > 0)
+    }
+  }, [data])
+
   useEffect(() => {
     // ? 푸시알림을 탭해서 앱에 진입한 경우
-    if (redirectTo === SHOW_NOTIFICATIONS_MODAL) {
+    if (
+      redirectTo === SHOW_NOTIFICATIONS_MODAL ||
+      redirectTo === SHOW_MESSAGES_MODAL
+    ) {
       // 1. 강제로 히스토리 변경 (replaceState로 초기화)
       window.history.replaceState({}, '', '/')
       // 2. 가짜 히스토리 추가 (크롬 최적화 방지)
@@ -51,37 +77,30 @@ function ScheduleHeader() {
 
       // 2. 홈페이지에서 알림 모달 오픈 히스토리 푸시
       setTimeout(() => {
-        handleOpen()
+        if (redirectTo === SHOW_NOTIFICATIONS_MODAL) {
+          handleOpenNotification()
+        } else {
+          handleOpenMessages()
+        }
       }, 400)
     }
   }, [redirectTo, navigate, window.history])
-
-  // useEffect(() => {
-  //   // * modal 쿼리 감지시 알림 모달 on/off
-  //   setOpen(modal === SHOW_NOTIFICATIONS_MODAL);
-  // }, [modal]);
 
   useEffect(() => {
     const handlePopState = () => {
       navigate('/', { replace: false })
     }
 
-    // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-    //   event.preventDefault();
-    //   event.returnValue = ''; // 크롬에서 경고창 표시 (일부 브라우저에서는 무시됨)
-    // };
-
-    if (isOpen) {
+    if (isOpenNotification) {
       window.addEventListener('popstate', handlePopState)
     } else {
       window.removeEventListener('popstate', handlePopState)
     }
+  }, [isOpenNotification])
 
-    // return () => {
-    //   window.removeEventListener('popstate', handlePopState);
-    //   console.log('CLEAN UP!');
-    // };
-  }, [isOpen])
+  useEffect(() => {
+    resetNewMessages()
+  }, [resetNewMessages])
 
   return (
     <header css={styles.header}>
@@ -94,16 +113,37 @@ function ScheduleHeader() {
           }}
         />
 
-        <button css={styles.notificationButton} onClick={() => handleOpen()}>
-          {hasNewNotification && <div css={styles.redDot} />}
-          <IconBell24 />
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            css={styles.notificationButton}
+            onClick={() => handleOpenMessages()}
+          >
+            {hasNewMessages && <div css={styles.redDot} />}
+            <MessageFilled className="text-xl fill-current !text-[#B0B8C1]" />
+          </button>
+
+          <button
+            css={styles.notificationButton}
+            onClick={() => handleOpenNotification()}
+          >
+            {hasNewNotification && <div css={styles.redDot} />}
+            <IconBell24 />
+          </button>
+        </div>
       </Flex>
 
       <DrawerNotifications
-        open={isOpen}
+        open={isOpenNotification}
         onClose={() => {
           navigate(-1)
+        }}
+      />
+
+      <DrawerMessages
+        open={isOpenMessages}
+        onClose={() => {
+          navigate(-1)
+          resetNewMessages()
         }}
       />
     </header>
@@ -137,5 +177,3 @@ const styles = {
     border-radius: 50%;
   `,
 }
-
-export default ScheduleHeader

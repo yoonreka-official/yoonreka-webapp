@@ -2,7 +2,7 @@ import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
 
 import ErrorTemplate from '~/errors/ErrorTemplate.tsx'
 
-function RootBoundary() {
+export default function RootBoundary() {
   const error = useRouteError()
 
   if (isRouteErrorResponse(error)) {
@@ -26,5 +26,3 @@ function RootBoundary() {
     />
   )
 }
-
-export default RootBoundary

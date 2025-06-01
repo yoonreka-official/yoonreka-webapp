@@ -29,7 +29,7 @@ const NOTIFICATION_TABS: Array<{
   { key: NotificationType.INVOICE_DUE, label: '회비' },
 ]
 
-function DrawerNotifications({
+export default function DrawerNotifications({
   open,
   children,
   defaultActiveKey,
@@ -206,5 +206,3 @@ const styles = {
     }
   `,
 }
-
-export default DrawerNotifications

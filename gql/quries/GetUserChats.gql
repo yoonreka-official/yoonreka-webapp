@@ -1,0 +1,33 @@
+query GetUserChats {
+  userChats: my_userChatPagination(first: 5000) {
+    edges {
+      node {
+        ...UserChat
+      }
+    }
+  }
+}
+
+fragment UserChat on UserChat {
+  id
+  user {
+    id
+    name
+  }
+  administrator {
+    id
+    name
+  }
+  attachments {
+    id
+    mimeType
+    size
+    url
+    filename
+    createdAt
+    updatedAt
+  }
+  message
+  createdAt
+  updatedAt
+}

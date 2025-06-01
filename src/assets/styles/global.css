@@ -11,7 +11,6 @@
     system ui,
     sans-serif;
   letter-spacing: 0.0128em;
-  padding: 0;
 
   /* scroll 비활성화 */
   -ms-overflow-style: none; /* IE and Edge */
