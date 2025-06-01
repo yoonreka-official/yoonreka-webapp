@@ -43,11 +43,14 @@ export default function CardNotification({
       title={
         <Flex direction="column" gap={4} justify="center">
           <Body size={14} weight="bold">
-            <img
-              alt="아이콘"
-              css={notificationStyles.icon}
-              src={getIcon(type)}
-            />
+            <div className="flex items-center space-x-2">
+              <img
+                alt="아이콘"
+                css={notificationStyles.icon}
+                src={getIcon(type)}
+              />
+              {pinned && <span className="h-[14px]">📌</span>}
+            </div>
 
             {title}
 
