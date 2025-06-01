@@ -2,19 +2,22 @@ import { gql } from '@apollo/client'
 
 import { appolo } from '~/utils/apollo.util.ts'
 
-import { ClientCreateInquiryInput, CreateInquiryDocument } from '~/types/api'
+import {
+  ClientCreateInquiryInput,
+  CreateInquiryDocument,
+  Inquiry,
+} from '~/types/api'
 import type { QuestionParams } from '~/types/question.type.ts'
 
 export const getMyQuestions = (filter: QuestionParams) => {
   // eslint-disable-next-line
-  return appolo.query<{ myInquiries: any[] }>({
+  return appolo.query<{ myInquiries: Inquiry[] }>({
     query: gql`
       query MyInquiries($filter: ClientInquiryFilterInput) {
         myInquiries(filter: $filter) {
           answer
           answeredAt
           bookInfo
-          createdAt
           description
           id
           lecture {
@@ -23,8 +26,18 @@ export const getMyQuestions = (filter: QuestionParams) => {
           }
           link
           title
-          updatedAt
           who
+          attachments {
+            filename
+            id
+            mimeType
+            size
+            url
+            createdAt
+            updatedAt
+          }
+          createdAt
+          updatedAt
         }
       }
     `,

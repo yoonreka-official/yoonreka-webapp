@@ -4,7 +4,7 @@ import Body from '~/components/typography/Body.tsx'
 import NoData from '~/components/utils/NoData.tsx'
 import { COLORS } from '~/configs/theme.ts'
 import useQuestions from '~/hooks/useQuestions.ts'
-import CardQuestion from '~/pages/questions/CardQuestion.tsx'
+import { CardQuestion } from '~/pages/questions/CardQuestion.tsx'
 
 export default function QuestionList() {
   const {

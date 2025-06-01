@@ -3,12 +3,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getMyQuestions } from '~/api/question.api.ts'
 
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { InquiryWho } from '~/types/api'
+import { Inquiry, InquiryWho } from '~/types/api'
 
 export interface QuestionState {
   isLoading: boolean
   // eslint-disable-next-line
-  list: any[]
+  list: Inquiry[]
 
   selectedUserType: InquiryWho
   selectedLectureId?: string
@@ -21,7 +21,7 @@ const initialState: QuestionState = {
 }
 
 // eslint-disable-next-line
-export const fetchQuestions = createAsyncThunk<any[], InquiryWho>(
+export const fetchQuestions = createAsyncThunk<Inquiry[], InquiryWho>(
   'question/fetchMyQuestions',
   async (userType, { rejectWithValue }) => {
     try {

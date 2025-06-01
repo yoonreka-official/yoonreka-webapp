@@ -10,14 +10,20 @@ import StatusTag from '~/components/utils/StatusTag.tsx'
 import { COLORS } from '~/configs/theme.ts'
 
 import type { CardBaseProps } from '~/components/cards/CardBase.tsx'
+import ButtonAttachment from '~/components/notifications/ButtonAttachment'
+import { Inquiry } from '~/types/api'
+import { AttachmentFile } from '~/types/lectures.type'
 
 export interface CardQuestionProps extends CardBaseProps {
-  // eslint-disable-next-line
-  question: any
+  question: Inquiry
   onChange?: (open: boolean) => void
 }
 
-function CardQuestion({ question, className, onChange }: CardQuestionProps) {
+export function CardQuestion({
+  question,
+  className,
+  onChange,
+}: CardQuestionProps) {
   const [open, setOpen] = useState(false)
 
   const toggle = () => {
@@ -49,6 +55,17 @@ function CardQuestion({ question, className, onChange }: CardQuestionProps) {
 
       <div css={[styles.bodyWrapper, open && styles.open]}>
         <div css={styles.body}>{question.description}</div>
+
+        {question.attachments && question.attachments.length > 0 && (
+          <div>
+            {question.attachments.map((attachment) => (
+              <ButtonAttachment
+                key={attachment.id}
+                attachment={attachment as unknown as AttachmentFile}
+              />
+            ))}
+          </div>
+        )}
 
         {question.answer && (
           <>
@@ -149,5 +166,3 @@ const styles = {
     word-break: break-all;
   `,
 }
-
-export default CardQuestion
