@@ -10,19 +10,35 @@ import Body from '~/components/typography/Body.tsx'
 import Caption from '~/components/typography/Caption.tsx'
 import { COLORS } from '~/configs/theme.ts'
 import useInvoices from '~/hooks/useInvoices.ts'
-import { InvoiceMethod } from '~/types/invoice.type.ts'
 import { formatDate } from '~/utils/format.util.ts'
 import rules from '~/utils/rules.util.ts'
 
+import useAuth from '~/hooks/useAuth'
+import { InvoiceMethod } from '~/types/api'
 import type { InvoiceRequestBody } from '~/types/invoice.type.ts'
 
-const INVOICE_METHODS: Array<{ value: InvoiceMethod; label: string }> = [
-  { value: InvoiceMethod.CARD, label: '카드' },
-  { value: InvoiceMethod.TRANSFER, label: '이체' },
-  { value: InvoiceMethod.SEOULPAY, label: '서울페이' },
+const MIDDLE_SCHOOL_INVOICE_METHODS: Array<{
+  value: InvoiceMethod
+  label: string
+}> = [
+  { value: InvoiceMethod.Card, label: '카드' },
+  { value: InvoiceMethod.Transfer, label: '이체' },
+  { value: InvoiceMethod.Seoulpay, label: '서울페이' },
+]
+
+const HIGHT_SCHOOL_INVOICE_METHODS: Array<{
+  value: InvoiceMethod
+  label: string
+}> = [
+  { value: InvoiceMethod.Megastudy, label: '메가스터디\n사이트 결제' },
+  { value: InvoiceMethod.Visit, label: '방문 결제' },
+  { value: InvoiceMethod.DayPay, label: '당일 결제' },
 ]
 
 function InvoiceUpdateBottomSheet() {
+  const {
+    state: { isHighSchool },
+  } = useAuth()
   const {
     state: { selected },
     handleUpdateInvoice,
@@ -73,7 +89,7 @@ function InvoiceUpdateBottomSheet() {
       <FormBase
         form={form}
         initialValues={{
-          method: InvoiceMethod.CARD,
+          method: isHighSchool ? InvoiceMethod.Megastudy : InvoiceMethod.Card,
         }}
         onFinish={async (values) => {
           await handleUpdateInvoice(values)
@@ -85,7 +101,14 @@ function InvoiceUpdateBottomSheet() {
         </FormItem>
 
         <FormItem label="납부 방법" name="method" rules={[rules.required]}>
-          <InputSegmented options={INVOICE_METHODS} isInput />
+          <InputSegmented
+            options={
+              isHighSchool
+                ? HIGHT_SCHOOL_INVOICE_METHODS
+                : MIDDLE_SCHOOL_INVOICE_METHODS
+            }
+            isInput
+          />
         </FormItem>
 
         <FormItem label="납부 메모" name="userMemo">

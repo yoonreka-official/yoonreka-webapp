@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import useScroll from '~/hooks/useScroll.ts'
 import Container from '~/layouts/Container.tsx'
 import ScreenBase from '~/layouts/ScreenBase.tsx'
-import Invoices from '~/pages/more/invoices'
+import { Invoices } from '~/pages/more/invoices'
 import MoreHeader from '~/pages/more/MoreHeader.tsx'
 import SchoolGrades from '~/pages/more/school-grades'
 

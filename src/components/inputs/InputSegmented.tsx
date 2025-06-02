@@ -33,6 +33,9 @@ const styles = {
     .ant-segmented-item {
       border-radius: 12px;
       height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &::after {
         border-radius: 12px;
@@ -45,9 +48,13 @@ const styles = {
       font-size: 14px;
       font-style: normal;
       font-weight: 600;
-      line-height: 32px;
+      line-height: 1.2;
       letter-spacing: -0.2px;
       transition: 0.3s all ease;
+      white-space: pre-wrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .ant-segmented-item-selected .ant-segmented-item-label {
@@ -64,6 +71,9 @@ const styles = {
     .ant-segmented-item {
       border-radius: 8px;
       height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &::after {
         border-radius: 8px;
@@ -71,7 +81,10 @@ const styles = {
     }
 
     .ant-segmented-item-label {
-      line-height: 44px;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   `,
 }

@@ -25,6 +25,7 @@ export const getInvoices = (params: InvoiceParams) => {
           dueDate
           createdAt
           comment
+          link
           books {
             id
             price

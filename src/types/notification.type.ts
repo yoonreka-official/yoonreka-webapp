@@ -1,11 +1,7 @@
-import type {
-  InvoiceBook,
-  InvoiceMethod,
-  InvoiceState,
-} from '~/types/invoice.type.ts'
+import type { InvoiceBook, InvoiceState } from '~/types/invoice.type.ts'
 import type { AttachmentFile } from '~/types/lectures.type.ts'
 import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts'
-import { InvoiceType } from './api'
+import { InvoiceMethod, InvoiceType } from './api'
 
 export type NotificationOrderKey = 'ID'
 

@@ -7,8 +7,8 @@ import useInvoices from '~/hooks/useInvoices.ts'
 import { InvoiceState } from '~/types/invoice.type.ts'
 import { formatDate, formatNumber } from '~/utils/format.util.ts'
 
-import type { Invoice } from '~/types/invoice.type.ts'
 import { InvoiceType } from '~/types/api'
+import type { Invoice } from '~/types/invoice.type.ts'
 
 interface Props {
   invoice: Invoice
@@ -54,6 +54,14 @@ function InvoiceCard({ invoice }: Props) {
         <li>
           {getPriceLabel(invoice.type)}: {formatNumber(invoice.price)}원
         </li>
+        {invoice.link && (
+          <li>
+            링크:{' '}
+            <a href={invoice.link} target="_blank" rel="noopener noreferrer">
+              {invoice.link}
+            </a>
+          </li>
+        )}
       </ul>
 
       {invoice.state === InvoiceState.FAILED && (

@@ -21,6 +21,7 @@
     "@ant-design/icons": "5.x",
     "@apollo/client": "^3.12.11",
     "@emotion/react": "^11.14.0",
+    "@kokr/id": "^0.4.0",
     "@naverpay/react-pdf": "^0.3.4",
     "@reduxjs/toolkit": "^2.5.1",
     "antd": "^5.23.3",

@@ -11,7 +11,7 @@ import { InvoiceType } from '~/types/api'
 
 import type { Nullable } from '~/types/utils/nullable.type.ts'
 
-function Invoices() {
+export function Invoices() {
   const {
     state: { list, isLoading, invoiceType },
     fetchData,
@@ -58,5 +58,3 @@ function Invoices() {
     </div>
   )
 }
-
-export default Invoices

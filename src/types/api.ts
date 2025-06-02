@@ -82,6 +82,7 @@ export type AdminCreateLectureInvoiceInput = {
   comment?: InputMaybe<Scalars['String']['input']>;
   isRepeat: Scalars['Boolean']['input'];
   lectureId: Scalars['ID']['input'];
+  link?: InputMaybe<Scalars['String']['input']>;
   payDueDay: Scalars['Int']['input'];
   price: Scalars['Int']['input'];
   type: InvoiceType;
@@ -278,6 +279,7 @@ export type AdminUpdateLectureInput = {
 export type AdminUpdateLectureInvoiceInput = {
   comment?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
+  link?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AdminUpdateMaterialInput = {
@@ -696,14 +698,20 @@ export enum InquiryWho {
 
 /** 결제 방법 */
 export enum InvoiceMethod {
-  /** 카드 */
+  /** 카드 (중등) */
   Card = 'CARD',
-  /** 현금 */
+  /** 현금 (중등) */
   Cash = 'CASH',
-  /** 서울페이 */
+  /** 당일 결제 (고등) */
+  DayPay = 'DAY_PAY',
+  /** 메가스터디 (고등) */
+  Megastudy = 'MEGASTUDY',
+  /** 서울페이 (중등) */
   Seoulpay = 'SEOULPAY',
-  /** 계좌이체 */
-  Transfer = 'TRANSFER'
+  /** 계좌이체 (중등) */
+  Transfer = 'TRANSFER',
+  /** 방문 결제 (고등) */
+  Visit = 'VISIT'
 }
 
 export enum InvoiceType {
@@ -822,6 +830,7 @@ export type LectureInvoice = {
   id: Scalars['ID']['output'];
   isRepeat: Scalars['Boolean']['output'];
   lecture?: Maybe<Lecture>;
+  link?: Maybe<Scalars['String']['output']>;
   method?: Maybe<InvoiceMethod>;
   paidAt?: Maybe<Scalars['Timestamp']['output']>;
   price: Scalars['Int']['output'];
@@ -1052,7 +1061,6 @@ export type Mutation = {
   adminCreateAdministrator: Administrator;
   adminCreateBook: Book;
   adminCreateLecture: Lecture;
-  adminCreateLectureInvoice: Scalars['Boolean']['output'];
   adminCreateMaterial: Material;
   adminCreateSchool: School;
   adminCreateTeacher: Teacher;
@@ -1061,7 +1069,6 @@ export type Mutation = {
   adminDeleteBook: Book;
   adminDeleteInquiry: Inquiry;
   adminDeleteLecture: Lecture;
-  adminDeleteLectureInvoice: Scalars['Boolean']['output'];
   adminDeleteMaterial: Material;
   adminDeleteSchool: School;
   adminDeleteTeacher: Teacher;
@@ -1074,8 +1081,6 @@ export type Mutation = {
   adminUpdateBook: Book;
   adminUpdateInquiry: Book;
   adminUpdateLecture: Lecture;
-  adminUpdateLectureInvoice: LectureInvoice;
-  adminUpdateLectureInvoicesPaid: Array<LectureInvoice>;
   adminUpdateMaterial: Material;
   adminUpdateSchool: School;
   adminUpdateTeacher: Teacher;
@@ -1083,10 +1088,14 @@ export type Mutation = {
   adminUploadLessonAttachment: Lesson;
   adminUpsertLectureGradeForm: LectureGradeForm;
   adminUpsertLectureLabelComment: LectureLabelComment;
+  admin_createLectureInvoice: Scalars['Boolean']['output'];
   admin_createNotice: Notice;
   admin_createUserChat: UserChat;
+  admin_deleteLectureInvoice: Scalars['Boolean']['output'];
   admin_deleteNotice: Notice;
   admin_deleteUserChat: UserChat;
+  admin_updateLectureInvoice: LectureInvoice;
+  admin_updateLectureInvoicesPaid: Array<LectureInvoice>;
   admin_updateLessonGradeMemo: LessonGrade;
   admin_updateNotice: Notice;
   admin_updateOperation: Operation;
@@ -1137,11 +1146,6 @@ export type MutationAdminCreateLectureArgs = {
 };
 
 
-export type MutationAdminCreateLectureInvoiceArgs = {
-  input: AdminCreateLectureInvoiceInput;
-};
-
-
 export type MutationAdminCreateMaterialArgs = {
   input: AdminCreateMaterialInput;
 };
@@ -1178,11 +1182,6 @@ export type MutationAdminDeleteInquiryArgs = {
 
 
 export type MutationAdminDeleteLectureArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationAdminDeleteLectureInvoiceArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1249,16 +1248,6 @@ export type MutationAdminUpdateLectureArgs = {
 };
 
 
-export type MutationAdminUpdateLectureInvoiceArgs = {
-  input: AdminUpdateLectureInvoiceInput;
-};
-
-
-export type MutationAdminUpdateLectureInvoicesPaidArgs = {
-  ids: Array<Scalars['ID']['input']>;
-};
-
-
 export type MutationAdminUpdateMaterialArgs = {
   input: AdminUpdateMaterialInput;
 };
@@ -1294,6 +1283,11 @@ export type MutationAdminUpsertLectureLabelCommentArgs = {
 };
 
 
+export type MutationAdmin_CreateLectureInvoiceArgs = {
+  input: AdminCreateLectureInvoiceInput;
+};
+
+
 export type MutationAdmin_CreateNoticeArgs = {
   input: AdminCreateNoticeInput;
 };
@@ -1304,6 +1298,11 @@ export type MutationAdmin_CreateUserChatArgs = {
 };
 
 
+export type MutationAdmin_DeleteLectureInvoiceArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationAdmin_DeleteNoticeArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1311,6 +1310,16 @@ export type MutationAdmin_DeleteNoticeArgs = {
 
 export type MutationAdmin_DeleteUserChatArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_UpdateLectureInvoiceArgs = {
+  input: AdminUpdateLectureInvoiceInput;
+};
+
+
+export type MutationAdmin_UpdateLectureInvoicesPaidArgs = {
+  ids: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1561,8 +1570,6 @@ export type Query = {
   adminInquiry: Inquiry;
   adminInquiryPagination: InquiryPagination;
   adminLecture: Lecture;
-  adminLectureInvoice: LectureInvoice;
-  adminLectureInvoicePagination: LectureInvoicePagination;
   adminLecturePagination: LecturePagination;
   adminLesson: Lesson;
   adminLessonPagination: LessonPagination;
@@ -1576,6 +1583,8 @@ export type Query = {
   adminTeacher: Teacher;
   adminTeacherPagination: TeacherPagination;
   adminUsers: Array<User>;
+  admin_lectureInvoice: LectureInvoice;
+  admin_lectureInvoicePagination: LectureInvoicePagination;
   admin_lessonGradePagination: LessonGradePagination;
   admin_lessons: Array<Lesson>;
   admin_operation: Operation;
@@ -1665,24 +1674,6 @@ export type QueryAdminInquiryPaginationArgs = {
 
 export type QueryAdminLectureArgs = {
   id: Scalars['ID']['input'];
-};
-
-
-export type QueryAdminLectureInvoiceArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryAdminLectureInvoicePaginationArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminLectureInvoiceFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<LectureInvoiceRelayOrder>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -1800,6 +1791,24 @@ export type QueryAdminUsersArgs = {
   asc?: InputMaybe<Scalars['Boolean']['input']>;
   filter?: InputMaybe<AdminUserFilterInput>;
   order?: InputMaybe<UserRelayOrder>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_LectureInvoiceArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_LectureInvoicePaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminLectureInvoiceFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<LectureInvoiceRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
   withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 

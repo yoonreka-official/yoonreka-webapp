@@ -1286,6 +1286,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@kokr/id@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@kokr/id/-/id-0.4.0.tgz#bc0ea040ec1d7ca628585d5f4d1fc5c40312506d"
+  integrity sha512-4ttPb8QjlvL9Q+K4CBNfysD+OC0LBNameAMgFW6Y6rErhBXtrKYRbuIu3D/TzDrAW3pNjPhZpfFcYvc00xJOwA==
+
 "@kurkle/color@^0.3.0":
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/@kurkle/color/-/color-0.3.4.tgz#4d4ff677e1609214fc71c580125ddddd86abcabf"
