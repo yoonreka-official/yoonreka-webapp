@@ -33,6 +33,7 @@ interface Props extends Omit<DrawerProps, 'onClose'> {
 const TYPES: Array<{ value: InquiryWho; label: string }> = [
   { value: InquiryWho.Student, label: '학생이에요' },
   { value: InquiryWho.Parent, label: '학무모예요' },
+  { value: InquiryWho.Request, label: '자료요청' },
 ]
 
 export function DrawerQuestionCreate({
@@ -86,7 +87,7 @@ export function DrawerQuestionCreate({
           <button onClick={() => handleClose()}>
             <IconExpandLeft24 />
           </button>
-          <h1>질문하기</h1>
+          <h1>{type === InquiryWho.Request ? '자료요청' : '질문하기'}</h1>
         </div>
       </header>
 

@@ -14,6 +14,7 @@ import { DrawerQuestionCreate } from '~/pages/questions/DrawerQuestionCreate.tsx
 const QUESTION_TABS = [
   { key: InquiryWho.Student, label: '학생' },
   { key: InquiryWho.Parent, label: '학부모' },
+  { key: InquiryWho.Request, label: '자료요청' },
 ]
 
 export default function QuestionHeader() {
@@ -35,7 +36,7 @@ export default function QuestionHeader() {
 
         <ButtonNav onClick={() => setOpen(true)}>
           <IconQuestions height={16} width={16} />
-          질문하기
+          {type === InquiryWho.Request ? '자료요청하기' : '질문하기'}
         </ButtonNav>
       </div>
 

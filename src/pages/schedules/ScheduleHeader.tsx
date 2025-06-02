@@ -2,6 +2,7 @@ import { css } from '@emotion/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
+import { MessageFilled } from '@ant-design/icons'
 import { useQuery } from '@apollo/client'
 import IconBell24 from '~/assets/svg/icon_bell_24.svg?react'
 import Flex from '~/components/display/Flex.tsx'
@@ -28,7 +29,7 @@ export default function ScheduleHeader() {
   const {
     state: { hasNew: hasNewNotification },
   } = useNotifications()
-  const [, setHasNewMessages] = useState(false)
+  const [hasNewMessages, setHasNewMessages] = useState(false)
 
   const isOpenNotification = modal === SHOW_NOTIFICATIONS_MODAL
   const isOpenMessages = modal === SHOW_MESSAGES_MODAL
@@ -113,13 +114,13 @@ export default function ScheduleHeader() {
         />
 
         <div className="flex items-center gap-4">
-          {/* <button
+          <button
             css={styles.notificationButton}
             onClick={() => handleOpenMessages()}
           >
             {hasNewMessages && <div css={styles.redDot} />}
             <MessageFilled className="text-xl fill-current !text-[#B0B8C1]" />
-          </button> */}
+          </button>
 
           <button
             css={styles.notificationButton}

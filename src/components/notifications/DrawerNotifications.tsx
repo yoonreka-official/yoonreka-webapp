@@ -87,7 +87,16 @@ export default function DrawerNotifications({
             handleChangeType(type)
 
             if (type === 'ALL') {
-              fetchData({ pagination: DEFAULT_PAGINATION })
+              fetchData({
+                pagination: DEFAULT_PAGINATION,
+                filter: {
+                  types: [
+                    NotificationType.INVOICE_DUE,
+                    NotificationType.NEW_MATERIAL,
+                    NotificationType.NEW_NOTICE,
+                  ],
+                },
+              })
             } else {
               fetchData({
                 pagination: DEFAULT_PAGINATION,

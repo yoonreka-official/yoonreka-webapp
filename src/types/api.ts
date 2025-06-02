@@ -663,7 +663,7 @@ export type Inquiry = {
   /** 최근 수정 시각 */
   updatedAt: Scalars['Timestamp']['output'];
   user: User;
-  /** 문의 주체 */
+  /** 문의 타입 */
   who: InquiryWho;
 };
 
@@ -688,6 +688,8 @@ export enum InquiryRelayOrder {
 export enum InquiryWho {
   /** 학부모 */
   Parent = 'PARENT',
+  /** 요청 */
+  Request = 'REQUEST',
   /** 학생 */
   Student = 'STUDENT'
 }
@@ -965,7 +967,11 @@ export type LessonGrade = {
   id: Scalars['ID']['output'];
   lesson?: Maybe<Lesson>;
   retest: Retest;
+  retestDoneAt?: Maybe<Scalars['Timestamp']['output']>;
+  retestMemo?: Maybe<Scalars['String']['output']>;
   supplementary: Supplementary;
+  supplementaryDoneAt?: Maybe<Scalars['Timestamp']['output']>;
+  supplementaryMemo?: Maybe<Scalars['String']['output']>;
   /** 최근 수정 시각 */
   updatedAt: Scalars['Timestamp']['output'];
   user?: Maybe<User>;
@@ -1048,7 +1054,6 @@ export type Mutation = {
   adminCreateLecture: Lecture;
   adminCreateLectureInvoice: Scalars['Boolean']['output'];
   adminCreateMaterial: Material;
-  adminCreateNotice: Notice;
   adminCreateSchool: School;
   adminCreateTeacher: Teacher;
   adminCreateUser: User;
@@ -1058,7 +1063,6 @@ export type Mutation = {
   adminDeleteLecture: Lecture;
   adminDeleteLectureInvoice: Scalars['Boolean']['output'];
   adminDeleteMaterial: Material;
-  adminDeleteNotice: Notice;
   adminDeleteSchool: School;
   adminDeleteTeacher: Teacher;
   adminDeleteUser: User;
@@ -1073,15 +1077,18 @@ export type Mutation = {
   adminUpdateLectureInvoice: LectureInvoice;
   adminUpdateLectureInvoicesPaid: Array<LectureInvoice>;
   adminUpdateMaterial: Material;
-  adminUpdateNotice: Notice;
   adminUpdateSchool: School;
   adminUpdateTeacher: Teacher;
   adminUpdateUser: User;
   adminUploadLessonAttachment: Lesson;
   adminUpsertLectureGradeForm: LectureGradeForm;
   adminUpsertLectureLabelComment: LectureLabelComment;
+  admin_createNotice: Notice;
   admin_createUserChat: UserChat;
+  admin_deleteNotice: Notice;
   admin_deleteUserChat: UserChat;
+  admin_updateLessonGradeMemo: LessonGrade;
+  admin_updateNotice: Notice;
   admin_updateOperation: Operation;
   admin_upsertLessonGrade: LessonGrade;
   admin_upsertManyLessonGrade: Array<LessonGrade>;
@@ -1140,11 +1147,6 @@ export type MutationAdminCreateMaterialArgs = {
 };
 
 
-export type MutationAdminCreateNoticeArgs = {
-  input: AdminCreateNoticeInput;
-};
-
-
 export type MutationAdminCreateSchoolArgs = {
   input: AdminCreateSchoolInput;
 };
@@ -1186,11 +1188,6 @@ export type MutationAdminDeleteLectureInvoiceArgs = {
 
 
 export type MutationAdminDeleteMaterialArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationAdminDeleteNoticeArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1267,11 +1264,6 @@ export type MutationAdminUpdateMaterialArgs = {
 };
 
 
-export type MutationAdminUpdateNoticeArgs = {
-  input: AdminUpdateNoticeInput;
-};
-
-
 export type MutationAdminUpdateSchoolArgs = {
   input: AdminUpdateSchoolInput;
 };
@@ -1302,13 +1294,35 @@ export type MutationAdminUpsertLectureLabelCommentArgs = {
 };
 
 
+export type MutationAdmin_CreateNoticeArgs = {
+  input: AdminCreateNoticeInput;
+};
+
+
 export type MutationAdmin_CreateUserChatArgs = {
   input: AdminCreateUserChatInput;
 };
 
 
+export type MutationAdmin_DeleteNoticeArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationAdmin_DeleteUserChatArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_UpdateLessonGradeMemoArgs = {
+  id: Scalars['ID']['input'];
+  retestMemo?: InputMaybe<Scalars['String']['input']>;
+  supplementaryMemo?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationAdmin_UpdateNoticeArgs = {
+  input: AdminUpdateNoticeInput;
 };
 
 
@@ -1473,6 +1487,7 @@ export enum NotificationType {
   InvoiceDue = 'INVOICE_DUE',
   NewMaterial = 'NEW_MATERIAL',
   NewNotice = 'NEW_NOTICE',
+  NewUserChat = 'NEW_USER_CHAT',
   Test = 'TEST'
 }
 
@@ -1560,13 +1575,13 @@ export type Query = {
   adminSchools: Array<School>;
   adminTeacher: Teacher;
   adminTeacherPagination: TeacherPagination;
-  adminUserPagination: UserPagination;
   adminUsers: Array<User>;
   admin_lessonGradePagination: LessonGradePagination;
   admin_lessons: Array<Lesson>;
   admin_operation: Operation;
   admin_user: User;
   admin_userChatPagination: UserChatPagination;
+  admin_userPagination: UserPagination;
   currentAdministrator?: Maybe<Administrator>;
   currentUser?: Maybe<User>;
   file?: Maybe<File>;
@@ -1781,19 +1796,6 @@ export type QueryAdminTeacherPaginationArgs = {
 };
 
 
-export type QueryAdminUserPaginationArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminUserFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<UserRelayOrder>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
 export type QueryAdminUsersArgs = {
   asc?: InputMaybe<Scalars['Boolean']['input']>;
   filter?: InputMaybe<AdminUserFilterInput>;
@@ -1839,6 +1841,19 @@ export type QueryAdmin_UserChatPaginationArgs = {
   filter?: InputMaybe<AdminUserChatFilterInput>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_UserPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminUserFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<UserRelayOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -2126,7 +2141,8 @@ export type UserPagination = {
 };
 
 export enum UserRelayOrder {
-  Id = 'ID'
+  Id = 'ID',
+  UserChatUpdatedAt = 'USER_CHAT_UPDATED_AT'
 }
 
 /** 학생의 학교 성적표 */
