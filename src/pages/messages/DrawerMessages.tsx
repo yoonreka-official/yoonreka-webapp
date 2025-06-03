@@ -4,12 +4,12 @@ import { Drawer } from 'antd'
 import IconExpandLeft24 from '~/assets/svg/icon_expand_left_24.svg?react'
 import { COLORS } from '~/configs/theme.ts'
 
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import type { DrawerProps } from 'antd'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ButtonPrimary from '~/components/buttons/ButtonPrimary'
 import useScroll from '~/hooks/useScroll'
-import { GetUserChatsDocument } from '~/types/api'
+import { GetUserChatsDocument, ReadAllUserChatsDocument } from '~/types/api'
 import { DrawerMessageCreate } from './DrawerMessageCreate'
 import { MessageItem } from './MessageItem'
 
@@ -27,6 +27,8 @@ export function DrawerMessages({
   ...props
 }: Props) {
   const itemsRef = useRef<HTMLDivElement>(null)
+
+  const [readAllUserChats] = useMutation(ReadAllUserChatsDocument)
   const { data, refetch } = useQuery(GetUserChatsDocument, {
     fetchPolicy: 'no-cache',
   })
@@ -55,6 +57,10 @@ export function DrawerMessages({
     if (!open) {
       return
     }
+
+    ;(async () => {
+      await readAllUserChats()
+    })()
     const lastUserChatId = userChats[userChats.length - 1]?.id
     if (lastUserChatId) {
       window.localStorage.setItem('lastSeenUserChatId', lastUserChatId)

@@ -9,6 +9,7 @@ import { useMutation } from '@apollo/client'
 import ButtonPrimary from '~/components/buttons/ButtonPrimary.tsx'
 import Flex from '~/components/display/Flex.tsx'
 import { FormItem, useForm } from '~/components/forms/FormBase.tsx'
+import InputFile from '~/components/inputs/InputFile'
 import InputTextArea from '~/components/inputs/InputTextArea.tsx'
 import Container from '~/layouts/Container'
 import { CreateUserChatDocument } from '~/types/api'
@@ -16,6 +17,7 @@ import rules from '~/utils/rules.util.ts'
 
 export interface FormDataMessage {
   message: string
+  fileIds?: string[]
 }
 
 export interface DrawerMessageCreateProps extends Omit<DrawerProps, 'onClose'> {
@@ -39,6 +41,7 @@ export function DrawerMessageCreate({
       variables: {
         input: {
           message: values.message,
+          fileIds: values.fileIds,
         },
       },
     })
@@ -88,6 +91,13 @@ export function DrawerMessageCreate({
                   placeholder={
                     '내용을 입력해 주세요.\n*현재 화면에서는 작성 중인 내용이 자동 저장되지 않습니다. 긴 문장은 다른 곳에서 작성 후 복사해 주세요.'
                   }
+                />
+              </FormItem>
+
+              <FormItem label="파일 첨부" name="fileIds">
+                <InputFile
+                  placeholder="PNG 또는 JPG만 업로드 가능해요."
+                  accept="image/png, image/jpeg"
                 />
               </FormItem>
             </section>
