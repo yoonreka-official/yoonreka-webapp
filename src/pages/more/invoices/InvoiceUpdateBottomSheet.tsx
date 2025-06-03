@@ -32,7 +32,7 @@ const HIGHT_SCHOOL_INVOICE_METHODS: Array<{
 }> = [
   { value: InvoiceMethod.Megastudy, label: '메가스터디\n사이트 결제' },
   { value: InvoiceMethod.Visit, label: '방문 결제' },
-  { value: InvoiceMethod.DayPay, label: '당일 결제' },
+  { value: InvoiceMethod.SameDay, label: '당일 결제' },
 ]
 
 function InvoiceUpdateBottomSheet() {

@@ -59,7 +59,7 @@ query GetMyNotifications(
           }
           description
           id
-          lecture {
+          lectures {
             id
             title
           }

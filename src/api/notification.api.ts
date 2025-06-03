@@ -88,7 +88,7 @@ export const getNotifications = async ({
                   url
                 }
                 description
-                lecture {
+                lectures {
                   id
                   title
                 }

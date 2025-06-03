@@ -11,7 +11,7 @@ query GetMyMaterials {
     }
     description
     id
-    lecture {
+    lectures {
       id
       title
     }
