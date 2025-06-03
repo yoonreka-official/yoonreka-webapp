@@ -4,11 +4,9 @@ import {
   readNotifications,
   setType,
 } from '~/stores/NotificationSlice.ts'
+import { NotificationType } from '~/types/api'
 
-import type {
-  NotificationParams,
-  NotificationType,
-} from '~/types/notification.type.ts'
+import type { NotificationParams } from '~/types/notification.type.ts'
 
 export default function useNotifications() {
   const state = useAppSelector((state) => state.notification)

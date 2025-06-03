@@ -7,12 +7,12 @@ import NotificationAllList from '~/components/notifications/NotificationAllList'
 import { COLORS } from '~/configs/theme.ts'
 import useNotifications from '~/hooks/useNotifications.ts'
 import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
-import { NotificationType } from '~/types/notification.type.ts'
 import { native } from '~/utils/app.util.ts'
 
 import type { DrawerProps } from 'antd'
 import MaterialList from './MaterialList'
 import NoticeList from './NoticeList'
+import { NotificationType } from '~/types/api'
 
 interface Props extends Omit<DrawerProps, 'onClose'> {
   defaultActiveKey?: string
@@ -24,9 +24,9 @@ const NOTIFICATION_TABS: Array<{
   label: string
 }> = [
   { key: 'ALL', label: '전체' },
-  { key: NotificationType.NEW_MATERIAL, label: '학습자료' },
-  { key: NotificationType.NEW_NOTICE, label: '공지사항' },
-  { key: NotificationType.INVOICE_DUE, label: '회비' },
+  { key: NotificationType.NewMaterial, label: '학습자료' },
+  { key: NotificationType.NewNotice, label: '공지사항' },
+  { key: NotificationType.InvoiceDue, label: '회비' },
 ]
 
 export default function DrawerNotifications({
@@ -91,9 +91,9 @@ export default function DrawerNotifications({
                 pagination: DEFAULT_PAGINATION,
                 filter: {
                   types: [
-                    NotificationType.INVOICE_DUE,
-                    NotificationType.NEW_MATERIAL,
-                    NotificationType.NEW_NOTICE,
+                    NotificationType.InvoiceDue,
+                    NotificationType.NewMaterial,
+                    NotificationType.NewNotice,
                   ],
                 },
               })
@@ -109,9 +109,9 @@ export default function DrawerNotifications({
         />
       </header>
 
-      {selectedType === NotificationType.NEW_MATERIAL ? (
+      {selectedType === NotificationType.NewMaterial ? (
         <MaterialList />
-      ) : selectedType === NotificationType.NEW_NOTICE ? (
+      ) : selectedType === NotificationType.NewNotice ? (
         <NoticeList />
       ) : (
         <NotificationAllList />

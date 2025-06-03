@@ -1,16 +1,9 @@
 import type { InvoiceBook, InvoiceState } from '~/types/invoice.type.ts'
 import type { AttachmentFile } from '~/types/lectures.type.ts'
 import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts'
-import { InvoiceMethod, InvoiceType } from './api'
+import { InvoiceMethod, InvoiceType, NotificationType } from './api'
 
 export type NotificationOrderKey = 'ID'
-
-export enum NotificationType {
-  INVOICE_DUE = 'INVOICE_DUE',
-  NEW_MATERIAL = 'NEW_MATERIAL',
-  NEW_NOTICE = 'NEW_NOTICE',
-  TEST = 'TEST',
-}
 
 export interface NotificationParams {
   pagination: {

@@ -13,12 +13,9 @@ import useNotifications from '~/hooks/useNotifications.ts'
 import useScroll from '~/hooks/useScroll.ts'
 import Container from '~/layouts/Container.tsx'
 import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
-import { GetMyNoticesDocument } from '~/types/api'
+import { GetMyNoticesDocument, NotificationType } from '~/types/api'
 import { AttachmentFile } from '~/types/lectures.type'
-import {
-  NotificationType,
-  NotificationTypeName,
-} from '~/types/notification.type.ts'
+import { NotificationTypeName } from '~/types/notification.type.ts'
 
 import type {
   Notification,
@@ -27,11 +24,11 @@ import type {
 
 const getNotificationTypeLabel = (type: NotificationType | 'ALL') => {
   switch (type) {
-    case NotificationType.NEW_MATERIAL:
+    case NotificationType.NewMaterial:
       return '학습자료 '
-    case NotificationType.INVOICE_DUE:
+    case NotificationType.InvoiceDue:
       return '회비 '
-    case NotificationType.NEW_NOTICE:
+    case NotificationType.NewNotice:
       return '공지사항 '
     default:
       return ''

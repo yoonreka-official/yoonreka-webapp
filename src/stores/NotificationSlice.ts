@@ -5,13 +5,13 @@ import { getNotifications } from '~/api/notification.api.ts'
 
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-import type {
+import {
   FormattedNotificationResponse,
   Notification,
   NotificationPageInfo,
   NotificationParams,
-  NotificationType,
 } from '~/types/notification.type.ts'
+import { NotificationType } from '~/types/api'
 
 export interface NotificationState {
   params: NotificationParams
@@ -30,9 +30,13 @@ export const DEFAULT_PAGINATION = { offset: 0, limit: 10 }
 const initialState: NotificationState = {
   params: {
     pagination: DEFAULT_PAGINATION,
-    // filter: {
-    //   types: [NotificationType.NEW_MATERIAL],
-    // },
+    filter: {
+      types: [
+        NotificationType.NewMaterial,
+        NotificationType.NewNotice,
+        NotificationType.InvoiceDue,
+      ],
+    },
   },
   list: [],
   pageInfo: {

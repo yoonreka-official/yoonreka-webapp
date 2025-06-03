@@ -6,7 +6,7 @@ import DrawerNotifications from '~/components/notifications/DrawerNotifications.
 import Headline from '~/components/typography/Headline.tsx'
 import useNotifications from '~/hooks/useNotifications.ts'
 import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
-import { NotificationType } from '~/types/notification.type.ts'
+import { NotificationType } from '~/types/api'
 
 function LectureHeader() {
   const { fetchData, handleChangeType } = useNotifications()
@@ -19,11 +19,11 @@ function LectureHeader() {
 
         <ButtonNav
           onClick={() => {
-            handleChangeType(NotificationType.NEW_MATERIAL)
+            handleChangeType(NotificationType.NewMaterial)
             fetchData({
               pagination: DEFAULT_PAGINATION,
               filter: {
-                types: [NotificationType.NEW_MATERIAL],
+                types: [NotificationType.NewMaterial],
               },
             })
             setOpen(true)
