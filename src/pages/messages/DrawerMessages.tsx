@@ -93,6 +93,11 @@ export function DrawerMessages({
         {userChats.map((userChat) => (
           <MessageItem key={userChat.id} userChat={userChat} />
         ))}
+        {userChats.length === 0 && (
+          <div className="flex items-center justify-center h-[calc(100vh-132px)]">
+            <p className="text-gray-500">메시지가 없어요.</p>
+          </div>
+        )}
 
         <div className="sticky bottom-0 left-0 right-0 pb-4">
           <ButtonPrimary
