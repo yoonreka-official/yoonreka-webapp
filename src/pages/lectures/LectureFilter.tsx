@@ -25,6 +25,7 @@ function LectureFilter() {
   return (
     <Flex direction="column" gap={8} style={{ marginBottom: 8 }}>
       <Select
+        className="!border-blue-400"
         value={lecture?.id}
         options={authUser?.lectures.map((item) => ({
           label: item.title,

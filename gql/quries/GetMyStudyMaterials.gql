@@ -1,0 +1,23 @@
+query GetMyStudyMaterials {
+  studyMaterials: my_studyMaterials {
+    ...MyStudyMaterials_StudyMaterial
+  }
+}
+
+fragment MyStudyMaterials_StudyMaterial on StudyMaterial {
+  id
+  title
+  isAll
+  materialAttachments {
+    name
+    attachment {
+      filename
+      id
+      mimeType
+      size
+      url
+    }
+  }
+  updatedAt
+  createdAt
+}

@@ -113,6 +113,14 @@ export type AdminCreateSchoolInput = {
   type: SchoolType;
 };
 
+export type AdminCreateStudyMaterialInput = {
+  description: Scalars['String']['input'];
+  lectureIds: Array<Scalars['ID']['input']>;
+  materialAttachments: Array<StudyMaterialAttachmentInput>;
+  title: Scalars['String']['input'];
+  userIds: Array<Scalars['ID']['input']>;
+};
+
 export type AdminCreateTeacherInput = {
   /** 메모 */
   memo?: InputMaybe<Scalars['String']['input']>;
@@ -221,6 +229,11 @@ export type AdminSchoolFilterInput = {
   nameContains?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AdminStudyMaterialFilterInput = {
+  lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  titleContains?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type AdminTeacherFilterInput = {
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   nameContains?: InputMaybe<Scalars['String']['input']>;
@@ -316,6 +329,12 @@ export type AdminUpdateSchoolInput = {
   memo?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   type: SchoolType;
+};
+
+export type AdminUpdateStudyMaterialInput = {
+  id: Scalars['ID']['input'];
+  materialAttachments: Array<StudyMaterialAttachmentInput>;
+  title: Scalars['String']['input'];
 };
 
 export type AdminUpdateTeacherInput = {
@@ -414,6 +433,7 @@ export type AdminUserFilterInput = {
   ids?: InputMaybe<Array<Scalars['ID']['input']>>;
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   nameContains?: InputMaybe<Scalars['String']['input']>;
+  onlyAdminUnreadUserChats?: InputMaybe<Scalars['Boolean']['input']>;
   schoolIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   state?: InputMaybe<UserState>;
 };
@@ -1052,6 +1072,8 @@ export type Material = {
   /** 수업자료 내용 */
   description: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  /** 전체 공지 여부 */
+  isAll: Scalars['Boolean']['output'];
   lectures: Array<Lecture>;
   /** 수업자료 제목 */
   title: Scalars['String']['output'];
@@ -1111,16 +1133,20 @@ export type Mutation = {
   adminUpsertLectureLabelComment: LectureLabelComment;
   admin_createLectureInvoice: Scalars['Boolean']['output'];
   admin_createNotice: Notice;
+  admin_createStudyMaterial: StudyMaterial;
   admin_createUserChat: UserChat;
   admin_deleteLectureInvoice: Scalars['Boolean']['output'];
   admin_deleteNotice: Notice;
+  admin_deleteStudyMaterial: StudyMaterial;
   admin_deleteUserChat: UserChat;
   admin_notifyLessonGrades: Scalars['Boolean']['output'];
+  admin_readAllUserChats: Scalars['Boolean']['output'];
   admin_updateLectureInvoice: LectureInvoice;
   admin_updateLectureInvoicesPaid: Array<LectureInvoice>;
   admin_updateLessonGradeMemo: LessonGrade;
   admin_updateNotice: Notice;
   admin_updateOperation: Operation;
+  admin_updateStudyMaterial: StudyMaterial;
   admin_upsertLessonGrade: LessonGrade;
   admin_upsertManyLessonGrade: Array<LessonGrade>;
   admin_upsertUserConsulting: UserConsulting;
@@ -1317,6 +1343,11 @@ export type MutationAdmin_CreateNoticeArgs = {
 };
 
 
+export type MutationAdmin_CreateStudyMaterialArgs = {
+  input: AdminCreateStudyMaterialInput;
+};
+
+
 export type MutationAdmin_CreateUserChatArgs = {
   input: AdminCreateUserChatInput;
 };
@@ -1332,6 +1363,11 @@ export type MutationAdmin_DeleteNoticeArgs = {
 };
 
 
+export type MutationAdmin_DeleteStudyMaterialArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationAdmin_DeleteUserChatArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1339,6 +1375,11 @@ export type MutationAdmin_DeleteUserChatArgs = {
 
 export type MutationAdmin_NotifyLessonGradesArgs = {
   input: AdminNotifyLessonGradeInput;
+};
+
+
+export type MutationAdmin_ReadAllUserChatsArgs = {
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -1366,6 +1407,11 @@ export type MutationAdmin_UpdateNoticeArgs = {
 
 export type MutationAdmin_UpdateOperationArgs = {
   input: AdminUpdateOperationInput;
+};
+
+
+export type MutationAdmin_UpdateStudyMaterialArgs = {
+  input: AdminUpdateStudyMaterialInput;
 };
 
 
@@ -1624,6 +1670,8 @@ export type Query = {
   admin_lessonGradePagination: LessonGradePagination;
   admin_lessons: Array<Lesson>;
   admin_operation: Operation;
+  admin_studyMaterial: StudyMaterial;
+  admin_studyMaterialPagination: StudyMaterialPagination;
   admin_user: User;
   admin_userChatPagination: UserChatPagination;
   admin_userPagination: UserPagination;
@@ -1649,6 +1697,8 @@ export type Query = {
   myNotificationPagination: NotificationPagination;
   /** 로그인 된 학생의 성젹표 조회 */
   mySchoolReportCards: Array<UserSchoolReportCard>;
+  /** 로그인 된 학생의 공부하기 자료 목록 조회 */
+  my_studyMaterials: Array<StudyMaterial>;
   my_userChatPagination: UserChatPagination;
   schoolPagination: SchoolPagination;
 };
@@ -1875,6 +1925,24 @@ export type QueryAdmin_OperationArgs = {
 };
 
 
+export type QueryAdmin_StudyMaterialArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_StudyMaterialPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminStudyMaterialFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<StudyMaterialRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
 export type QueryAdmin_UserArgs = {
   id: Scalars['ID']['input'];
 };
@@ -2035,6 +2103,51 @@ export enum SchoolType {
   Middle = 'MIDDLE'
 }
 
+export type StudyMaterial = {
+  __typename?: 'StudyMaterial';
+  administrator: Administrator;
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  id: Scalars['ID']['output'];
+  /** 전체 공지 여부 */
+  isAll: Scalars['Boolean']['output'];
+  lectures: Array<Lecture>;
+  materialAttachments?: Maybe<Array<StudyMaterialAttachment>>;
+  /** 수업자료 제목 */
+  title: Scalars['String']['output'];
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+  users: Array<User>;
+};
+
+export type StudyMaterialAttachment = {
+  __typename?: 'StudyMaterialAttachment';
+  attachment: PrivateFile;
+  name: Scalars['String']['output'];
+};
+
+export type StudyMaterialAttachmentInput = {
+  fileId: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
+
+export type StudyMaterialEdge = {
+  __typename?: 'StudyMaterialEdge';
+  cursor: Scalars['String']['output'];
+  node: StudyMaterial;
+};
+
+export type StudyMaterialPagination = {
+  __typename?: 'StudyMaterialPagination';
+  edges: Array<StudyMaterialEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export enum StudyMaterialRelayOrder {
+  Id = 'ID'
+}
+
 /** 보강 */
 export enum Supplementary {
   /** 보강 완료 */
@@ -2091,6 +2204,7 @@ export type UpsertUserDeviceInput = {
 
 export type User = {
   __typename?: 'User';
+  adminUnreadUserChats: Array<UserChat>;
   adminUserDevices: Array<UserDevice>;
   admin_userConsulting?: Maybe<UserConsulting>;
   /** 생년월일 */
@@ -2300,6 +2414,13 @@ export type GetMyNotificationsQueryVariables = Exact<{
 
 export type GetMyNotificationsQuery = { __typename?: 'Query', myNotificationPagination: { __typename?: 'NotificationPagination', totalCount: number, edges: Array<{ __typename?: 'NotificationEdge', cursor: string, node: { __typename?: 'Notification', id: string, createdAt: number, contents: string, title: string, link?: { __typename: 'LectureInvoice', id: string } | { __typename: 'Material', id: string } | { __typename: 'Notice', id: string } | null, lectureInvoice?: { __typename?: 'LectureInvoice', price: number, state: LectureInvoiceState, type: InvoiceType, paidAt?: number | null, method?: InvoiceMethod | null, dueDate: string, lecture?: { __typename?: 'Lecture', id: string, title: string } | null, books: Array<{ __typename?: 'Book', id: string, title: string, price?: number | null }> } | null, material?: { __typename?: 'Material', description: string, id: string, title: string, createdAt: number, updatedAt: number, attachments: Array<{ __typename?: 'PrivateFile', createdAt: number, filename?: string | null, id: string, mimeType: string, size: number, updatedAt: number, url: string }>, lectures: Array<{ __typename?: 'Lecture', id: string, title: string }> } | null, notice?: { __typename?: 'Notice', createdAt: number, description: string, id: string, isAll: boolean, link?: string | null, title: string, updatedAt: number, lectures: Array<{ __typename?: 'Lecture', id: string, title: string }>, attachments: Array<{ __typename?: 'PrivateFile', createdAt: number, filename?: string | null, id: string, mimeType: string, size: number, updatedAt: number, url: string }> } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean } } };
 
+export type GetMyStudyMaterialsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMyStudyMaterialsQuery = { __typename?: 'Query', studyMaterials: Array<{ __typename?: 'StudyMaterial', id: string, title: string, isAll: boolean, updatedAt: number, createdAt: number, materialAttachments?: Array<{ __typename?: 'StudyMaterialAttachment', name: string, attachment: { __typename?: 'PrivateFile', filename?: string | null, id: string, mimeType: string, size: number, url: string } }> | null }> };
+
+export type MyStudyMaterials_StudyMaterialFragment = { __typename?: 'StudyMaterial', id: string, title: string, isAll: boolean, updatedAt: number, createdAt: number, materialAttachments?: Array<{ __typename?: 'StudyMaterialAttachment', name: string, attachment: { __typename?: 'PrivateFile', filename?: string | null, id: string, mimeType: string, size: number, url: string } }> | null };
+
 export type GetUserChatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2308,6 +2429,7 @@ export type GetUserChatsQuery = { __typename?: 'Query', userChats: { __typename?
 export type UserChatFragment = { __typename?: 'UserChat', id: string, message?: string | null, createdAt: number, updatedAt: number, user: { __typename?: 'User', id: string, name: string }, administrator?: { __typename?: 'Administrator', id: string, name: string } | null, attachments: Array<{ __typename?: 'PrivateFile', id: string, mimeType: string, size: number, url: string, filename?: string | null, createdAt: number, updatedAt: number }> };
 
 export const DailyGradeComment_OperationFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DailyGradeComment_Operation"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Operation"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]} as unknown as DocumentNode<DailyGradeComment_OperationFragment, unknown>;
+export const MyStudyMaterials_StudyMaterialFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StudyMaterial"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"materialAttachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<MyStudyMaterials_StudyMaterialFragment, unknown>;
 export const UserChatFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserChat"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserChat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"administrator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UserChatFragment, unknown>;
 export const AnalyzePrivateFileMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AnalyzePrivateFileMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"key"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filename"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"size"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"analyzePrivateFileMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"Variable","name":{"kind":"Name","value":"key"}}},{"kind":"Argument","name":{"kind":"Name","value":"filename"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filename"}}},{"kind":"Argument","name":{"kind":"Name","value":"mimeType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}}},{"kind":"Argument","name":{"kind":"Name","value":"size"},"value":{"kind":"Variable","name":{"kind":"Name","value":"size"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<AnalyzePrivateFileMetadataMutation, AnalyzePrivateFileMetadataMutationVariables>;
 export const CreateInquiryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInquiry"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientCreateInquiryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInquiry"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateInquiryMutation, CreateInquiryMutationVariables>;
@@ -2318,4 +2440,5 @@ export const GetMyLectureInvoicesDocument = {"kind":"Document","definitions":[{"
 export const GetMyMaterialsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetMyMaterialsQuery, GetMyMaterialsQueryVariables>;
 export const GetMyNoticesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyNotices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myNotices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"pinnedAt"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetMyNoticesQuery, GetMyNoticesQueryVariables>;
 export const GetMyNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"order"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NotificationRelayOrder"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NotificationFilterInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"asc"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myNotificationPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"order"},"value":{"kind":"Variable","name":{"kind":"Name","value":"order"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"asc"},"value":{"kind":"Variable","name":{"kind":"Name","value":"asc"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"link"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureInvoice"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Material"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Notice"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"lectureInvoice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"paidAt"}},{"kind":"Field","name":{"kind":"Name","value":"method"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"books"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"notice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"contents"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}}]}}]}}]}}]} as unknown as DocumentNode<GetMyNotificationsQuery, GetMyNotificationsQueryVariables>;
+export const GetMyStudyMaterialsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyStudyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"studyMaterials"},"name":{"kind":"Name","value":"my_studyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StudyMaterial"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"materialAttachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<GetMyStudyMaterialsQuery, GetMyStudyMaterialsQueryVariables>;
 export const GetUserChatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserChats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"userChats"},"name":{"kind":"Name","value":"my_userChatPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"5000"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserChat"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserChat"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserChat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"administrator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<GetUserChatsQuery, GetUserChatsQueryVariables>;

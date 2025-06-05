@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import useLectures from '~/hooks/useLectures.ts'
@@ -8,6 +8,7 @@ import ScreenBase from '~/layouts/ScreenBase.tsx'
 import LectureAttachmentViewer from '~/pages/lectures/LectureAttachmentViewer.tsx'
 import LectureFilter from '~/pages/lectures/LectureFilter.tsx'
 import LectureHeader from '~/pages/lectures/LectureHeader.tsx'
+import { StudyMaterials } from './StudyMaterials'
 
 function LecturesPage() {
   const {
@@ -19,6 +20,8 @@ function LecturesPage() {
   const [params] = useSearchParams()
   const lectureId = params.get('lectureId')
   const lessonDate = params.get('date')
+
+  const [type, setType] = useState<'materials' | 'study-materials'>('materials')
 
   useLoading(isLoading)
 
@@ -33,11 +36,17 @@ function LecturesPage() {
   }, [])
 
   return (
-    <ScreenBase header={<LectureHeader />}>
-      <Container>
-        <LectureFilter />
-        <LectureAttachmentViewer />
-      </Container>
+    <ScreenBase header={<LectureHeader onTypeChange={setType} />}>
+      {type === 'materials' ? (
+        <Container>
+          <LectureFilter />
+          <LectureAttachmentViewer />
+        </Container>
+      ) : (
+        <Container>
+          <StudyMaterials />
+        </Container>
+      )}
     </ScreenBase>
   )
 }
