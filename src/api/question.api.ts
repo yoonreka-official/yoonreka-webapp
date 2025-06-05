@@ -36,6 +36,15 @@ export const getMyQuestions = (filter: QuestionParams) => {
             createdAt
             updatedAt
           }
+          answerAttachments {
+            filename
+            id
+            mimeType
+            size
+            url
+            createdAt
+            updatedAt
+          }
           createdAt
           updatedAt
         }

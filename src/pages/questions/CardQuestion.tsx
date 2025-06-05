@@ -70,7 +70,7 @@ export function CardQuestion({
         {question.answer && (
           <>
             <br />
-            <Flex gap={4} items="center">
+            <Flex className="pb-1" gap={4} items="center">
               <Caption color={COLORS.FONT['40']} size={12} weight="bold">
                 답변
               </Caption>
@@ -93,6 +93,17 @@ export function CardQuestion({
                 </a>
               )}
             </div>
+            {question.answerAttachments &&
+              question.answerAttachments.length > 0 && (
+                <div>
+                  {question.answerAttachments.map((attachment) => (
+                    <ButtonAttachment
+                      key={attachment.id}
+                      attachment={attachment as unknown as AttachmentFile}
+                    />
+                  ))}
+                </div>
+              )}
           </>
         )}
       </div>

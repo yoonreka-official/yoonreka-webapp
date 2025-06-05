@@ -262,6 +262,8 @@ export type AdminUpdateBookInput = {
 
 export type AdminUpdateInquiryInput = {
   answer?: InputMaybe<Scalars['String']['input']>;
+  /** 문의 답변 첨부파일 ID */
+  answerFileIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   id: Scalars['ID']['input'];
   link?: InputMaybe<Scalars['URL']['input']>;
 };
@@ -691,6 +693,7 @@ export type Inquiry = {
   administrator?: Maybe<Administrator>;
   /** 문의 답변 */
   answer?: Maybe<Scalars['String']['output']>;
+  answerAttachments: Array<PrivateFile>;
   answeredAt?: Maybe<Scalars['Timestamp']['output']>;
   attachments: Array<PrivateFile>;
   /** 문의 내용 */
@@ -1110,7 +1113,6 @@ export type Mutation = {
   adminCreateUser: User;
   adminDeleteAdministrator: Administrator;
   adminDeleteBook: Book;
-  adminDeleteInquiry: Inquiry;
   adminDeleteLecture: Lecture;
   adminDeleteMaterial: Material;
   adminDeleteSchool: School;
@@ -1122,7 +1124,6 @@ export type Mutation = {
   adminUpdateAdministrator: Administrator;
   adminUpdateAdministratorPassword: Scalars['Boolean']['output'];
   adminUpdateBook: Book;
-  adminUpdateInquiry: Book;
   adminUpdateLecture: Lecture;
   adminUpdateMaterial: Material;
   adminUpdateSchool: School;
@@ -1135,12 +1136,14 @@ export type Mutation = {
   admin_createNotice: Notice;
   admin_createStudyMaterial: StudyMaterial;
   admin_createUserChat: UserChat;
+  admin_deleteInquiry: Inquiry;
   admin_deleteLectureInvoice: Scalars['Boolean']['output'];
   admin_deleteNotice: Notice;
   admin_deleteStudyMaterial: StudyMaterial;
   admin_deleteUserChat: UserChat;
   admin_notifyLessonGrades: Scalars['Boolean']['output'];
   admin_readAllUserChats: Scalars['Boolean']['output'];
+  admin_updateInquiry: Book;
   admin_updateLectureInvoice: LectureInvoice;
   admin_updateLectureInvoicesPaid: Array<LectureInvoice>;
   admin_updateLessonGradeMemo: LessonGrade;
@@ -1226,11 +1229,6 @@ export type MutationAdminDeleteBookArgs = {
 };
 
 
-export type MutationAdminDeleteInquiryArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
 export type MutationAdminDeleteLectureArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1285,11 +1283,6 @@ export type MutationAdminUpdateAdministratorPasswordArgs = {
 
 export type MutationAdminUpdateBookArgs = {
   input: AdminUpdateBookInput;
-};
-
-
-export type MutationAdminUpdateInquiryArgs = {
-  input: AdminUpdateInquiryInput;
 };
 
 
@@ -1353,6 +1346,11 @@ export type MutationAdmin_CreateUserChatArgs = {
 };
 
 
+export type MutationAdmin_DeleteInquiryArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationAdmin_DeleteLectureInvoiceArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1380,6 +1378,11 @@ export type MutationAdmin_NotifyLessonGradesArgs = {
 
 export type MutationAdmin_ReadAllUserChatsArgs = {
   userId: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_UpdateInquiryArgs = {
+  input: AdminUpdateInquiryInput;
 };
 
 
@@ -1649,8 +1652,6 @@ export type Query = {
   adminAdministratorPagination: AdministratorPagination;
   adminBook: Book;
   adminBookPagination: BookPagination;
-  adminInquiry: Inquiry;
-  adminInquiryPagination: InquiryPagination;
   adminLecture: Lecture;
   adminLecturePagination: LecturePagination;
   adminLesson: Lesson;
@@ -1665,6 +1666,8 @@ export type Query = {
   adminTeacher: Teacher;
   adminTeacherPagination: TeacherPagination;
   adminUsers: Array<User>;
+  admin_inquiry: Inquiry;
+  admin_inquiryPagination: InquiryPagination;
   admin_lectureInvoice: LectureInvoice;
   admin_lectureInvoicePagination: LectureInvoicePagination;
   admin_lessonGradePagination: LessonGradePagination;
@@ -1735,24 +1738,6 @@ export type QueryAdminBookPaginationArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   order?: InputMaybe<BookRelayOrder>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryAdminInquiryArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryAdminInquiryPaginationArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminInquiryFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<InquiryRelayOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -1877,6 +1862,24 @@ export type QueryAdminUsersArgs = {
   asc?: InputMaybe<Scalars['Boolean']['input']>;
   filter?: InputMaybe<AdminUserFilterInput>;
   order?: InputMaybe<UserRelayOrder>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_InquiryArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_InquiryPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminInquiryFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<InquiryRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
   withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
