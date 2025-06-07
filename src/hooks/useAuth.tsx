@@ -84,6 +84,7 @@ const useAuth = () => {
   }
 
   const handleLogout = async () => {
+    console.log('handleLogout')
     const confirm = await dialog.confirm({
       title: '정말 로그아웃 하시겠습니까?',
       content: '로그아웃',
