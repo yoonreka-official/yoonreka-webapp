@@ -76,7 +76,7 @@ function CardDailyGrade({
 
       <Flex direction="column" gap={4} style={{ marginTop: 16 }}>
         <Body size={14} weight="bold">
-          {`지윤T's COMMENT`}
+          {`COMMENT`}
         </Body>
 
         <div css={gradeStyles.commentBox}>
