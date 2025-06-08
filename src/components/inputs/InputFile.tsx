@@ -96,6 +96,7 @@ function InputFile({
           value={internalValue}
           placeholder={placeholder}
           readOnly
+          allowClear={false}
           {...props}
           onClick={() => !internalValue && openFileBrowser()}
         />
