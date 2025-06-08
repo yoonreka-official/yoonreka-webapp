@@ -59,6 +59,7 @@ export function DrawerMessages({
     }
 
     ;(async () => {
+      await refetch()
       await readAllUserChats()
     })()
     const lastUserChatId = userChats[userChats.length - 1]?.id
@@ -66,6 +67,19 @@ export function DrawerMessages({
       window.localStorage.setItem('lastSeenUserChatId', lastUserChatId)
     }
   }, [userChats, open])
+
+  useEffect(() => {
+    if (!open) {
+      return
+    }
+
+    const intervalId = setInterval(async () => {
+      await refetch()
+    }, 2700)
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [open])
 
   return (
     <Drawer
