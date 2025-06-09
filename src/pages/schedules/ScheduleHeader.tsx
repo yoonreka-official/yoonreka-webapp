@@ -60,7 +60,7 @@ export default function ScheduleHeader() {
 
   useEffect(() => {
     if (fType) {
-      if (fType === 'NEW_USER_CHAT') {
+      if (fType === 'NEW_LESSON_GRADE') {
         navigate('/grades')
         return
       }
