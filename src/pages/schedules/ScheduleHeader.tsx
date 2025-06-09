@@ -20,6 +20,7 @@ const SHOW_MESSAGES_MODAL = 'messages'
 export default function ScheduleHeader() {
   const [params] = useSearchParams()
   const redirectTo = params.get('to')
+  const fType = params.get('f_type') // 앱 푸시 눌러서 들어올 경우 타입이 들어옴
   const modal = params.get('modal')
   const { data } = useQuery(GetUserChatsDocument, { fetchPolicy: 'no-cache' })
 
@@ -58,6 +59,13 @@ export default function ScheduleHeader() {
   }, [data])
 
   useEffect(() => {
+    if (fType) {
+      if (fType === 'NEW_USER_CHAT') {
+        navigate('/grades')
+        return
+      }
+    }
+
     // ? 푸시알림을 탭해서 앱에 진입한 경우
     if (
       redirectTo === SHOW_NOTIFICATIONS_MODAL ||

@@ -93,7 +93,7 @@ export default function NotificationAllList() {
         return (
           <CardInvoice
             key={item.id}
-            title={item.lectureInvoice!.lecture.title}
+            title={item.lectureInvoice!.lecture?.title ?? ''}
             createdAt={item.lectureInvoice!.dueDate}
             invoiceType={item.lectureInvoice!.type}
             isNew={item.isNew}
