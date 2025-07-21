@@ -10,7 +10,7 @@ import Caption from '~/components/typography/Caption.tsx'
 import { COLORS } from '~/configs/theme.ts'
 import useAuth from '~/hooks/useAuth.tsx'
 import useGrades from '~/hooks/useGrades.ts'
-import { GetDailyGradeCommentDocument } from '~/types/api'
+import { GetDailyGradeCommentDocument, Supplementary } from '~/types/api'
 import { AttendanceStatus } from '~/types/grades.type.ts'
 
 import type {
@@ -62,7 +62,12 @@ function CardDailyGrade({
         </Body>
 
         <Caption color={COLORS.FONT['80']} size={12} weight="semibold">
-          {getAttendanceText(lesson.myLessonGrade?.attendanceStatus)}
+          <div className="flex items-center space-x-1">
+            {getAttendanceText(lesson.myLessonGrade?.attendanceStatus)}
+            {lesson.myLessonGrade?.supplementary === Supplementary.Done && (
+              <div>(보강완료)</div>
+            )}
+          </div>
         </Caption>
       </Flex>
 
