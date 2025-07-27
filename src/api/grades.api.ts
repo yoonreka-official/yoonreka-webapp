@@ -25,7 +25,7 @@ export const getLectureGrades = (myLectureId: string, gradeType: GradeType) => {
             value # 성적 항목 라벨 이름값 (ex. 단어, 리스닝, 구문, 어법 ...)
           }
 
-          lessons {
+          lessons: myLessons {
             date
 
             attachment {
