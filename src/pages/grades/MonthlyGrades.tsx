@@ -1,3 +1,4 @@
+import { css } from '@emotion/react'
 import dayjs from 'dayjs'
 import { useCallback, useMemo, useState } from 'react'
 import Flex from '~/components/display/Flex'
@@ -10,17 +11,10 @@ import {
   GradeMonthlyTab_LessonGradeFragment,
 } from '~/types/api'
 import { gradeStyles } from './CardDailyGrade'
-import { css } from '@emotion/react'
-
-type DataType = {
-  key: string
-  lesson?: GradeMonthlyTab_LessonFragment
-  lessonGrade?: GradeMonthlyTab_LessonGradeFragment
-}
 
 type MonthlyGroupedData = {
   month: string // YYYY-MM format
-  items: DataType[]
+  items: GradeMonthlyTab_LessonGradeFragment[]
 }
 
 export interface MonthlyGradesProps {
@@ -31,26 +25,9 @@ export function MonthlyGrades({ lessonGrades }: MonthlyGradesProps) {
   const [selectedMonth, setSelectedMonth] = useState<string | 'all'>('all')
 
   const dataSource = useMemo<MonthlyGroupedData[]>(() => {
-    // 먼저 기존 방식대로 DataType 배열을 생성
-    const flatData = lessonGrades
-      .map((lessonGrade) => [
-        {
-          key: `${lessonGrade.id}--lecture`,
-          lesson: lessonGrade.lesson!,
-          lessonGrade: undefined,
-        },
-        {
-          key: `${lessonGrade.id}--lessonGrade`,
-          lesson: undefined,
-          lessonGrade,
-        },
-      ])
-      .flat()
-
-    // 월별로 그룹핑
-    const groupedByMonth = flatData.reduce(
-      (acc, item) => {
-        const lesson = item.lesson || item.lessonGrade?.lesson
+    const groupedByMonth = lessonGrades.reduce(
+      (acc, lessonGrade) => {
+        const lesson = lessonGrade.lesson
         if (!lesson?.date) return acc
 
         const monthKey = dayjs(lesson.date).format('YYYY-MM')
@@ -58,14 +35,13 @@ export function MonthlyGrades({ lessonGrades }: MonthlyGradesProps) {
         if (!acc[monthKey]) {
           acc[monthKey] = []
         }
-        acc[monthKey].push(item)
+        acc[monthKey].push(lessonGrade)
 
         return acc
       },
-      {} as Record<string, DataType[]>,
+      {} as Record<string, GradeMonthlyTab_LessonGradeFragment[]>,
     )
 
-    // 월별로 정렬된 배열로 변환 (최신 월이 먼저 오도록)
     return Object.entries(groupedByMonth)
       .map(([month, items]) => ({
         month,
@@ -85,7 +61,6 @@ export function MonthlyGrades({ lessonGrades }: MonthlyGradesProps) {
     return options
   }, [dataSource])
 
-  // 선택된 월에 따라 필터링된 데이터
   const filteredDataSource = useMemo(() => {
     if (selectedMonth === 'all') {
       return dataSource
@@ -96,7 +71,6 @@ export function MonthlyGrades({ lessonGrades }: MonthlyGradesProps) {
   return (
     <div className="space-y-4">
       <div>
-        {/* 월별 선택 Select */}
         <Flex
           direction="column"
           gap={8}
@@ -117,63 +91,58 @@ export function MonthlyGrades({ lessonGrades }: MonthlyGradesProps) {
       <div className="flex flex-col space-y-6">
         {filteredDataSource.map((monthGroup) => (
           <div key={monthGroup.month} className="bg-white rounded-2xl">
-            {/* 월별 헤더 */}
             <header className="px-4 py-4">
               <Body size={14} weight="bold">
                 {dayjs(monthGroup.month + '-01').format('YYYY년 MM월')}
               </Body>
             </header>
 
-            {/* 해당 월의 데이터 */}
             <div className="mx-4 space-y-2">
-              {monthGroup.items.map((item, index) => {
-                const lesson = item.lesson
-                const lessonGrade = item.lessonGrade
+              {monthGroup.items.map((lessonGrade) => {
+                const lesson = lessonGrade.lesson
+
+                if (!lesson) {
+                  return null
+                }
 
                 return (
-                  <div key={index}>
-                    {lesson ? (
-                      <Lecture lesson={lesson} />
-                    ) : lessonGrade ? (
-                      <div className="space-y-4 pb-8">
-                        {['과제성적', '테스트', '진도'].map((type) => (
-                          <div key={type}>
-                            <Grades
-                              lessonGrade={lessonGrade}
-                              type={type as '과제성적' | '테스트' | '진도'}
-                            />
+                  <div key={lessonGrade.id}>
+                    <Lecture lesson={lesson} />
+                    <div className="space-y-4 py-4">
+                      {['과제성적', '테스트', '진도'].map((type) => (
+                        <div key={type}>
+                          <Grades
+                            lessonGrade={lessonGrade}
+                            type={type as '과제성적' | '테스트' | '진도'}
+                          />
+                        </div>
+                      ))}
+
+                      {lessonGrade.comment && (
+                        <Flex
+                          direction="column"
+                          gap={4}
+                          style={{ marginTop: 16 }}
+                        >
+                          <Body size={14} weight="bold">
+                            {`COMMENT`}
+                          </Body>
+
+                          <div css={gradeStyles.commentBox}>
+                            <Caption
+                              color={
+                                lessonGrade.comment
+                                  ? COLORS.FONT['80']
+                                  : COLORS.BG['04']
+                              }
+                              size={12}
+                            >
+                              {lessonGrade.comment || '개별 코멘트가 없습니다.'}
+                            </Caption>
                           </div>
-                        ))}
-
-                        {lessonGrade.comment && (
-                          <Flex
-                            direction="column"
-                            gap={4}
-                            style={{ marginTop: 16 }}
-                          >
-                            <Body size={14} weight="bold">
-                              {`COMMENT`}
-                            </Body>
-
-                            <div css={gradeStyles.commentBox}>
-                              <Caption
-                                color={
-                                  lessonGrade.comment
-                                    ? COLORS.FONT['80']
-                                    : COLORS.BG['04']
-                                }
-                                size={12}
-                              >
-                                {lessonGrade.comment ||
-                                  '개별 코멘트가 없습니다.'}
-                              </Caption>
-                            </div>
-                          </Flex>
-                        )}
-                      </div>
-                    ) : (
-                      <></>
-                    )}
+                        </Flex>
+                      )}
+                    </div>
                   </div>
                 )
               })}
