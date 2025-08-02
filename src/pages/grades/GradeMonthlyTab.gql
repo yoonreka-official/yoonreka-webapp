@@ -1,0 +1,75 @@
+query GetGradeMonthlyTab(
+  $filter: ClientLessonGradesFilterInput
+  $order: LessonGradeRelayOrder!
+  $asc: Boolean!
+) {
+  lessonGrades: myLessonGrades(asc: $asc, order: $order, filter: $filter) {
+    ...GradeMonthlyTab_LessonGrade
+  }
+}
+
+fragment GradeMonthlyTab_LessonGrade on LessonGrade {
+  id
+  user {
+    id
+    name
+    school {
+      id
+      name
+    }
+    birthDate
+  }
+  lesson {
+    ...GradeMonthlyTab_Lesson
+  }
+  attendanceStatus
+
+  supplementary
+  supplementaryDoneAt
+  supplementaryMemo
+
+  retest
+  retestDoneAt
+  retestMemo
+
+  data {
+    id
+    type
+    label
+    value
+    value2
+    maxValue
+  }
+  comment
+  createdAt
+  updatedAt
+}
+
+fragment GradeMonthlyTab_Lesson on Lesson {
+  id
+  date
+  startTime
+  endTime
+
+  lecture {
+    ...GradeMonthlyTab_Lecture
+  }
+}
+
+fragment GradeMonthlyTab_Lecture on Lecture {
+  id
+  title
+
+  gradeForm(gradeType: DEFAULT) {
+    ...GradeMonthlyTab_GradeForm
+  }
+}
+
+fragment GradeMonthlyTab_GradeForm on LectureGradeForm {
+  id
+  labels {
+    id
+    type
+    value
+  }
+}

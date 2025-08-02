@@ -15,7 +15,7 @@ import type {
 } from '~/types/grades.type.ts'
 import type { Nullable } from '~/types/utils/nullable.type.ts'
 
-export type GradeTab = 'daily' | 'total'
+export type GradeTab = 'daily' | 'total' | 'monthly'
 
 const DEFAULT_COLOR = COLORS.STATUS['06']
 

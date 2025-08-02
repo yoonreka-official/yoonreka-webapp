@@ -5,7 +5,6 @@ import useGrades from '~/hooks/useGrades.ts'
 import useLoading from '~/hooks/useLoading.ts'
 import Container from '~/layouts/Container.tsx'
 import ScreenBase from '~/layouts/ScreenBase.tsx'
-import GradeFilter from '~/pages/grades/GradeFilter.tsx'
 import GradeHeader from '~/pages/grades/GradeHeader.tsx'
 import GradeTabContainer from '~/pages/grades/GradeTabContainer.tsx'
 import { GradeType } from '~/types/grades.type.ts'
@@ -34,7 +33,6 @@ function GradesPage() {
   return (
     <ScreenBase header={<GradeHeader />}>
       <Container>
-        <GradeFilter />
         <GradeTabContainer />
       </Container>
     </ScreenBase>

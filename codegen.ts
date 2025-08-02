@@ -2,7 +2,12 @@ import type { CodegenConfig } from '@graphql-codegen/cli'
 
 const config: CodegenConfig = {
   schema: 'http://localhost:18000/graphql',
-  documents: ['gql/**/*.gql'],
+  documents: [
+    'gql/**/*.gql',
+    'src/**/*.gql',
+    'components/**/*.gql',
+    'plugins/**/*.gql',
+  ],
   generates: {
     './src/types/api.ts': {
       plugins: ['typescript', 'typescript-operations', 'typed-document-node'],

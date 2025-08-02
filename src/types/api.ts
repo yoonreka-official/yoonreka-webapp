@@ -48,6 +48,11 @@ export type AdminCreateBookInput = {
   title: Scalars['String']['input'];
 };
 
+export type AdminCreateLectureGradeFormCandidateInput = {
+  labels: Array<LectureGradeFormLabelInput>;
+  title: Scalars['String']['input'];
+};
+
 export type AdminCreateLectureInput = {
   /** 소속교재 (id) */
   bookId?: InputMaybe<Scalars['ID']['input']>;
@@ -166,6 +171,13 @@ export type AdminCreateUserInput = {
   state: UserState;
 };
 
+export type AdminCreateWorkLogInput = {
+  date: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+  endTime?: InputMaybe<Scalars['String']['input']>;
+  startTime?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type AdminInquiryFilterInput = {
   answered?: InputMaybe<Scalars['Boolean']['input']>;
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -200,7 +212,17 @@ export type AdminLessonFilterInput = {
   userIds?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
-export type AdminLessonGradeFilterInput = {
+export type AdminLessonGradePaginationFilterInput = {
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lessonIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  retests?: InputMaybe<Array<Retest>>;
+  schoolIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  supplementaries?: InputMaybe<Array<Supplementary>>;
+  userIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+export type AdminLessonGradesFilterInput = {
   ids?: InputMaybe<Array<Scalars['ID']['input']>>;
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   lessonIds?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -238,6 +260,17 @@ export type AdminTeacherFilterInput = {
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   nameContains?: InputMaybe<Scalars['String']['input']>;
   roles?: InputMaybe<Array<AdministratorRole>>;
+};
+
+export type AdminTransferLectureInput = {
+  /** 이전 수업 (id) */
+  fromLectureId: Scalars['ID']['input'];
+  /** 이동 수업 (id) */
+  toLectureId: Scalars['ID']['input'];
+  /** 이동 일자 */
+  transferDate: Scalars['Date']['input'];
+  /** 학생 (id) */
+  userId: Scalars['ID']['input'];
 };
 
 export type AdminUpdateAdministratorInput = {
@@ -308,16 +341,20 @@ export type AdminUpdateMaterialInput = {
   description: Scalars['String']['input'];
   fileIds: Array<Scalars['ID']['input']>;
   id: Scalars['ID']['input'];
+  lectureIds: Array<Scalars['ID']['input']>;
   title: Scalars['String']['input'];
+  userIds: Array<Scalars['ID']['input']>;
 };
 
 export type AdminUpdateNoticeInput = {
   description: Scalars['String']['input'];
   fileIds: Array<Scalars['ID']['input']>;
   id: Scalars['ID']['input'];
+  lectureIds: Array<Scalars['ID']['input']>;
   link?: InputMaybe<Scalars['URL']['input']>;
   pinned?: InputMaybe<Scalars['Boolean']['input']>;
   title: Scalars['String']['input'];
+  userIds: Array<Scalars['ID']['input']>;
 };
 
 export type AdminUpdateOperationInput = {
@@ -377,6 +414,14 @@ export type AdminUpdateUserInput = {
   schoolId: Scalars['ID']['input'];
   /** 상태 */
   state: UserState;
+};
+
+export type AdminUpdateWorkLogInput = {
+  date: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+  endTime?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  startTime?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AdminUploadLessonAttachmentInput = {
@@ -440,6 +485,14 @@ export type AdminUserFilterInput = {
   state?: InputMaybe<UserState>;
 };
 
+export type AdminWorkLogAuditLogFilterInput = {
+  workLogIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+export type AdminWorkLogFilterInput = {
+  administratorIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
 export type Administrator = {
   __typename?: 'Administrator';
   /** 최초 생성 시각 */
@@ -493,6 +546,13 @@ export enum AttendanceStatus {
   /** 출석 */
   Present = 'PRESENT'
 }
+
+export type AuditLogDiff = {
+  __typename?: 'AuditLogDiff';
+  current?: Maybe<Scalars['JSON']['output']>;
+  path: Scalars['String']['output'];
+  previous?: Maybe<Scalars['JSON']['output']>;
+};
 
 export type AuthTokenPair = {
   __typename?: 'AuthTokenPair';
@@ -597,6 +657,10 @@ export type ClientLessonFilterInput = {
   startDate?: InputMaybe<Scalars['Date']['input']>;
 };
 
+export type ClientLessonGradesFilterInput = {
+  userIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
 export type ClientRequestLectureInvoiceInput = {
   /** 납부 완료 요청할 회비 ID */
   lectureInvoiceId: Scalars['ID']['input'];
@@ -673,6 +737,16 @@ export type File = {
   updatedAt: Scalars['Timestamp']['output'];
   url: Scalars['URL']['output'];
 };
+
+/** 폼 라벨 옵션 유형 */
+export enum FormLabelOptionType {
+  /** 숫자 */
+  Number = 'NUMBER',
+  /** 선택 */
+  Select = 'SELECT',
+  /** 텍스트 */
+  Text = 'TEXT'
+}
 
 export enum Gender {
   Female = 'FEMALE',
@@ -764,7 +838,7 @@ export enum InvoiceType {
 
 export type Lecture = {
   __typename?: 'Lecture';
-  adminLabelComments: Array<LectureLabelComment>;
+  admin_labelComments: Array<LectureLabelComment>;
   book?: Maybe<Book>;
   color?: Maybe<Scalars['String']['output']>;
   /** 성정 확인의 공통 메시지 */
@@ -776,6 +850,8 @@ export type Lecture = {
   deletedAt?: Maybe<Scalars['Timestamp']['output']>;
   endDate: Scalars['Date']['output'];
   etc?: Maybe<Scalars['String']['output']>;
+  /** 이동해서 나간 학생들 */
+  fromTransfers: Array<UserLectureTransfer>;
   /** 학년 */
   grade: Scalars['Int']['output'];
   gradeForm?: Maybe<LectureGradeForm>;
@@ -784,13 +860,17 @@ export type Lecture = {
   lessons?: Maybe<Array<Lesson>>;
   /** 해당 수업의 "평가 항목" 별 코멘트 목록 */
   myLabelComments: Array<LectureLabelComment>;
+  myLessons?: Maybe<Array<Lesson>>;
   place?: Maybe<Scalars['String']['output']>;
   school?: Maybe<School>;
   startDate: Scalars['Date']['output'];
+  state: LectureState;
   teachers: Array<Teacher>;
   /** 수업 시간 계획 */
   timePlannings: Array<LectureTimePlanning>;
   title: Scalars['String']['output'];
+  /** 이동해서 들어온 학생들 */
+  toTransfers: Array<UserLectureTransfer>;
   /** 최근 수정 시각 */
   updatedAt: Scalars['Timestamp']['output'];
   users: Array<User>;
@@ -825,6 +905,17 @@ export type LectureGradeForm = {
   updatedAt: Scalars['Timestamp']['output'];
 };
 
+export type LectureGradeFormCandidate = {
+  __typename?: 'LectureGradeFormCandidate';
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  id: Scalars['ID']['output'];
+  labels: Array<LectureGradeFormLabel>;
+  title: Scalars['String']['output'];
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+};
+
 export type LectureGradeFormData = {
   __typename?: 'LectureGradeFormData';
   /** GradeFormLabel 의 ID */
@@ -851,12 +942,16 @@ export type LectureGradeFormDataInput = {
 export type LectureGradeFormLabel = {
   __typename?: 'LectureGradeFormLabel';
   id: Scalars['String']['output'];
+  optionType?: Maybe<FormLabelOptionType>;
+  options?: Maybe<Array<Scalars['String']['output']>>;
   type: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
 
 export type LectureGradeFormLabelInput = {
   id: Scalars['String']['input'];
+  optionType?: InputMaybe<FormLabelOptionType>;
+  options?: InputMaybe<Array<Scalars['String']['input']>>;
   type: Scalars['String']['input'];
   value: Scalars['String']['input'];
 };
@@ -944,37 +1039,38 @@ export type LectureTimePlanning = {
   __typename?: 'LectureTimePlanning';
   /** 수업 요일 */
   dayOfWeek: DayOfWeek;
-  /** 수업 종료 시간 (HH:MM) */
+  /** 수업 종료 시간 (HH:mm) */
   endTime?: Maybe<Scalars['String']['output']>;
-  /** 수업 시작 시간 (HH:MM) */
+  /** 수업 시작 시간 (HH:mm) */
   startTime: Scalars['String']['output'];
 };
 
 export type LectureTimePlanningInput = {
   /** 수업 요일 */
   dayOfWeek: DayOfWeek;
-  /** 수업 종료 시간 (HH:MM) */
+  /** 수업 종료 시간 (HH:mm) */
   endTime?: InputMaybe<Scalars['String']['input']>;
-  /** 수업 시작 시간 (HH:MM) */
+  /** 수업 시작 시간 (HH:mm) */
   startTime?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Lesson = {
   __typename?: 'Lesson';
-  adminLessonGrades: Array<LessonGrade>;
+  admin_lessonGradeCache?: Maybe<LessonGradeCache>;
+  admin_lessonGrades: Array<LessonGrade>;
   attachment?: Maybe<PrivateFile>;
   /** 최초 생성 시각 */
   createdAt: Scalars['Timestamp']['output'];
   date: Scalars['Date']['output'];
   /** 탈퇴 시각 */
   deletedAt?: Maybe<Scalars['Timestamp']['output']>;
-  /** 수업 종료 시간 (HH:MM) */
+  /** 수업 종료 시간 (HH:mm) */
   endTime: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   lecture: Lecture;
   /** 해당 개별수업의 성적 조회 */
   myLessonGrade?: Maybe<LessonGrade>;
-  /** 수업 시작 시간 (HH:MM) */
+  /** 수업 시작 시간 (HH:mm) */
   startTime: Scalars['String']['output'];
   topGrades: Array<LessonGradeStatistic>;
   topThirtyPercentGrades: Array<LessonGradeStatistic>;
@@ -983,7 +1079,7 @@ export type Lesson = {
 };
 
 
-export type LessonAdminLessonGradesArgs = {
+export type LessonAdmin_LessonGradesArgs = {
   gradeType: GradeType;
 };
 
@@ -1029,6 +1125,16 @@ export type LessonGrade = {
   user?: Maybe<User>;
 };
 
+export type LessonGradeCache = {
+  __typename?: 'LessonGradeCache';
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  data?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+};
+
 export type LessonGradeEdge = {
   __typename?: 'LessonGradeEdge';
   cursor: Scalars['String']['output'];
@@ -1044,6 +1150,7 @@ export type LessonGradePagination = {
 
 export enum LessonGradeRelayOrder {
   Id = 'ID',
+  LessonDate = 'LESSON_DATE',
   RetestAt = 'RETEST_AT',
   SupplementaryAt = 'SUPPLEMENTARY_AT'
 }
@@ -1105,51 +1212,61 @@ export enum MaterialRelayOrder {
 export type Mutation = {
   __typename?: 'Mutation';
   adminCreateAdministrator: Administrator;
-  adminCreateBook: Book;
-  adminCreateLecture: Lecture;
-  adminCreateMaterial: Material;
-  adminCreateSchool: School;
-  adminCreateTeacher: Teacher;
-  adminCreateUser: User;
   adminDeleteAdministrator: Administrator;
-  adminDeleteBook: Book;
-  adminDeleteLecture: Lecture;
-  adminDeleteMaterial: Material;
-  adminDeleteSchool: School;
-  adminDeleteTeacher: Teacher;
-  adminDeleteUser: User;
-  adminRefreshAuthToken: AuthTokenPair;
-  adminSignInByPhone: AuthTokenPair;
   adminTestNotification: Scalars['Boolean']['output'];
   adminUpdateAdministrator: Administrator;
-  adminUpdateAdministratorPassword: Scalars['Boolean']['output'];
-  adminUpdateBook: Book;
-  adminUpdateLecture: Lecture;
-  adminUpdateMaterial: Material;
-  adminUpdateSchool: School;
-  adminUpdateTeacher: Teacher;
-  adminUpdateUser: User;
-  adminUploadLessonAttachment: Lesson;
-  adminUpsertLectureGradeForm: LectureGradeForm;
-  adminUpsertLectureLabelComment: LectureLabelComment;
+  admin_checkIn: Scalars['Boolean']['output'];
+  admin_createBook: Book;
+  admin_createLecture: Lecture;
+  admin_createLectureGradeFormCandidate: LectureGradeFormCandidate;
   admin_createLectureInvoice: Scalars['Boolean']['output'];
+  admin_createMaterial: Material;
   admin_createNotice: Notice;
+  admin_createSchool: School;
   admin_createStudyMaterial: StudyMaterial;
+  admin_createTeacher: Teacher;
+  admin_createUser: User;
   admin_createUserChat: UserChat;
+  admin_createWorkLog: WorkLog;
+  admin_deleteBook: Book;
   admin_deleteInquiry: Inquiry;
+  admin_deleteLecture: Lecture;
+  admin_deleteLectureGradeFormCandidate: LectureGradeFormCandidate;
   admin_deleteLectureInvoice: Scalars['Boolean']['output'];
+  admin_deleteMaterial: Material;
   admin_deleteNotice: Notice;
+  admin_deleteSchool: School;
   admin_deleteStudyMaterial: StudyMaterial;
+  admin_deleteTeacher: Teacher;
+  admin_deleteUser: User;
   admin_deleteUserChat: UserChat;
   admin_notifyLessonGrades: Scalars['Boolean']['output'];
   admin_readAllUserChats: Scalars['Boolean']['output'];
+  admin_refreshAuthToken: AuthTokenPair;
+  admin_signInByPhone: AuthTokenPair;
+  admin_transferLecture: UserLectureTransfer;
+  admin_undoTransferLecture: UserLectureTransfer;
+  admin_updateAdministratorPassword: Scalars['Boolean']['output'];
+  admin_updateBook: Book;
   admin_updateInquiry: Book;
+  admin_updateLecture: Lecture;
   admin_updateLectureInvoice: LectureInvoice;
   admin_updateLectureInvoicesPaid: Array<LectureInvoice>;
+  admin_updateLessonGradeCache: LessonGradeCache;
   admin_updateLessonGradeMemo: LessonGrade;
+  admin_updateMaterial: Material;
+  admin_updateMyWorkLog: WorkLog;
   admin_updateNotice: Notice;
+  admin_updateNoticePin: Notice;
   admin_updateOperation: Operation;
+  admin_updateSchool: School;
   admin_updateStudyMaterial: StudyMaterial;
+  admin_updateTeacher: Teacher;
+  admin_updateUser: User;
+  admin_updateWorkLog: WorkLog;
+  admin_uploadLessonAttachment: Lesson;
+  admin_upsertLectureGradeForm: LectureGradeForm;
+  admin_upsertLectureLabelComment: LectureLabelComment;
   admin_upsertLessonGrade: LessonGrade;
   admin_upsertManyLessonGrade: Array<LessonGrade>;
   admin_upsertUserConsulting: UserConsulting;
@@ -1189,79 +1306,8 @@ export type MutationAdminCreateAdministratorArgs = {
 };
 
 
-export type MutationAdminCreateBookArgs = {
-  input: AdminCreateBookInput;
-};
-
-
-export type MutationAdminCreateLectureArgs = {
-  input: AdminCreateLectureInput;
-};
-
-
-export type MutationAdminCreateMaterialArgs = {
-  input: AdminCreateMaterialInput;
-};
-
-
-export type MutationAdminCreateSchoolArgs = {
-  input: AdminCreateSchoolInput;
-};
-
-
-export type MutationAdminCreateTeacherArgs = {
-  input: AdminCreateTeacherInput;
-};
-
-
-export type MutationAdminCreateUserArgs = {
-  input: AdminCreateUserInput;
-};
-
-
 export type MutationAdminDeleteAdministratorArgs = {
   id: Scalars['ID']['input'];
-};
-
-
-export type MutationAdminDeleteBookArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationAdminDeleteLectureArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationAdminDeleteMaterialArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationAdminDeleteSchoolArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationAdminDeleteTeacherArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationAdminDeleteUserArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type MutationAdminRefreshAuthTokenArgs = {
-  refreshToken: Scalars['String']['input'];
-};
-
-
-export type MutationAdminSignInByPhoneArgs = {
-  password: Scalars['String']['input'];
-  phone: Scalars['PhoneNumber']['input'];
 };
 
 
@@ -1275,54 +1321,24 @@ export type MutationAdminUpdateAdministratorArgs = {
 };
 
 
-export type MutationAdminUpdateAdministratorPasswordArgs = {
-  newPassword: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+export type MutationAdmin_CheckInArgs = {
+  lectureId: Scalars['ID']['input'];
+  phoneNumber: Scalars['String']['input'];
 };
 
 
-export type MutationAdminUpdateBookArgs = {
-  input: AdminUpdateBookInput;
+export type MutationAdmin_CreateBookArgs = {
+  input: AdminCreateBookInput;
 };
 
 
-export type MutationAdminUpdateLectureArgs = {
-  input: AdminUpdateLectureInput;
+export type MutationAdmin_CreateLectureArgs = {
+  input: AdminCreateLectureInput;
 };
 
 
-export type MutationAdminUpdateMaterialArgs = {
-  input: AdminUpdateMaterialInput;
-};
-
-
-export type MutationAdminUpdateSchoolArgs = {
-  input: AdminUpdateSchoolInput;
-};
-
-
-export type MutationAdminUpdateTeacherArgs = {
-  input: AdminUpdateTeacherInput;
-};
-
-
-export type MutationAdminUpdateUserArgs = {
-  input: AdminUpdateUserInput;
-};
-
-
-export type MutationAdminUploadLessonAttachmentArgs = {
-  input: AdminUploadLessonAttachmentInput;
-};
-
-
-export type MutationAdminUpsertLectureGradeFormArgs = {
-  input: AdminUpsertLectureGradeFormInput;
-};
-
-
-export type MutationAdminUpsertLectureLabelCommentArgs = {
-  input: AdminUpsertLectureLabelCommentInput;
+export type MutationAdmin_CreateLectureGradeFormCandidateArgs = {
+  input: AdminCreateLectureGradeFormCandidateInput;
 };
 
 
@@ -1331,8 +1347,18 @@ export type MutationAdmin_CreateLectureInvoiceArgs = {
 };
 
 
+export type MutationAdmin_CreateMaterialArgs = {
+  input: AdminCreateMaterialInput;
+};
+
+
 export type MutationAdmin_CreateNoticeArgs = {
   input: AdminCreateNoticeInput;
+};
+
+
+export type MutationAdmin_CreateSchoolArgs = {
+  input: AdminCreateSchoolInput;
 };
 
 
@@ -1341,12 +1367,42 @@ export type MutationAdmin_CreateStudyMaterialArgs = {
 };
 
 
+export type MutationAdmin_CreateTeacherArgs = {
+  input: AdminCreateTeacherInput;
+};
+
+
+export type MutationAdmin_CreateUserArgs = {
+  input: AdminCreateUserInput;
+};
+
+
 export type MutationAdmin_CreateUserChatArgs = {
   input: AdminCreateUserChatInput;
 };
 
 
+export type MutationAdmin_CreateWorkLogArgs = {
+  input: AdminCreateWorkLogInput;
+};
+
+
+export type MutationAdmin_DeleteBookArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationAdmin_DeleteInquiryArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_DeleteLectureArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_DeleteLectureGradeFormCandidateArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1356,12 +1412,32 @@ export type MutationAdmin_DeleteLectureInvoiceArgs = {
 };
 
 
+export type MutationAdmin_DeleteMaterialArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationAdmin_DeleteNoticeArgs = {
   id: Scalars['ID']['input'];
 };
 
 
+export type MutationAdmin_DeleteSchoolArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationAdmin_DeleteStudyMaterialArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_DeleteTeacherArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_DeleteUserArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1381,8 +1457,45 @@ export type MutationAdmin_ReadAllUserChatsArgs = {
 };
 
 
+export type MutationAdmin_RefreshAuthTokenArgs = {
+  refreshToken: Scalars['String']['input'];
+};
+
+
+export type MutationAdmin_SignInByPhoneArgs = {
+  password: Scalars['String']['input'];
+  phone: Scalars['PhoneNumber']['input'];
+};
+
+
+export type MutationAdmin_TransferLectureArgs = {
+  input: AdminTransferLectureInput;
+};
+
+
+export type MutationAdmin_UndoTransferLectureArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_UpdateAdministratorPasswordArgs = {
+  newPassword: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+
+export type MutationAdmin_UpdateBookArgs = {
+  input: AdminUpdateBookInput;
+};
+
+
 export type MutationAdmin_UpdateInquiryArgs = {
   input: AdminUpdateInquiryInput;
+};
+
+
+export type MutationAdmin_UpdateLectureArgs = {
+  input: AdminUpdateLectureInput;
 };
 
 
@@ -1396,10 +1509,26 @@ export type MutationAdmin_UpdateLectureInvoicesPaidArgs = {
 };
 
 
+export type MutationAdmin_UpdateLessonGradeCacheArgs = {
+  data?: InputMaybe<Scalars['String']['input']>;
+  lessonId: Scalars['ID']['input'];
+};
+
+
 export type MutationAdmin_UpdateLessonGradeMemoArgs = {
   id: Scalars['ID']['input'];
   retestMemo?: InputMaybe<Scalars['String']['input']>;
   supplementaryMemo?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationAdmin_UpdateMaterialArgs = {
+  input: AdminUpdateMaterialInput;
+};
+
+
+export type MutationAdmin_UpdateMyWorkLogArgs = {
+  input: AdminUpdateWorkLogInput;
 };
 
 
@@ -1408,13 +1537,54 @@ export type MutationAdmin_UpdateNoticeArgs = {
 };
 
 
+export type MutationAdmin_UpdateNoticePinArgs = {
+  id: Scalars['ID']['input'];
+  pin: Scalars['Boolean']['input'];
+};
+
+
 export type MutationAdmin_UpdateOperationArgs = {
   input: AdminUpdateOperationInput;
 };
 
 
+export type MutationAdmin_UpdateSchoolArgs = {
+  input: AdminUpdateSchoolInput;
+};
+
+
 export type MutationAdmin_UpdateStudyMaterialArgs = {
   input: AdminUpdateStudyMaterialInput;
+};
+
+
+export type MutationAdmin_UpdateTeacherArgs = {
+  input: AdminUpdateTeacherInput;
+};
+
+
+export type MutationAdmin_UpdateUserArgs = {
+  input: AdminUpdateUserInput;
+};
+
+
+export type MutationAdmin_UpdateWorkLogArgs = {
+  input: AdminUpdateWorkLogInput;
+};
+
+
+export type MutationAdmin_UploadLessonAttachmentArgs = {
+  input: AdminUploadLessonAttachmentInput;
+};
+
+
+export type MutationAdmin_UpsertLectureGradeFormArgs = {
+  input: AdminUpsertLectureGradeFormInput;
+};
+
+
+export type MutationAdmin_UpsertLectureLabelCommentArgs = {
+  input: AdminUpsertLectureLabelCommentInput;
 };
 
 
@@ -1577,6 +1747,7 @@ export enum NotificationRelayOrder {
 }
 
 export enum NotificationType {
+  CheckIn = 'CHECK_IN',
   InvoiceDue = 'INVOICE_DUE',
   NewLessonGrade = 'NEW_LESSON_GRADE',
   NewMaterial = 'NEW_MATERIAL',
@@ -1649,35 +1820,40 @@ export type PrivateFile = {
 export type Query = {
   __typename?: 'Query';
   adminAdministrator: Administrator;
-  adminAdministratorPagination: AdministratorPagination;
-  adminBook: Book;
-  adminBookPagination: BookPagination;
-  adminLecture: Lecture;
-  adminLecturePagination: LecturePagination;
-  adminLesson: Lesson;
-  adminLessonPagination: LessonPagination;
-  adminMaterial: Material;
-  adminMaterialPagination: MaterialPagination;
-  adminNotice: Notice;
-  adminNoticePagination: NoticePagination;
-  adminSchool: School;
-  adminSchoolPagination: SchoolPagination;
-  adminSchools: Array<School>;
-  adminTeacher: Teacher;
-  adminTeacherPagination: TeacherPagination;
-  adminUsers: Array<User>;
+  admin_administratorPagination: AdministratorPagination;
+  admin_book: Book;
+  admin_bookPagination: BookPagination;
   admin_inquiry: Inquiry;
   admin_inquiryPagination: InquiryPagination;
+  admin_lecture: Lecture;
+  admin_lectureGradeFormCandidates: Array<LectureGradeFormCandidate>;
   admin_lectureInvoice: LectureInvoice;
   admin_lectureInvoicePagination: LectureInvoicePagination;
+  admin_lecturePagination: LecturePagination;
+  admin_lesson: Lesson;
   admin_lessonGradePagination: LessonGradePagination;
+  admin_lessonGrades: Array<LessonGrade>;
+  admin_lessonPagination: LessonPagination;
   admin_lessons: Array<Lesson>;
+  admin_material: Material;
+  admin_materialPagination: MaterialPagination;
+  admin_notice: Notice;
+  admin_noticePagination: NoticePagination;
   admin_operation: Operation;
+  admin_school: School;
+  admin_schoolPagination: SchoolPagination;
+  admin_schools: Array<School>;
   admin_studyMaterial: StudyMaterial;
   admin_studyMaterialPagination: StudyMaterialPagination;
+  admin_teacher: Teacher;
+  admin_teacherPagination: TeacherPagination;
   admin_user: User;
   admin_userChatPagination: UserChatPagination;
   admin_userPagination: UserPagination;
+  admin_users: Array<User>;
+  admin_workLog: WorkLog;
+  admin_workLogAuditLogPagination: WorkLogAuditLogPagination;
+  admin_workLogPagination: WorkLogPagination;
   currentAdministrator?: Maybe<Administrator>;
   currentUser?: Maybe<User>;
   file?: Maybe<File>;
@@ -1690,6 +1866,7 @@ export type Query = {
   myLectureInvoices: Array<LectureInvoice>;
   /** 로그인 된 학생의 수업 목록 조회 */
   myLectures: Array<Lecture>;
+  myLessonGrades: Array<LessonGrade>;
   /** 로그인 된 학생의 "개별 수업" 목록 조회 */
   myLessons: Array<Lesson>;
   /** 로그인 된 학생의 학습자료 목록 조회 (학생이 수강중인 수업 + 전체 학습자료) */
@@ -1712,7 +1889,7 @@ export type QueryAdminAdministratorArgs = {
 };
 
 
-export type QueryAdminAdministratorPaginationArgs = {
+export type QueryAdmin_AdministratorPaginationArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   asc?: InputMaybe<Scalars['Boolean']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -1721,16 +1898,15 @@ export type QueryAdminAdministratorPaginationArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   order?: InputMaybe<AdministratorRelayOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
-export type QueryAdminBookArgs = {
+export type QueryAdmin_BookArgs = {
   id: Scalars['ID']['input'];
 };
 
 
-export type QueryAdminBookPaginationArgs = {
+export type QueryAdmin_BookPaginationArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   asc?: InputMaybe<Scalars['Boolean']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
@@ -1739,129 +1915,6 @@ export type QueryAdminBookPaginationArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   order?: InputMaybe<BookRelayOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryAdminLectureArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryAdminLecturePaginationArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminLectureFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<LectureRelayOrder>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryAdminLessonArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryAdminLessonPaginationArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminLessonFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<LessonRelayOrder>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryAdminMaterialArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryAdminMaterialPaginationArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminMaterialFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<MaterialRelayOrder>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryAdminNoticeArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryAdminNoticePaginationArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminNoticeFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<NoticeRelayOrder>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryAdminSchoolArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryAdminSchoolPaginationArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminSchoolFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<SchoolRelayOrder>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryAdminSchoolsArgs = {
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<AdminSchoolFilterInput>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryAdminTeacherArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type QueryAdminTeacherPaginationArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminTeacherFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  order?: InputMaybe<TeacherRelayOrder>;
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-
-export type QueryAdminUsersArgs = {
-  asc?: InputMaybe<Scalars['Boolean']['input']>;
-  filter?: InputMaybe<AdminUserFilterInput>;
-  order?: InputMaybe<UserRelayOrder>;
   withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -1884,6 +1937,11 @@ export type QueryAdmin_InquiryPaginationArgs = {
 };
 
 
+export type QueryAdmin_LectureArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type QueryAdmin_LectureInvoiceArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1902,14 +1960,51 @@ export type QueryAdmin_LectureInvoicePaginationArgs = {
 };
 
 
+export type QueryAdmin_LecturePaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminLectureFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<LectureRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_LessonArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type QueryAdmin_LessonGradePaginationArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   asc?: InputMaybe<Scalars['Boolean']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<AdminLessonGradeFilterInput>;
+  filter?: InputMaybe<AdminLessonGradePaginationFilterInput>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   order?: InputMaybe<LessonGradeRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAdmin_LessonGradesArgs = {
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<AdminLessonGradesFilterInput>;
+  order?: InputMaybe<LessonGradeRelayOrder>;
+};
+
+
+export type QueryAdmin_LessonPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminLessonFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<LessonRelayOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -1923,8 +2018,69 @@ export type QueryAdmin_LessonsArgs = {
 };
 
 
+export type QueryAdmin_MaterialArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_MaterialPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminMaterialFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<MaterialRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_NoticeArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_NoticePaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminNoticeFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<NoticeRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
 export type QueryAdmin_OperationArgs = {
   type: OperationType;
+};
+
+
+export type QueryAdmin_SchoolArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_SchoolPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminSchoolFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<SchoolRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_SchoolsArgs = {
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<AdminSchoolFilterInput>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -1941,6 +2097,24 @@ export type QueryAdmin_StudyMaterialPaginationArgs = {
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
   order?: InputMaybe<StudyMaterialRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_TeacherArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_TeacherPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminTeacherFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<TeacherRelayOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
@@ -1975,6 +2149,43 @@ export type QueryAdmin_UserPaginationArgs = {
 };
 
 
+export type QueryAdmin_UsersArgs = {
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<AdminUserFilterInput>;
+  order?: InputMaybe<UserRelayOrder>;
+  withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_WorkLogArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_WorkLogAuditLogPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminWorkLogAuditLogFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<WorkLogAuditLogRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAdmin_WorkLogPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminWorkLogFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<WorkLogRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryFileArgs = {
   id: Scalars['ID']['input'];
 };
@@ -2002,6 +2213,13 @@ export type QueryMyLectureInvoicesArgs = {
 export type QueryMyLecturesArgs = {
   asc?: InputMaybe<Scalars['Boolean']['input']>;
   order?: InputMaybe<LectureRelayOrder>;
+};
+
+
+export type QueryMyLessonGradesArgs = {
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<ClientLessonGradesFilterInput>;
+  order?: InputMaybe<LessonGradeRelayOrder>;
 };
 
 
@@ -2056,6 +2274,7 @@ export enum Retest {
 
 export type School = {
   __typename?: 'School';
+  admin_users: Array<User>;
   /** 최초 생성 시각 */
   createdAt: Scalars['Timestamp']['output'];
   /** 탈퇴 시각 */
@@ -2066,7 +2285,6 @@ export type School = {
   type: SchoolType;
   /** 최근 수정 시각 */
   updatedAt: Scalars['Timestamp']['output'];
-  users: Array<User>;
 };
 
 export type SchoolEdge = {
@@ -2163,10 +2381,10 @@ export enum Supplementary {
 
 export type Teacher = {
   __typename?: 'Teacher';
+  admin_lectures: Array<Lecture>;
   /** 최초 생성 시각 */
   createdAt: Scalars['Timestamp']['output'];
   id: Scalars['ID']['output'];
-  lectures: Array<Lecture>;
   memo?: Maybe<Scalars['String']['output']>;
   /** 강사 이름 */
   name: Scalars['String']['output'];
@@ -2208,8 +2426,9 @@ export type UpsertUserDeviceInput = {
 export type User = {
   __typename?: 'User';
   adminUnreadUserChats: Array<UserChat>;
-  adminUserDevices: Array<UserDevice>;
   admin_userConsulting?: Maybe<UserConsulting>;
+  admin_userDevices: Array<UserDevice>;
+  admin_userLectureTransfers: Array<UserLectureTransfer>;
   /** 생년월일 */
   birthDate: Scalars['Date']['output'];
   code: Scalars['String']['output'];
@@ -2219,9 +2438,9 @@ export type User = {
   deactivatedAt?: Maybe<Scalars['Timestamp']['output']>;
   /** 탈퇴 시각 */
   deletedAt?: Maybe<Scalars['Timestamp']['output']>;
-  /** 방해금지모드 종료 시간 (HH:MM) */
+  /** 방해금지모드 종료 시간 (HH:mm) */
   distractionEndTime?: Maybe<Scalars['String']['output']>;
-  /** 방해금지모드 시작 시간 (HH:MM) */
+  /** 방해금지모드 시작 시간 (HH:mm) */
   distractionStartTime?: Maybe<Scalars['String']['output']>;
   /** 성별(Male, Female) */
   gender: Gender;
@@ -2306,6 +2525,19 @@ export type UserEdge = {
   node: User;
 };
 
+export type UserLectureTransfer = {
+  __typename?: 'UserLectureTransfer';
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  fromLecture?: Maybe<Lecture>;
+  id: Scalars['ID']['output'];
+  toLecture?: Maybe<Lecture>;
+  transferDate: Scalars['Date']['output'];
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+  user: User;
+};
+
 export type UserPagination = {
   __typename?: 'UserPagination';
   edges: Array<UserEdge>;
@@ -2353,6 +2585,66 @@ export enum UserState {
   Suspended = 'SUSPENDED',
   /** 퇴원 */
   Withdrawn = 'WITHDRAWN'
+}
+
+export type WorkLog = {
+  __typename?: 'WorkLog';
+  admin_administrator?: Maybe<Administrator>;
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  date: Scalars['Date']['output'];
+  /** 작업 내용 */
+  description: Scalars['String']['output'];
+  /** 작업 종료 시간 (HH:mm) */
+  endTime?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  /** 작업 시작 시간 (HH:mm) */
+  startTime?: Maybe<Scalars['String']['output']>;
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+};
+
+export type WorkLogAuditLog = {
+  __typename?: 'WorkLogAuditLog';
+  admin_administrator?: Maybe<Administrator>;
+  createdAt: Scalars['Timestamp']['output'];
+  diff: Array<AuditLogDiff>;
+  id: Scalars['ID']['output'];
+};
+
+export type WorkLogAuditLogEdge = {
+  __typename?: 'WorkLogAuditLogEdge';
+  cursor: Scalars['String']['output'];
+  node: WorkLogAuditLog;
+};
+
+export type WorkLogAuditLogPagination = {
+  __typename?: 'WorkLogAuditLogPagination';
+  edges: Array<WorkLogAuditLogEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export enum WorkLogAuditLogRelayOrder {
+  Id = 'ID'
+}
+
+export type WorkLogEdge = {
+  __typename?: 'WorkLogEdge';
+  cursor: Scalars['String']['output'];
+  node: WorkLog;
+};
+
+export type WorkLogPagination = {
+  __typename?: 'WorkLogPagination';
+  edges: Array<WorkLogEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export enum WorkLogRelayOrder {
+  Date = 'DATE',
+  Id = 'ID'
 }
 
 export type AnalyzePrivateFileMetadataMutationVariables = Exact<{
@@ -2431,9 +2723,30 @@ export type GetUserChatsQuery = { __typename?: 'Query', userChats: { __typename?
 
 export type UserChatFragment = { __typename?: 'UserChat', id: string, message?: string | null, createdAt: number, updatedAt: number, user: { __typename?: 'User', id: string, name: string }, administrator?: { __typename?: 'Administrator', id: string, name: string } | null, attachments: Array<{ __typename?: 'PrivateFile', id: string, mimeType: string, size: number, url: string, filename?: string | null, createdAt: number, updatedAt: number }> };
 
+export type GetGradeMonthlyTabQueryVariables = Exact<{
+  filter?: InputMaybe<ClientLessonGradesFilterInput>;
+  order: LessonGradeRelayOrder;
+  asc: Scalars['Boolean']['input'];
+}>;
+
+
+export type GetGradeMonthlyTabQuery = { __typename?: 'Query', lessonGrades: Array<{ __typename?: 'LessonGrade', id: string, attendanceStatus?: AttendanceStatus | null, supplementary: Supplementary, supplementaryDoneAt?: number | null, supplementaryMemo?: string | null, retest: Retest, retestDoneAt?: number | null, retestMemo?: string | null, comment?: string | null, createdAt: number, updatedAt: number, user?: { __typename?: 'User', id: string, name: string, birthDate: string, school: { __typename?: 'School', id: string, name: string } } | null, lesson?: { __typename?: 'Lesson', id: string, date: string, startTime: string, endTime: string, lecture: { __typename?: 'Lecture', id: string, title: string, gradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null } } | null, data?: Array<{ __typename?: 'LectureGradeFormData', id: string, type: string, label: string, value?: any | null, value2?: any | null, maxValue?: number | null }> | null }> };
+
+export type GradeMonthlyTab_LessonGradeFragment = { __typename?: 'LessonGrade', id: string, attendanceStatus?: AttendanceStatus | null, supplementary: Supplementary, supplementaryDoneAt?: number | null, supplementaryMemo?: string | null, retest: Retest, retestDoneAt?: number | null, retestMemo?: string | null, comment?: string | null, createdAt: number, updatedAt: number, user?: { __typename?: 'User', id: string, name: string, birthDate: string, school: { __typename?: 'School', id: string, name: string } } | null, lesson?: { __typename?: 'Lesson', id: string, date: string, startTime: string, endTime: string, lecture: { __typename?: 'Lecture', id: string, title: string, gradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null } } | null, data?: Array<{ __typename?: 'LectureGradeFormData', id: string, type: string, label: string, value?: any | null, value2?: any | null, maxValue?: number | null }> | null };
+
+export type GradeMonthlyTab_LessonFragment = { __typename?: 'Lesson', id: string, date: string, startTime: string, endTime: string, lecture: { __typename?: 'Lecture', id: string, title: string, gradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null } };
+
+export type GradeMonthlyTab_LectureFragment = { __typename?: 'Lecture', id: string, title: string, gradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null };
+
+export type GradeMonthlyTab_GradeFormFragment = { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> };
+
 export const DailyGradeComment_OperationFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DailyGradeComment_Operation"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Operation"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]} as unknown as DocumentNode<DailyGradeComment_OperationFragment, unknown>;
 export const MyStudyMaterials_StudyMaterialFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StudyMaterial"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"materialAttachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<MyStudyMaterials_StudyMaterialFragment, unknown>;
 export const UserChatFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserChat"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserChat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"administrator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UserChatFragment, unknown>;
+export const GradeMonthlyTab_GradeFormFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_GradeFormFragment, unknown>;
+export const GradeMonthlyTab_LectureFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LectureFragment, unknown>;
+export const GradeMonthlyTab_LessonFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LessonFragment, unknown>;
+export const GradeMonthlyTab_LessonGradeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGrade"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"school"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"birthDate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attendanceStatus"}},{"kind":"Field","name":{"kind":"Name","value":"supplementary"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryMemo"}},{"kind":"Field","name":{"kind":"Name","value":"retest"}},{"kind":"Field","name":{"kind":"Name","value":"retestDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"retestMemo"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"value2"}},{"kind":"Field","name":{"kind":"Name","value":"maxValue"}}]}},{"kind":"Field","name":{"kind":"Name","value":"comment"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LessonGradeFragment, unknown>;
 export const AnalyzePrivateFileMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AnalyzePrivateFileMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"key"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filename"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"size"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"analyzePrivateFileMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"Variable","name":{"kind":"Name","value":"key"}}},{"kind":"Argument","name":{"kind":"Name","value":"filename"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filename"}}},{"kind":"Argument","name":{"kind":"Name","value":"mimeType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}}},{"kind":"Argument","name":{"kind":"Name","value":"size"},"value":{"kind":"Variable","name":{"kind":"Name","value":"size"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<AnalyzePrivateFileMetadataMutation, AnalyzePrivateFileMetadataMutationVariables>;
 export const CreateInquiryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInquiry"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientCreateInquiryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInquiry"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateInquiryMutation, CreateInquiryMutationVariables>;
 export const ReadAllUserChatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ReadAllUserChats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"my_readAllUserChats"}}]}}]} as unknown as DocumentNode<ReadAllUserChatsMutation, ReadAllUserChatsMutationVariables>;
@@ -2445,3 +2758,4 @@ export const GetMyNoticesDocument = {"kind":"Document","definitions":[{"kind":"O
 export const GetMyNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"order"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NotificationRelayOrder"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NotificationFilterInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"asc"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myNotificationPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"order"},"value":{"kind":"Variable","name":{"kind":"Name","value":"order"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"asc"},"value":{"kind":"Variable","name":{"kind":"Name","value":"asc"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"link"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureInvoice"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Material"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Notice"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"lectureInvoice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"paidAt"}},{"kind":"Field","name":{"kind":"Name","value":"method"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"books"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"notice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"contents"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}}]}}]}}]}}]} as unknown as DocumentNode<GetMyNotificationsQuery, GetMyNotificationsQueryVariables>;
 export const GetMyStudyMaterialsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyStudyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"studyMaterials"},"name":{"kind":"Name","value":"my_studyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StudyMaterial"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"materialAttachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<GetMyStudyMaterialsQuery, GetMyStudyMaterialsQueryVariables>;
 export const GetUserChatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserChats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"userChats"},"name":{"kind":"Name","value":"my_userChatPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"5000"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserChat"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserChat"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserChat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"administrator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<GetUserChatsQuery, GetUserChatsQueryVariables>;
+export const GetGradeMonthlyTabDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGradeMonthlyTab"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientLessonGradesFilterInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"order"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGradeRelayOrder"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"asc"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lessonGrades"},"name":{"kind":"Name","value":"myLessonGrades"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"asc"},"value":{"kind":"Variable","name":{"kind":"Name","value":"asc"}}},{"kind":"Argument","name":{"kind":"Name","value":"order"},"value":{"kind":"Variable","name":{"kind":"Name","value":"order"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGrade"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"school"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"birthDate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attendanceStatus"}},{"kind":"Field","name":{"kind":"Name","value":"supplementary"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryMemo"}},{"kind":"Field","name":{"kind":"Name","value":"retest"}},{"kind":"Field","name":{"kind":"Name","value":"retestDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"retestMemo"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"value2"}},{"kind":"Field","name":{"kind":"Name","value":"maxValue"}}]}},{"kind":"Field","name":{"kind":"Name","value":"comment"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetGradeMonthlyTabQuery, GetGradeMonthlyTabQueryVariables>;

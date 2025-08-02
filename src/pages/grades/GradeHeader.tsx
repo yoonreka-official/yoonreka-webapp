@@ -13,6 +13,7 @@ const GRADE_TABS: Array<{
 }> = [
   { key: 'daily', label: '데일리 성적' },
   { key: 'total', label: '누적 성적' },
+  { key: 'monthly', label: '월별 성적' },
 ]
 
 function GradeHeader() {
