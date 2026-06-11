@@ -1,0 +1,8 @@
+mutation RetryMyWrongAnswer($input: ClientRetryWrongAnswerInput!) {
+  retryMyWrongAnswer(input: $input) {
+    id
+    value
+    isCorrect
+    createdAt
+  }
+}

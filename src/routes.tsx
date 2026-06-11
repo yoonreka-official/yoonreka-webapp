@@ -5,11 +5,14 @@ import RootBoundary from '~/errors/RootBoundary'
 import AuthGuard from '~/guards/AuthGuard'
 import LayoutDefault from '~/layouts/LayoutDefault.tsx'
 import GradesPage from '~/pages/grades'
+import ExamResultPage from '~/pages/grades/exams'
 import LecturesPage from '~/pages/lectures'
+import LessonVideoPage from '~/pages/lectures/videos'
 import LoginPage from '~/pages/login'
 import MorePage from '~/pages/more'
 import QuestionsPage from '~/pages/questions'
 import SchedulesPage from '~/pages/schedules'
+import WrongAnswersPage from '~/pages/wrong-answers'
 
 export const router = createBrowserRouter([
   {
@@ -34,8 +37,20 @@ export const router = createBrowserRouter([
             element: <LecturesPage />,
           },
           {
+            path: 'lectures/videos/:videoId',
+            element: <LessonVideoPage />,
+          },
+          {
             path: 'grades',
             element: <GradesPage />,
+          },
+          {
+            path: 'grades/exams/:examId',
+            element: <ExamResultPage />,
+          },
+          {
+            path: 'wrong-answers',
+            element: <WrongAnswersPage />,
           },
           {
             path: 'questions',

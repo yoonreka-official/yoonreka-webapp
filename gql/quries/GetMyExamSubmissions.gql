@@ -1,0 +1,12 @@
+query GetMyExamSubmissions($filter: ClientExamSubmissionFilterInput) {
+  submissions: myExamSubmissions(filter: $filter) {
+    id
+    examId
+    totalScore
+    isPassed
+    status
+    submitType
+    confirmedAt
+    createdAt
+  }
+}

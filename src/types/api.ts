@@ -48,6 +48,21 @@ export type AdminCreateBookInput = {
   title: Scalars['String']['input'];
 };
 
+export type AdminCreateExamInput = {
+  answerFileId?: InputMaybe<Scalars['ID']['input']>;
+  category?: InputMaybe<Scalars['String']['input']>;
+  cutline?: InputMaybe<Scalars['Float']['input']>;
+  displaySettings?: InputMaybe<ExamDisplaySettingsInput>;
+  isRetest?: InputMaybe<Scalars['Boolean']['input']>;
+  lessonId: Scalars['ID']['input'];
+  levelCuts?: InputMaybe<Array<ExamLevelCutInput>>;
+  maxScore?: InputMaybe<Scalars['Float']['input']>;
+  originExamId?: InputMaybe<Scalars['ID']['input']>;
+  questionFileId?: InputMaybe<Scalars['ID']['input']>;
+  status?: InputMaybe<ExamStatus>;
+  title: Scalars['String']['input'];
+};
+
 export type AdminCreateLectureGradeFormCandidateInput = {
   labels: Array<LectureGradeFormLabelInput>;
   title: Scalars['String']['input'];
@@ -92,6 +107,20 @@ export type AdminCreateLectureInvoiceInput = {
   price: Scalars['Int']['input'];
   type: InvoiceType;
   userId: Scalars['ID']['input'];
+};
+
+export type AdminCreateLessonVideoInput = {
+  chapters?: InputMaybe<Array<LessonVideoChapterInput>>;
+  durationSeconds?: InputMaybe<Scalars['Int']['input']>;
+  fileId?: InputMaybe<Scalars['ID']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lessonId: Scalars['ID']['input'];
+  materialIds: Array<Scalars['ID']['input']>;
+  memo?: InputMaybe<Scalars['String']['input']>;
+  sourceType: LessonVideoSourceType;
+  title: Scalars['String']['input'];
+  visibility?: InputMaybe<LessonVideoVisibility>;
+  youtubeVideoId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AdminCreateMaterialInput = {
@@ -178,9 +207,50 @@ export type AdminCreateWorkLogInput = {
   startTime?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AdminDeleteUserFromLectureInput = {
+  lectureId: Scalars['ID']['input'];
+  /** 학생 (id) */
+  userId: Scalars['ID']['input'];
+};
+
+export type AdminExamFilterInput = {
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+  isRetest?: InputMaybe<Scalars['Boolean']['input']>;
+  lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lessonIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  statuses?: InputMaybe<Array<ExamStatus>>;
+};
+
+export type AdminExamQuestionInput = {
+  allowedAnswers?: InputMaybe<Array<Scalars['String']['input']>>;
+  answer: Scalars['String']['input'];
+  no: Scalars['Int']['input'];
+  point: Scalars['Float']['input'];
+  questionType: ExamQuestionType;
+  unit?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AdminExamStatistics = {
+  __typename?: 'AdminExamStatistics';
+  /** 응시자 수 */
+  applicants: Scalars['Int']['output'];
+  /** 점수대별 인원 (만점 대비 5구간) */
+  histogram: Array<Scalars['Int']['output']>;
+  /** 최고점 */
+  max?: Maybe<Scalars['Float']['output']>;
+  /** 평균 */
+  mean?: Maybe<Scalars['Float']['output']>;
+  /** 표준편차 */
+  stddev?: Maybe<Scalars['Float']['output']>;
+  /** 상위 10% 평균 */
+  topTenPercentMean?: Maybe<Scalars['Float']['output']>;
+};
+
 export type AdminInquiryFilterInput = {
   answered?: InputMaybe<Scalars['Boolean']['input']>;
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lectureStates?: InputMaybe<Array<LectureState>>;
   userIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   whoes?: InputMaybe<Array<InquiryWho>>;
 };
@@ -215,6 +285,7 @@ export type AdminLessonFilterInput = {
 export type AdminLessonGradePaginationFilterInput = {
   ids?: InputMaybe<Array<Scalars['ID']['input']>>;
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lectureStates?: InputMaybe<Array<LectureState>>;
   lessonIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   retests?: InputMaybe<Array<Retest>>;
   schoolIds?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -232,13 +303,53 @@ export type AdminLessonGradesFilterInput = {
   userIds?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
+export type AdminLessonVideoFilterInput = {
+  ids?: InputMaybe<Array<Scalars['ID']['input']>>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lessonIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  sourceTypes?: InputMaybe<Array<LessonVideoSourceType>>;
+  visibilities?: InputMaybe<Array<LessonVideoVisibility>>;
+};
+
+export type AdminLessonVideoViewerStatus = {
+  __typename?: 'AdminLessonVideoViewerStatus';
+  /** 시청 완료 여부 */
+  isCompleted: Scalars['Boolean']['output'];
+  /** 진도율 */
+  progressRatio: Scalars['Float']['output'];
+  user: User;
+  /** 누적 체류 시간 (초) */
+  watchedSeconds: Scalars['Int']['output'];
+};
+
+export type AdminLessonVideoViewerStatusSummary = {
+  __typename?: 'AdminLessonVideoViewerStatusSummary';
+  /** 평균 진도율 */
+  averageProgressRatio: Scalars['Float']['output'];
+  /** 진도율 100% 인원 */
+  fullyWatchedCount: Scalars['Int']['output'];
+  /** 진도율 90% 이상 인원 */
+  overNinetyPercentCount: Scalars['Int']['output'];
+  /** 대상 학생 수 */
+  totalCount: Scalars['Int']['output'];
+};
+
+export type AdminLessonVideoViewerStatuses = {
+  __typename?: 'AdminLessonVideoViewerStatuses';
+  statuses: Array<AdminLessonVideoViewerStatus>;
+  summary: AdminLessonVideoViewerStatusSummary;
+};
+
 export type AdminMaterialFilterInput = {
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lectureStates?: InputMaybe<Array<LectureState>>;
   titleContains?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AdminNoticeFilterInput = {
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lectureStates?: InputMaybe<Array<LectureState>>;
   titleContains?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -251,8 +362,14 @@ export type AdminSchoolFilterInput = {
   nameContains?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AdminSetExamQuestionsInput = {
+  examId: Scalars['ID']['input'];
+  questions: Array<AdminExamQuestionInput>;
+};
+
 export type AdminStudyMaterialFilterInput = {
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  lectureStates?: InputMaybe<Array<LectureState>>;
   titleContains?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -290,6 +407,22 @@ export type AdminUpdateBookInput = {
   memo?: InputMaybe<Scalars['String']['input']>;
   price?: InputMaybe<Scalars['Int']['input']>;
   /** 이름 */
+  title: Scalars['String']['input'];
+};
+
+export type AdminUpdateExamInput = {
+  answerFileId?: InputMaybe<Scalars['ID']['input']>;
+  category?: InputMaybe<Scalars['String']['input']>;
+  cutline?: InputMaybe<Scalars['Float']['input']>;
+  displaySettings?: InputMaybe<ExamDisplaySettingsInput>;
+  id: Scalars['ID']['input'];
+  isRetest?: InputMaybe<Scalars['Boolean']['input']>;
+  lessonId: Scalars['ID']['input'];
+  levelCuts?: InputMaybe<Array<ExamLevelCutInput>>;
+  maxScore?: InputMaybe<Scalars['Float']['input']>;
+  originExamId?: InputMaybe<Scalars['ID']['input']>;
+  questionFileId?: InputMaybe<Scalars['ID']['input']>;
+  status?: InputMaybe<ExamStatus>;
   title: Scalars['String']['input'];
 };
 
@@ -335,6 +468,21 @@ export type AdminUpdateLectureInvoiceInput = {
   comment?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   link?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AdminUpdateLessonVideoInput = {
+  chapters?: InputMaybe<Array<LessonVideoChapterInput>>;
+  durationSeconds?: InputMaybe<Scalars['Int']['input']>;
+  fileId?: InputMaybe<Scalars['ID']['input']>;
+  id: Scalars['ID']['input'];
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
+  lessonId: Scalars['ID']['input'];
+  materialIds: Array<Scalars['ID']['input']>;
+  memo?: InputMaybe<Scalars['String']['input']>;
+  sourceType: LessonVideoSourceType;
+  title: Scalars['String']['input'];
+  visibility?: InputMaybe<LessonVideoVisibility>;
+  youtubeVideoId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AdminUpdateMaterialInput = {
@@ -427,6 +575,23 @@ export type AdminUpdateWorkLogInput = {
 export type AdminUploadLessonAttachmentInput = {
   fileId?: InputMaybe<Scalars['ID']['input']>;
   lessonId: Scalars['ID']['input'];
+};
+
+export type AdminUpsertExamAnswerInput = {
+  questionNo: Scalars['Int']['input'];
+  value?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AdminUpsertExamAnswersInput = {
+  answers: Array<AdminUpsertExamAnswerInput>;
+  submissionId: Scalars['ID']['input'];
+};
+
+export type AdminUpsertExamSubmissionInput = {
+  examId: Scalars['ID']['input'];
+  scanFileIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  submitType?: InputMaybe<ExamSubmitType>;
+  userId: Scalars['ID']['input'];
 };
 
 export type AdminUpsertLectureGradeFormInput = {
@@ -634,6 +799,66 @@ export type ClientCreateUserSchoolReportCardInput = {
   type: SchoolReportType;
 };
 
+export type ClientExamQuestionResult = {
+  __typename?: 'ClientExamQuestionResult';
+  /** 정답 */
+  answer: Scalars['String']['output'];
+  /** 획득 점수 */
+  earnedPoint?: Maybe<Scalars['Float']['output']>;
+  /** 시험 답안 ID (오답 재풀이용) */
+  examAnswerId?: Maybe<Scalars['ID']['output']>;
+  /** 정답 여부 */
+  isCorrect?: Maybe<Scalars['Boolean']['output']>;
+  /** 문항 번호 */
+  no: Scalars['Int']['output'];
+  /** 배점 */
+  point: Scalars['Float']['output'];
+  questionType: ExamQuestionType;
+  /** 영역/단원 태그 */
+  unit?: Maybe<Scalars['String']['output']>;
+  /** 내 답안 */
+  value?: Maybe<Scalars['String']['output']>;
+};
+
+export type ClientExamResult = {
+  __typename?: 'ClientExamResult';
+  /** 성적 표시 설정 */
+  displaySettings?: Maybe<ExamDisplaySettings>;
+  /** 시험 */
+  exam: Exam;
+  /** 문제 PDF */
+  questionFile?: Maybe<PrivateFile>;
+  /** 문항별 결과 */
+  questionResults: Array<ClientExamQuestionResult>;
+  /** 시험 통계 (실시간 계산) */
+  statistics: ClientExamStatistics;
+  /** 내 시험 제출 */
+  submission: ExamSubmission;
+};
+
+export type ClientExamStatistics = {
+  __typename?: 'ClientExamStatistics';
+  /** 응시자 수 */
+  applicants: Scalars['Int']['output'];
+  /** 점수대별 인원 (만점 대비 20% 단위 5구간) */
+  histogram: Array<Scalars['Int']['output']>;
+  /** 최고점 */
+  max?: Maybe<Scalars['Float']['output']>;
+  /** 평균 */
+  mean?: Maybe<Scalars['Float']['output']>;
+  /** 내 등수 (동점 공동순위) */
+  myRank?: Maybe<Scalars['Int']['output']>;
+  /** 표준편차 */
+  stddev?: Maybe<Scalars['Float']['output']>;
+  /** 상위 10% 평균 */
+  topTenPercentMean?: Maybe<Scalars['Float']['output']>;
+};
+
+export type ClientExamSubmissionFilterInput = {
+  /** 수업 ID */
+  lectureId?: InputMaybe<Scalars['ID']['input']>;
+};
+
 export type ClientInquiryFilterInput = {
   /** 답변 여부 */
   answered?: InputMaybe<Scalars['Boolean']['input']>;
@@ -670,6 +895,13 @@ export type ClientRequestLectureInvoiceInput = {
   userMemo?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type ClientRetryWrongAnswerInput = {
+  /** 시험 답안 ID */
+  examAnswerId: Scalars['ID']['input'];
+  /** 재풀이 답안 */
+  value: Scalars['String']['input'];
+};
+
 export type ClientUpdateUserSchoolReportCardInput = {
   /** 성적표 파일 ID */
   fileId: Scalars['ID']['input'];
@@ -693,6 +925,38 @@ export type ClientUpdateUserSchoolReportCardInput = {
   totalCount: Scalars['Int']['input'];
   /** 성적표 타입 (중간고사, 기말고사, 모의고사) */
   type: SchoolReportType;
+};
+
+export type ClientUpsertLessonVideoProgressInput = {
+  /** 마지막 재생 위치 (초, 이어보기) */
+  lastPositionSeconds: Scalars['Int']['input'];
+  /** 강의 영상 ID */
+  lessonVideoId: Scalars['ID']['input'];
+  /** 이번에 시청한 구간 */
+  segment?: InputMaybe<WatchedSegmentInput>;
+};
+
+export type ClientWrongAnswer = {
+  __typename?: 'ClientWrongAnswer';
+  /** 시험 */
+  exam: Exam;
+  /** 오답 답안 */
+  examAnswer: ExamAnswer;
+  /** 해결 여부 (마지막 재풀이가 정답) */
+  isResolved: Scalars['Boolean']['output'];
+  /** 문제 PDF */
+  questionFile?: Maybe<PrivateFile>;
+};
+
+export type ClientWrongAnswerFilterInput = {
+  /** 시험 ID */
+  examId?: InputMaybe<Scalars['ID']['input']>;
+  /** 수업 ID */
+  lectureId?: InputMaybe<Scalars['ID']['input']>;
+  /** 미해결(마지막 재풀이가 정답이 아닌) 오답만 조회 */
+  onlyUnresolved?: InputMaybe<Scalars['Boolean']['input']>;
+  /** 영역/단원 태그 */
+  unit?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ConsultingData = {
@@ -720,6 +984,219 @@ export enum DeviceType {
   Android = 'ANDROID',
   Ios = 'IOS',
   Unknown = 'UNKNOWN'
+}
+
+export type Exam = {
+  __typename?: 'Exam';
+  admin_answerFile?: Maybe<PrivateFile>;
+  admin_lesson: Lesson;
+  admin_questionFile?: Maybe<PrivateFile>;
+  admin_questions: Array<ExamQuestion>;
+  admin_statistics: AdminExamStatistics;
+  admin_submissionCount: Scalars['Int']['output'];
+  /** 시험 유형 (실전모의고사, 복습테스트, 오답복습 등) */
+  category?: Maybe<Scalars['String']['output']>;
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  /** 커트라인 */
+  cutline?: Maybe<Scalars['Float']['output']>;
+  /** 삭제 시각 */
+  deletedAt?: Maybe<Scalars['Timestamp']['output']>;
+  /** 성적 표시 설정 */
+  displaySettings?: Maybe<ExamDisplaySettings>;
+  id: Scalars['ID']['output'];
+  /** 재시험 여부 */
+  isRetest: Scalars['Boolean']['output'];
+  /** 등급컷 (null이면 표시 안 함) */
+  levelCuts?: Maybe<Array<ExamLevelCut>>;
+  /** 만점 */
+  maxScore: Scalars['Float']['output'];
+  originExamId?: Maybe<Scalars['ID']['output']>;
+  status: ExamStatus;
+  /** 시험 제목 */
+  title: Scalars['String']['output'];
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+};
+
+export type ExamAnswer = {
+  __typename?: 'ExamAnswer';
+  admin_question: ExamQuestion;
+  /** 자동인식 신뢰도 (향후 자동인식용) */
+  confidence?: Maybe<Scalars['Float']['output']>;
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  /** 삭제 시각 */
+  deletedAt?: Maybe<Scalars['Timestamp']['output']>;
+  /** 획득 점수 */
+  earnedPoint?: Maybe<Scalars['Float']['output']>;
+  id: Scalars['ID']['output'];
+  /** 정답 여부 */
+  isCorrect?: Maybe<Scalars['Boolean']['output']>;
+  /** 검수 필요 여부 */
+  needsReview: Scalars['Boolean']['output'];
+  /** 답안의 문항 */
+  question: ExamQuestion;
+  /** 오답 재풀이 기록 */
+  retries: Array<ExamAnswerRetry>;
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+  /** 학생 답안 */
+  value?: Maybe<Scalars['String']['output']>;
+};
+
+export type ExamAnswerRetry = {
+  __typename?: 'ExamAnswerRetry';
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  /** 삭제 시각 */
+  deletedAt?: Maybe<Scalars['Timestamp']['output']>;
+  id: Scalars['ID']['output'];
+  /** 정답 여부 */
+  isCorrect: Scalars['Boolean']['output'];
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+  /** 재풀이 답안 */
+  value: Scalars['String']['output'];
+};
+
+export type ExamDisplaySettings = {
+  __typename?: 'ExamDisplaySettings';
+  /** 히스토그램 표시 여부 */
+  showHistogram?: Maybe<Scalars['Boolean']['output']>;
+  /** 등급 표시 여부 */
+  showLevel?: Maybe<Scalars['Boolean']['output']>;
+  /** 등수 표시 여부 */
+  showRank?: Maybe<Scalars['Boolean']['output']>;
+  /** 통계 표시 여부 */
+  showStatistics?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type ExamDisplaySettingsInput = {
+  /** 히스토그램 표시 여부 */
+  showHistogram?: InputMaybe<Scalars['Boolean']['input']>;
+  /** 등급 표시 여부 */
+  showLevel?: InputMaybe<Scalars['Boolean']['input']>;
+  /** 등수 표시 여부 */
+  showRank?: InputMaybe<Scalars['Boolean']['input']>;
+  /** 통계 표시 여부 */
+  showStatistics?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ExamEdge = {
+  __typename?: 'ExamEdge';
+  cursor: Scalars['String']['output'];
+  node: Exam;
+};
+
+export type ExamLevelCut = {
+  __typename?: 'ExamLevelCut';
+  /** 등급 */
+  level: Scalars['Int']['output'];
+  /** 등급컷 점수 */
+  score: Scalars['Float']['output'];
+};
+
+export type ExamLevelCutInput = {
+  /** 등급 */
+  level: Scalars['Int']['input'];
+  /** 등급컷 점수 */
+  score: Scalars['Float']['input'];
+};
+
+export type ExamPagination = {
+  __typename?: 'ExamPagination';
+  edges: Array<ExamEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type ExamQuestion = {
+  __typename?: 'ExamQuestion';
+  /** 허용 답안 */
+  allowedAnswers?: Maybe<Array<Scalars['String']['output']>>;
+  /** 정답 */
+  answer: Scalars['String']['output'];
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  /** 삭제 시각 */
+  deletedAt?: Maybe<Scalars['Timestamp']['output']>;
+  id: Scalars['ID']['output'];
+  /** 문항 번호 */
+  no: Scalars['Int']['output'];
+  /** 배점 */
+  point: Scalars['Float']['output'];
+  questionType: ExamQuestionType;
+  /** 영역/단원 태그 (오답노트 분류) */
+  unit?: Maybe<Scalars['String']['output']>;
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+};
+
+/** 시험 문항 유형 */
+export enum ExamQuestionType {
+  /** 선택형 */
+  Choice = 'CHOICE',
+  /** 단답형 */
+  Short = 'SHORT'
+}
+
+export enum ExamRelayOrder {
+  Id = 'ID'
+}
+
+/** 시험 상태 */
+export enum ExamStatus {
+  /** 작성중 */
+  Draft = 'DRAFT',
+  /** 확정 */
+  Finalized = 'FINALIZED',
+  /** 공개 */
+  Published = 'PUBLISHED'
+}
+
+export type ExamSubmission = {
+  __typename?: 'ExamSubmission';
+  admin_answers: Array<ExamAnswer>;
+  admin_exam: Exam;
+  admin_scanFiles: Array<PrivateFile>;
+  admin_user: User;
+  /** 문항별 답안 목록 */
+  answers: Array<ExamAnswer>;
+  confirmedAt?: Maybe<Scalars['Timestamp']['output']>;
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  /** 삭제 시각 */
+  deletedAt?: Maybe<Scalars['Timestamp']['output']>;
+  /** 시험 ID */
+  examId: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  /** 커트라인 통과 여부 */
+  isPassed?: Maybe<Scalars['Boolean']['output']>;
+  status: ExamSubmissionStatus;
+  submitType: ExamSubmitType;
+  /** 총점 */
+  totalScore?: Maybe<Scalars['Float']['output']>;
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+};
+
+/** 시험 제출 상태 */
+export enum ExamSubmissionStatus {
+  /** 채점 확정 */
+  Confirmed = 'CONFIRMED',
+  /** 채점중 */
+  Grading = 'GRADING',
+  /** 제출 대기 */
+  Pending = 'PENDING'
+}
+
+/** 시험 제출 방식 */
+export enum ExamSubmitType {
+  /** 온라인 응시 */
+  Online = 'ONLINE',
+  /** 현장 응시 */
+  Onsite = 'ONSITE'
 }
 
 export type File = {
@@ -1141,6 +1618,35 @@ export type LessonGradeEdge = {
   node: LessonGrade;
 };
 
+export type LessonGradeMonthly = {
+  __typename?: 'LessonGradeMonthly';
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  id: Scalars['ID']['output'];
+  /** 월 */
+  month: Scalars['Date']['output'];
+  score?: Maybe<LessonGradeMonthlyScore>;
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+};
+
+export type LessonGradeMonthlyScore = {
+  __typename?: 'LessonGradeMonthlyScore';
+  assignment?: Maybe<Scalars['String']['output']>;
+  attendance?: Maybe<Scalars['String']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+  progress?: Maybe<Scalars['String']['output']>;
+  test?: Maybe<Scalars['String']['output']>;
+};
+
+export type LessonGradeMonthlyScoreInput = {
+  assignment?: InputMaybe<Scalars['String']['input']>;
+  attendance?: InputMaybe<Scalars['String']['input']>;
+  comment?: InputMaybe<Scalars['String']['input']>;
+  progress?: InputMaybe<Scalars['String']['input']>;
+  test?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type LessonGradePagination = {
   __typename?: 'LessonGradePagination';
   edges: Array<LessonGradeEdge>;
@@ -1171,6 +1677,108 @@ export type LessonPagination = {
 export enum LessonRelayOrder {
   Date = 'DATE',
   Id = 'ID'
+}
+
+export type LessonVideo = {
+  __typename?: 'LessonVideo';
+  admin_attachment?: Maybe<PrivateFile>;
+  admin_lesson: Lesson;
+  admin_materials: Array<Material>;
+  attachment?: Maybe<PrivateFile>;
+  /** 타임스탬프 챕터 */
+  chapters?: Maybe<Array<LessonVideoChapter>>;
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  /** 삭제 시각 */
+  deletedAt?: Maybe<Scalars['Timestamp']['output']>;
+  /** 영상 길이 (초) */
+  durationSeconds?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['ID']['output'];
+  /** 공개 여부 */
+  isPublished: Scalars['Boolean']['output'];
+  /** 회차 ID */
+  lessonId: Scalars['ID']['output'];
+  /** 연결된 학습자료 목록 */
+  materials: Array<Material>;
+  memo?: Maybe<Scalars['String']['output']>;
+  sourceType: LessonVideoSourceType;
+  /** 영상 제목 */
+  title: Scalars['String']['output'];
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+  visibility: LessonVideoVisibility;
+  youtubeVideoId?: Maybe<Scalars['String']['output']>;
+};
+
+export type LessonVideoChapter = {
+  __typename?: 'LessonVideoChapter';
+  /** 챕터 라벨 */
+  label: Scalars['String']['output'];
+  /** 챕터 시작 시점 (초) */
+  seconds: Scalars['Int']['output'];
+};
+
+export type LessonVideoChapterInput = {
+  /** 챕터 라벨 */
+  label: Scalars['String']['input'];
+  /** 챕터 시작 시점 (초) */
+  seconds: Scalars['Int']['input'];
+};
+
+export type LessonVideoEdge = {
+  __typename?: 'LessonVideoEdge';
+  cursor: Scalars['String']['output'];
+  node: LessonVideo;
+};
+
+export type LessonVideoPagination = {
+  __typename?: 'LessonVideoPagination';
+  edges: Array<LessonVideoEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type LessonVideoProgress = {
+  __typename?: 'LessonVideoProgress';
+  /** 최초 생성 시각 */
+  createdAt: Scalars['Timestamp']['output'];
+  /** 삭제 시각 */
+  deletedAt?: Maybe<Scalars['Timestamp']['output']>;
+  id: Scalars['ID']['output'];
+  /** 시청 완료 여부 */
+  isCompleted: Scalars['Boolean']['output'];
+  /** 마지막 재생 위치 (초, 이어보기) */
+  lastPositionSeconds: Scalars['Int']['output'];
+  /** 강의 영상 ID */
+  lessonVideoId: Scalars['ID']['output'];
+  /** 진도율 (병합 구간 합 / 영상 길이) */
+  progressRatio: Scalars['Float']['output'];
+  /** 최근 수정 시각 */
+  updatedAt: Scalars['Timestamp']['output'];
+  /** 누적 체류 시간 (초) */
+  watchedSeconds: Scalars['Int']['output'];
+  /** 시청 구간 (병합 저장) */
+  watchedSegments?: Maybe<Array<WatchedSegment>>;
+};
+
+export enum LessonVideoRelayOrder {
+  Id = 'ID'
+}
+
+/** 강의 영상 소스 유형 */
+export enum LessonVideoSourceType {
+  /** 직접 업로드 (mp4) */
+  Upload = 'UPLOAD',
+  /** 유튜브 링크 */
+  Youtube = 'YOUTUBE'
+}
+
+/** 강의 영상 공개 범위 */
+export enum LessonVideoVisibility {
+  /** 전체 공개 */
+  All = 'ALL',
+  /** 수강 강의 공개 */
+  Lecture = 'LECTURE'
 }
 
 export type Material = {
@@ -1216,10 +1824,14 @@ export type Mutation = {
   adminTestNotification: Scalars['Boolean']['output'];
   adminUpdateAdministrator: Administrator;
   admin_checkIn: Scalars['Boolean']['output'];
+  admin_confirmExamSubmission: ExamSubmission;
+  admin_copyExam: Exam;
   admin_createBook: Book;
+  admin_createExam: Exam;
   admin_createLecture: Lecture;
   admin_createLectureGradeFormCandidate: LectureGradeFormCandidate;
   admin_createLectureInvoice: Scalars['Boolean']['output'];
+  admin_createLessonVideo: LessonVideo;
   admin_createMaterial: Material;
   admin_createNotice: Notice;
   admin_createSchool: School;
@@ -1229,10 +1841,13 @@ export type Mutation = {
   admin_createUserChat: UserChat;
   admin_createWorkLog: WorkLog;
   admin_deleteBook: Book;
+  admin_deleteExam: Exam;
+  admin_deleteExamSubmissions: Scalars['Boolean']['output'];
   admin_deleteInquiry: Inquiry;
   admin_deleteLecture: Lecture;
   admin_deleteLectureGradeFormCandidate: LectureGradeFormCandidate;
   admin_deleteLectureInvoice: Scalars['Boolean']['output'];
+  admin_deleteLessonVideo: LessonVideo;
   admin_deleteMaterial: Material;
   admin_deleteNotice: Notice;
   admin_deleteSchool: School;
@@ -1240,20 +1855,26 @@ export type Mutation = {
   admin_deleteTeacher: Teacher;
   admin_deleteUser: User;
   admin_deleteUserChat: UserChat;
+  admin_deleteUserFromLecture: Lecture;
   admin_notifyLessonGrades: Scalars['Boolean']['output'];
   admin_readAllUserChats: Scalars['Boolean']['output'];
   admin_refreshAuthToken: AuthTokenPair;
+  admin_regradeExam: Scalars['Boolean']['output'];
+  admin_setExamQuestions: Array<ExamQuestion>;
   admin_signInByPhone: AuthTokenPair;
   admin_transferLecture: UserLectureTransfer;
   admin_undoTransferLecture: UserLectureTransfer;
   admin_updateAdministratorPassword: Scalars['Boolean']['output'];
   admin_updateBook: Book;
+  admin_updateExam: Exam;
   admin_updateInquiry: Book;
   admin_updateLecture: Lecture;
   admin_updateLectureInvoice: LectureInvoice;
   admin_updateLectureInvoicesPaid: Array<LectureInvoice>;
   admin_updateLessonGradeCache: LessonGradeCache;
   admin_updateLessonGradeMemo: LessonGrade;
+  admin_updateLessonGradeMonthlyScore: LessonGradeMonthly;
+  admin_updateLessonVideo: LessonVideo;
   admin_updateMaterial: Material;
   admin_updateMyWorkLog: WorkLog;
   admin_updateNotice: Notice;
@@ -1265,6 +1886,8 @@ export type Mutation = {
   admin_updateUser: User;
   admin_updateWorkLog: WorkLog;
   admin_uploadLessonAttachment: Lesson;
+  admin_upsertExamAnswers: Array<ExamAnswer>;
+  admin_upsertExamSubmission: ExamSubmission;
   admin_upsertLectureGradeForm: LectureGradeForm;
   admin_upsertLectureLabelComment: LectureLabelComment;
   admin_upsertLessonGrade: LessonGrade;
@@ -1281,6 +1904,8 @@ export type Mutation = {
   refreshAuthToken: AuthTokenPair;
   /** 납부 완료 버튼 (납부 확인 요청) */
   requestLectureInvoice: LectureInvoice;
+  /** 오답 다시 풀기 (본인 답안 검증 + 즉시 채점 후 기록) */
+  retryMyWrongAnswer: ExamAnswerRetry;
   /**
    * 학생 로그인
    *
@@ -1295,6 +1920,8 @@ export type Mutation = {
   updateUser: User;
   updateUserPassword: Scalars['Boolean']['output'];
   updateUserSchoolReportCard: UserSchoolReportCard;
+  /** 로그인 된 학생의 강의 영상 시청 진도 저장 (멱등 upsert, 서버에서 구간 병합/진도율 계산) */
+  upsertMyLessonVideoProgress: LessonVideoProgress;
   upsertUserDevice: UserDevice;
   /** 탈퇴 */
   withdraw: Scalars['Boolean']['output'];
@@ -1327,8 +1954,24 @@ export type MutationAdmin_CheckInArgs = {
 };
 
 
+export type MutationAdmin_ConfirmExamSubmissionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_CopyExamArgs = {
+  examId: Scalars['ID']['input'];
+  lessonId: Scalars['ID']['input'];
+};
+
+
 export type MutationAdmin_CreateBookArgs = {
   input: AdminCreateBookInput;
+};
+
+
+export type MutationAdmin_CreateExamArgs = {
+  input: AdminCreateExamInput;
 };
 
 
@@ -1344,6 +1987,11 @@ export type MutationAdmin_CreateLectureGradeFormCandidateArgs = {
 
 export type MutationAdmin_CreateLectureInvoiceArgs = {
   input: AdminCreateLectureInvoiceInput;
+};
+
+
+export type MutationAdmin_CreateLessonVideoArgs = {
+  input: AdminCreateLessonVideoInput;
 };
 
 
@@ -1392,6 +2040,17 @@ export type MutationAdmin_DeleteBookArgs = {
 };
 
 
+export type MutationAdmin_DeleteExamArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_DeleteExamSubmissionsArgs = {
+  examId: Scalars['ID']['input'];
+  submissionIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+
 export type MutationAdmin_DeleteInquiryArgs = {
   id: Scalars['ID']['input'];
 };
@@ -1408,6 +2067,11 @@ export type MutationAdmin_DeleteLectureGradeFormCandidateArgs = {
 
 
 export type MutationAdmin_DeleteLectureInvoiceArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_DeleteLessonVideoArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -1447,6 +2111,11 @@ export type MutationAdmin_DeleteUserChatArgs = {
 };
 
 
+export type MutationAdmin_DeleteUserFromLectureArgs = {
+  input: AdminDeleteUserFromLectureInput;
+};
+
+
 export type MutationAdmin_NotifyLessonGradesArgs = {
   input: AdminNotifyLessonGradeInput;
 };
@@ -1459,6 +2128,16 @@ export type MutationAdmin_ReadAllUserChatsArgs = {
 
 export type MutationAdmin_RefreshAuthTokenArgs = {
   refreshToken: Scalars['String']['input'];
+};
+
+
+export type MutationAdmin_RegradeExamArgs = {
+  examId: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_SetExamQuestionsArgs = {
+  input: AdminSetExamQuestionsInput;
 };
 
 
@@ -1486,6 +2165,11 @@ export type MutationAdmin_UpdateAdministratorPasswordArgs = {
 
 export type MutationAdmin_UpdateBookArgs = {
   input: AdminUpdateBookInput;
+};
+
+
+export type MutationAdmin_UpdateExamArgs = {
+  input: AdminUpdateExamInput;
 };
 
 
@@ -1519,6 +2203,18 @@ export type MutationAdmin_UpdateLessonGradeMemoArgs = {
   id: Scalars['ID']['input'];
   retestMemo?: InputMaybe<Scalars['String']['input']>;
   supplementaryMemo?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationAdmin_UpdateLessonGradeMonthlyScoreArgs = {
+  month: Scalars['Date']['input'];
+  score: LessonGradeMonthlyScoreInput;
+  userId: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_UpdateLessonVideoArgs = {
+  input: AdminUpdateLessonVideoInput;
 };
 
 
@@ -1575,6 +2271,16 @@ export type MutationAdmin_UpdateWorkLogArgs = {
 
 export type MutationAdmin_UploadLessonAttachmentArgs = {
   input: AdminUploadLessonAttachmentInput;
+};
+
+
+export type MutationAdmin_UpsertExamAnswersArgs = {
+  input: AdminUpsertExamAnswersInput;
+};
+
+
+export type MutationAdmin_UpsertExamSubmissionArgs = {
+  input: AdminUpsertExamSubmissionInput;
 };
 
 
@@ -1636,6 +2342,11 @@ export type MutationRequestLectureInvoiceArgs = {
 };
 
 
+export type MutationRetryMyWrongAnswerArgs = {
+  input: ClientRetryWrongAnswerInput;
+};
+
+
 export type MutationSignInByPhoneArgs = {
   deviceType?: InputMaybe<DeviceType>;
   password: Scalars['String']['input'];
@@ -1663,6 +2374,11 @@ export type MutationUpdateUserPasswordArgs = {
 
 export type MutationUpdateUserSchoolReportCardArgs = {
   input: ClientUpdateUserSchoolReportCardInput;
+};
+
+
+export type MutationUpsertMyLessonVideoProgressArgs = {
+  input: ClientUpsertLessonVideoProgressInput;
 };
 
 
@@ -1823,6 +2539,10 @@ export type Query = {
   admin_administratorPagination: AdministratorPagination;
   admin_book: Book;
   admin_bookPagination: BookPagination;
+  admin_exam: Exam;
+  admin_examPagination: ExamPagination;
+  admin_examSubmission: ExamSubmission;
+  admin_examSubmissions: Array<ExamSubmission>;
   admin_inquiry: Inquiry;
   admin_inquiryPagination: InquiryPagination;
   admin_lecture: Lecture;
@@ -1834,6 +2554,9 @@ export type Query = {
   admin_lessonGradePagination: LessonGradePagination;
   admin_lessonGrades: Array<LessonGrade>;
   admin_lessonPagination: LessonPagination;
+  admin_lessonVideo: LessonVideo;
+  admin_lessonVideoPagination: LessonVideoPagination;
+  admin_lessonVideoViewerStatuses: AdminLessonVideoViewerStatuses;
   admin_lessons: Array<Lesson>;
   admin_material: Material;
   admin_materialPagination: MaterialPagination;
@@ -1858,6 +2581,10 @@ export type Query = {
   currentUser?: Maybe<User>;
   file?: Maybe<File>;
   lessonGradeCommentOperation: Operation;
+  /** 로그인 된 학생의 시험 결과 조회 (본인 제출 + 채점 확정 검증) */
+  myExamResult: ClientExamResult;
+  /** 로그인 된 학생의 시험 제출 목록 조회 (채점 확정분만) */
+  myExamSubmissions: Array<ExamSubmission>;
   /** 로그인 된 학생의 문의 목록 조회 */
   myInquiries: Array<Inquiry>;
   /** 수업 조회 (로그인된 학생이 수강중인 수업이 아니면 NULL 반환) */
@@ -1867,6 +2594,12 @@ export type Query = {
   /** 로그인 된 학생의 수업 목록 조회 */
   myLectures: Array<Lecture>;
   myLessonGrades: Array<LessonGrade>;
+  /** 강의 영상 조회 (공개된 영상 + 수강 검증) */
+  myLessonVideo: LessonVideo;
+  /** 로그인 된 학생의 강의 영상 시청 진도 목록 조회 */
+  myLessonVideoProgresses: Array<LessonVideoProgress>;
+  /** 로그인 된 학생의 강의 영상 목록 조회 (공개된 영상 + 수강 검증) */
+  myLessonVideos: Array<LessonVideo>;
   /** 로그인 된 학생의 "개별 수업" 목록 조회 */
   myLessons: Array<Lesson>;
   /** 로그인 된 학생의 학습자료 목록 조회 (학생이 수강중인 수업 + 전체 학습자료) */
@@ -1877,6 +2610,8 @@ export type Query = {
   myNotificationPagination: NotificationPagination;
   /** 로그인 된 학생의 성젹표 조회 */
   mySchoolReportCards: Array<UserSchoolReportCard>;
+  /** 로그인 된 학생의 오답노트 목록 조회 (채점 확정분만) */
+  myWrongAnswers: Array<ClientWrongAnswer>;
   /** 로그인 된 학생의 공부하기 자료 목록 조회 */
   my_studyMaterials: Array<StudyMaterial>;
   my_userChatPagination: UserChatPagination;
@@ -1916,6 +2651,33 @@ export type QueryAdmin_BookPaginationArgs = {
   order?: InputMaybe<BookRelayOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_ExamArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_ExamPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminExamFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<ExamRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAdmin_ExamSubmissionArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_ExamSubmissionsArgs = {
+  examId: Scalars['ID']['input'];
 };
 
 
@@ -2007,6 +2769,28 @@ export type QueryAdmin_LessonPaginationArgs = {
   order?: InputMaybe<LessonRelayOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
   withDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type QueryAdmin_LessonVideoArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryAdmin_LessonVideoPaginationArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<AdminLessonVideoFilterInput>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  order?: InputMaybe<LessonVideoRelayOrder>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryAdmin_LessonVideoViewerStatusesArgs = {
+  lessonVideoId: Scalars['ID']['input'];
 };
 
 
@@ -2191,6 +2975,17 @@ export type QueryFileArgs = {
 };
 
 
+export type QueryMyExamResultArgs = {
+  submissionId: Scalars['ID']['input'];
+};
+
+
+export type QueryMyExamSubmissionsArgs = {
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<ClientExamSubmissionFilterInput>;
+};
+
+
 export type QueryMyInquiriesArgs = {
   asc?: InputMaybe<Scalars['Boolean']['input']>;
   filter?: InputMaybe<ClientInquiryFilterInput>;
@@ -2223,6 +3018,22 @@ export type QueryMyLessonGradesArgs = {
 };
 
 
+export type QueryMyLessonVideoArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryMyLessonVideoProgressesArgs = {
+  lectureId: Scalars['ID']['input'];
+};
+
+
+export type QueryMyLessonVideosArgs = {
+  lectureId: Scalars['ID']['input'];
+  lessonId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
 export type QueryMyLessonsArgs = {
   asc?: InputMaybe<Scalars['Boolean']['input']>;
   filter?: InputMaybe<ClientLessonFilterInput>;
@@ -2239,6 +3050,12 @@ export type QueryMyNotificationPaginationArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   order?: InputMaybe<NotificationRelayOrder>;
   skip?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryMyWrongAnswersArgs = {
+  asc?: InputMaybe<Scalars['Boolean']['input']>;
+  filter?: InputMaybe<ClientWrongAnswerFilterInput>;
 };
 
 
@@ -2429,6 +3246,7 @@ export type User = {
   admin_userConsulting?: Maybe<UserConsulting>;
   admin_userDevices: Array<UserDevice>;
   admin_userLectureTransfers: Array<UserLectureTransfer>;
+  admin_userLessonGradeMonthly: Array<LessonGradeMonthly>;
   /** 생년월일 */
   birthDate: Scalars['Date']['output'];
   code: Scalars['String']['output'];
@@ -2587,6 +3405,21 @@ export enum UserState {
   Withdrawn = 'WITHDRAWN'
 }
 
+export type WatchedSegment = {
+  __typename?: 'WatchedSegment';
+  /** 시청 구간 종료 (초) */
+  e: Scalars['Float']['output'];
+  /** 시청 구간 시작 (초) */
+  s: Scalars['Float']['output'];
+};
+
+export type WatchedSegmentInput = {
+  /** 시청 구간 종료 (초) */
+  e: Scalars['Float']['input'];
+  /** 시청 구간 시작 (초) */
+  s: Scalars['Float']['input'];
+};
+
 export type WorkLog = {
   __typename?: 'WorkLog';
   admin_administrator?: Maybe<Administrator>;
@@ -2669,6 +3502,20 @@ export type ReadAllUserChatsMutationVariables = Exact<{ [key: string]: never; }>
 
 export type ReadAllUserChatsMutation = { __typename?: 'Mutation', my_readAllUserChats: boolean };
 
+export type RetryMyWrongAnswerMutationVariables = Exact<{
+  input: ClientRetryWrongAnswerInput;
+}>;
+
+
+export type RetryMyWrongAnswerMutation = { __typename?: 'Mutation', retryMyWrongAnswer: { __typename?: 'ExamAnswerRetry', id: string, value: string, isCorrect: boolean, createdAt: number } };
+
+export type UpsertMyLessonVideoProgressMutationVariables = Exact<{
+  input: ClientUpsertLessonVideoProgressInput;
+}>;
+
+
+export type UpsertMyLessonVideoProgressMutation = { __typename?: 'Mutation', upsertMyLessonVideoProgress: { __typename?: 'LessonVideoProgress', id: string, lessonVideoId: string, lastPositionSeconds: number, watchedSeconds: number, progressRatio: number, isCompleted: boolean, updatedAt: number } };
+
 export type CreateUserChatMutationVariables = Exact<{
   input: ClientCreateUserChatInput;
 }>;
@@ -2683,10 +3530,51 @@ export type GetDailyGradeCommentQuery = { __typename?: 'Query', operation: { __t
 
 export type DailyGradeComment_OperationFragment = { __typename?: 'Operation', id: string, message?: string | null };
 
+export type GetMyExamResultQueryVariables = Exact<{
+  submissionId: Scalars['ID']['input'];
+}>;
+
+
+export type GetMyExamResultQuery = { __typename?: 'Query', examResult: { __typename?: 'ClientExamResult', exam: { __typename?: 'Exam', id: string, title: string, category?: string | null, maxScore: number, isRetest: boolean, levelCuts?: Array<{ __typename?: 'ExamLevelCut', level: number, score: number }> | null }, submission: { __typename?: 'ExamSubmission', id: string, examId: string, totalScore?: number | null, isPassed?: boolean | null, status: ExamSubmissionStatus, submitType: ExamSubmitType, confirmedAt?: number | null }, statistics: { __typename?: 'ClientExamStatistics', applicants: number, histogram: Array<number>, max?: number | null, mean?: number | null, myRank?: number | null, stddev?: number | null, topTenPercentMean?: number | null }, displaySettings?: { __typename?: 'ExamDisplaySettings', showHistogram?: boolean | null, showLevel?: boolean | null, showRank?: boolean | null, showStatistics?: boolean | null } | null, questionResults: Array<{ __typename?: 'ClientExamQuestionResult', examAnswerId?: string | null, no: number, unit?: string | null, questionType: ExamQuestionType, point: number, earnedPoint?: number | null, isCorrect?: boolean | null, value?: string | null, answer: string }>, questionFile?: { __typename?: 'PrivateFile', id: string, filename?: string | null, url: string } | null } };
+
+export type MyExamResult_QuestionResultFragment = { __typename?: 'ClientExamQuestionResult', examAnswerId?: string | null, no: number, unit?: string | null, questionType: ExamQuestionType, point: number, earnedPoint?: number | null, isCorrect?: boolean | null, value?: string | null, answer: string };
+
+export type GetMyExamSubmissionsQueryVariables = Exact<{
+  filter?: InputMaybe<ClientExamSubmissionFilterInput>;
+}>;
+
+
+export type GetMyExamSubmissionsQuery = { __typename?: 'Query', submissions: Array<{ __typename?: 'ExamSubmission', id: string, examId: string, totalScore?: number | null, isPassed?: boolean | null, status: ExamSubmissionStatus, submitType: ExamSubmitType, confirmedAt?: number | null, createdAt: number }> };
+
 export type GetMyLectureInvoicesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetMyLectureInvoicesQuery = { __typename?: 'Query', myLectureInvoices: Array<{ __typename?: 'LectureInvoice', id: string, price: number, state: LectureInvoiceState, type: InvoiceType, paidAt?: number | null, method?: InvoiceMethod | null, dueDate: string, lecture?: { __typename?: 'Lecture', id: string, title: string } | null, books: Array<{ __typename?: 'Book', id: string, title: string, price?: number | null }> }> };
+
+export type GetMyLessonVideoQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetMyLessonVideoQuery = { __typename?: 'Query', lessonVideo: { __typename?: 'LessonVideo', id: string, title: string, memo?: string | null, lessonId: string, sourceType: LessonVideoSourceType, youtubeVideoId?: string | null, durationSeconds?: number | null, chapters?: Array<{ __typename?: 'LessonVideoChapter', label: string, seconds: number }> | null, attachment?: { __typename?: 'PrivateFile', id: string, filename?: string | null, mimeType: string, size: number, url: string } | null, materials: Array<{ __typename?: 'Material', id: string, title: string, attachments: Array<{ __typename?: 'PrivateFile', id: string, filename?: string | null, mimeType: string, size: number, url: string }> }> } };
+
+export type GetMyLessonVideoProgressesQueryVariables = Exact<{
+  lectureId: Scalars['ID']['input'];
+}>;
+
+
+export type GetMyLessonVideoProgressesQuery = { __typename?: 'Query', progresses: Array<{ __typename?: 'LessonVideoProgress', id: string, lessonVideoId: string, lastPositionSeconds: number, watchedSeconds: number, progressRatio: number, isCompleted: boolean }> };
+
+export type GetMyLessonVideosQueryVariables = Exact<{
+  lectureId: Scalars['ID']['input'];
+}>;
+
+
+export type GetMyLessonVideosQuery = { __typename?: 'Query', lecture?: { __typename?: 'Lecture', id: string, title: string, lessons?: Array<{ __typename?: 'Lesson', id: string, date: string }> | null } | null, lessonVideos: Array<{ __typename?: 'LessonVideo', id: string, title: string, lessonId: string, sourceType: LessonVideoSourceType, durationSeconds?: number | null, createdAt: number, updatedAt: number }>, progresses: Array<{ __typename?: 'LessonVideoProgress', id: string, lessonVideoId: string, lastPositionSeconds: number, watchedSeconds: number, progressRatio: number, isCompleted: boolean, updatedAt: number }> };
+
+export type MyLessonVideos_LessonVideoFragment = { __typename?: 'LessonVideo', id: string, title: string, lessonId: string, sourceType: LessonVideoSourceType, durationSeconds?: number | null, createdAt: number, updatedAt: number };
+
+export type MyLessonVideos_LessonVideoProgressFragment = { __typename?: 'LessonVideoProgress', id: string, lessonVideoId: string, lastPositionSeconds: number, watchedSeconds: number, progressRatio: number, isCompleted: boolean, updatedAt: number };
 
 export type GetMyMaterialsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2716,6 +3604,15 @@ export type GetMyStudyMaterialsQuery = { __typename?: 'Query', studyMaterials: A
 
 export type MyStudyMaterials_StudyMaterialFragment = { __typename?: 'StudyMaterial', id: string, title: string, isAll: boolean, updatedAt: number, createdAt: number, materialAttachments?: Array<{ __typename?: 'StudyMaterialAttachment', name: string, attachment: { __typename?: 'PrivateFile', filename?: string | null, id: string, mimeType: string, size: number, url: string } }> | null };
 
+export type GetMyWrongAnswersQueryVariables = Exact<{
+  filter?: InputMaybe<ClientWrongAnswerFilterInput>;
+}>;
+
+
+export type GetMyWrongAnswersQuery = { __typename?: 'Query', wrongAnswers: Array<{ __typename?: 'ClientWrongAnswer', isResolved: boolean, exam: { __typename?: 'Exam', id: string, title: string, category?: string | null, maxScore: number }, examAnswer: { __typename?: 'ExamAnswer', id: string, value?: string | null, isCorrect?: boolean | null, earnedPoint?: number | null, question: { __typename?: 'ExamQuestion', id: string, no: number, point: number, unit?: string | null, questionType: ExamQuestionType }, retries: Array<{ __typename?: 'ExamAnswerRetry', id: string, value: string, isCorrect: boolean, createdAt: number }> }, questionFile?: { __typename?: 'PrivateFile', id: string, filename?: string | null, url: string } | null }> };
+
+export type MyWrongAnswers_WrongAnswerFragment = { __typename?: 'ClientWrongAnswer', isResolved: boolean, exam: { __typename?: 'Exam', id: string, title: string, category?: string | null, maxScore: number }, examAnswer: { __typename?: 'ExamAnswer', id: string, value?: string | null, isCorrect?: boolean | null, earnedPoint?: number | null, question: { __typename?: 'ExamQuestion', id: string, no: number, point: number, unit?: string | null, questionType: ExamQuestionType }, retries: Array<{ __typename?: 'ExamAnswerRetry', id: string, value: string, isCorrect: boolean, createdAt: number }> }, questionFile?: { __typename?: 'PrivateFile', id: string, filename?: string | null, url: string } | null };
+
 export type GetUserChatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2741,7 +3638,11 @@ export type GradeMonthlyTab_LectureFragment = { __typename?: 'Lecture', id: stri
 export type GradeMonthlyTab_GradeFormFragment = { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> };
 
 export const DailyGradeComment_OperationFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DailyGradeComment_Operation"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Operation"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]} as unknown as DocumentNode<DailyGradeComment_OperationFragment, unknown>;
+export const MyExamResult_QuestionResultFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyExamResult_QuestionResult"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ClientExamQuestionResult"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"examAnswerId"}},{"kind":"Field","name":{"kind":"Name","value":"no"}},{"kind":"Field","name":{"kind":"Name","value":"unit"}},{"kind":"Field","name":{"kind":"Name","value":"questionType"}},{"kind":"Field","name":{"kind":"Name","value":"point"}},{"kind":"Field","name":{"kind":"Name","value":"earnedPoint"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"answer"}}]}}]} as unknown as DocumentNode<MyExamResult_QuestionResultFragment, unknown>;
+export const MyLessonVideos_LessonVideoFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyLessonVideos_LessonVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonVideo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"lessonId"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<MyLessonVideos_LessonVideoFragment, unknown>;
+export const MyLessonVideos_LessonVideoProgressFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyLessonVideos_LessonVideoProgress"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonVideoProgress"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lessonVideoId"}},{"kind":"Field","name":{"kind":"Name","value":"lastPositionSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"watchedSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"progressRatio"}},{"kind":"Field","name":{"kind":"Name","value":"isCompleted"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<MyLessonVideos_LessonVideoProgressFragment, unknown>;
 export const MyStudyMaterials_StudyMaterialFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StudyMaterial"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"materialAttachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<MyStudyMaterials_StudyMaterialFragment, unknown>;
+export const MyWrongAnswers_WrongAnswerFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyWrongAnswers_WrongAnswer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ClientWrongAnswer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isResolved"}},{"kind":"Field","name":{"kind":"Name","value":"exam"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"maxScore"}}]}},{"kind":"Field","name":{"kind":"Name","value":"examAnswer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"earnedPoint"}},{"kind":"Field","name":{"kind":"Name","value":"question"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"no"}},{"kind":"Field","name":{"kind":"Name","value":"point"}},{"kind":"Field","name":{"kind":"Name","value":"unit"}},{"kind":"Field","name":{"kind":"Name","value":"questionType"}}]}},{"kind":"Field","name":{"kind":"Name","value":"retries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"questionFile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<MyWrongAnswers_WrongAnswerFragment, unknown>;
 export const UserChatFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserChat"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserChat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"administrator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UserChatFragment, unknown>;
 export const GradeMonthlyTab_GradeFormFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_GradeFormFragment, unknown>;
 export const GradeMonthlyTab_LectureFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LectureFragment, unknown>;
@@ -2750,12 +3651,20 @@ export const GradeMonthlyTab_LessonGradeFragmentDoc = {"kind":"Document","defini
 export const AnalyzePrivateFileMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AnalyzePrivateFileMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"key"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filename"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"size"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"analyzePrivateFileMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"Variable","name":{"kind":"Name","value":"key"}}},{"kind":"Argument","name":{"kind":"Name","value":"filename"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filename"}}},{"kind":"Argument","name":{"kind":"Name","value":"mimeType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}}},{"kind":"Argument","name":{"kind":"Name","value":"size"},"value":{"kind":"Variable","name":{"kind":"Name","value":"size"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<AnalyzePrivateFileMetadataMutation, AnalyzePrivateFileMetadataMutationVariables>;
 export const CreateInquiryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInquiry"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientCreateInquiryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInquiry"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateInquiryMutation, CreateInquiryMutationVariables>;
 export const ReadAllUserChatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ReadAllUserChats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"my_readAllUserChats"}}]}}]} as unknown as DocumentNode<ReadAllUserChatsMutation, ReadAllUserChatsMutationVariables>;
+export const RetryMyWrongAnswerDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RetryMyWrongAnswer"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientRetryWrongAnswerInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"retryMyWrongAnswer"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<RetryMyWrongAnswerMutation, RetryMyWrongAnswerMutationVariables>;
+export const UpsertMyLessonVideoProgressDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpsertMyLessonVideoProgress"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientUpsertLessonVideoProgressInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"upsertMyLessonVideoProgress"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lessonVideoId"}},{"kind":"Field","name":{"kind":"Name","value":"lastPositionSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"watchedSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"progressRatio"}},{"kind":"Field","name":{"kind":"Name","value":"isCompleted"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<UpsertMyLessonVideoProgressMutation, UpsertMyLessonVideoProgressMutationVariables>;
 export const CreateUserChatDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUserChat"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientCreateUserChatInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"createUserChat"},"name":{"kind":"Name","value":"my_createUserChat"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateUserChatMutation, CreateUserChatMutationVariables>;
 export const GetDailyGradeCommentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetDailyGradeComment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"operation"},"name":{"kind":"Name","value":"lessonGradeCommentOperation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"DailyGradeComment_Operation"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"DailyGradeComment_Operation"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Operation"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}}]} as unknown as DocumentNode<GetDailyGradeCommentQuery, GetDailyGradeCommentQueryVariables>;
+export const GetMyExamResultDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyExamResult"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"submissionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"examResult"},"name":{"kind":"Name","value":"myExamResult"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"submissionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"submissionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"exam"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"maxScore"}},{"kind":"Field","name":{"kind":"Name","value":"isRetest"}},{"kind":"Field","name":{"kind":"Name","value":"levelCuts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"level"}},{"kind":"Field","name":{"kind":"Name","value":"score"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"submission"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"examId"}},{"kind":"Field","name":{"kind":"Name","value":"totalScore"}},{"kind":"Field","name":{"kind":"Name","value":"isPassed"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"submitType"}},{"kind":"Field","name":{"kind":"Name","value":"confirmedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"statistics"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"applicants"}},{"kind":"Field","name":{"kind":"Name","value":"histogram"}},{"kind":"Field","name":{"kind":"Name","value":"max"}},{"kind":"Field","name":{"kind":"Name","value":"mean"}},{"kind":"Field","name":{"kind":"Name","value":"myRank"}},{"kind":"Field","name":{"kind":"Name","value":"stddev"}},{"kind":"Field","name":{"kind":"Name","value":"topTenPercentMean"}}]}},{"kind":"Field","name":{"kind":"Name","value":"displaySettings"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"showHistogram"}},{"kind":"Field","name":{"kind":"Name","value":"showLevel"}},{"kind":"Field","name":{"kind":"Name","value":"showRank"}},{"kind":"Field","name":{"kind":"Name","value":"showStatistics"}}]}},{"kind":"Field","name":{"kind":"Name","value":"questionResults"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyExamResult_QuestionResult"}}]}},{"kind":"Field","name":{"kind":"Name","value":"questionFile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyExamResult_QuestionResult"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ClientExamQuestionResult"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"examAnswerId"}},{"kind":"Field","name":{"kind":"Name","value":"no"}},{"kind":"Field","name":{"kind":"Name","value":"unit"}},{"kind":"Field","name":{"kind":"Name","value":"questionType"}},{"kind":"Field","name":{"kind":"Name","value":"point"}},{"kind":"Field","name":{"kind":"Name","value":"earnedPoint"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"answer"}}]}}]} as unknown as DocumentNode<GetMyExamResultQuery, GetMyExamResultQueryVariables>;
+export const GetMyExamSubmissionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyExamSubmissions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientExamSubmissionFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"submissions"},"name":{"kind":"Name","value":"myExamSubmissions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"examId"}},{"kind":"Field","name":{"kind":"Name","value":"totalScore"}},{"kind":"Field","name":{"kind":"Name","value":"isPassed"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"submitType"}},{"kind":"Field","name":{"kind":"Name","value":"confirmedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetMyExamSubmissionsQuery, GetMyExamSubmissionsQueryVariables>;
 export const GetMyLectureInvoicesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyLectureInvoices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myLectureInvoices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"paidAt"}},{"kind":"Field","name":{"kind":"Name","value":"method"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"books"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}}]}}]}}]} as unknown as DocumentNode<GetMyLectureInvoicesQuery, GetMyLectureInvoicesQueryVariables>;
+export const GetMyLessonVideoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyLessonVideo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lessonVideo"},"name":{"kind":"Name","value":"myLessonVideo"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"memo"}},{"kind":"Field","name":{"kind":"Name","value":"lessonId"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"youtubeVideoId"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"chapters"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"seconds"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"materials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetMyLessonVideoQuery, GetMyLessonVideoQueryVariables>;
+export const GetMyLessonVideoProgressesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyLessonVideoProgresses"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lectureId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"progresses"},"name":{"kind":"Name","value":"myLessonVideoProgresses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lectureId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lectureId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lessonVideoId"}},{"kind":"Field","name":{"kind":"Name","value":"lastPositionSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"watchedSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"progressRatio"}},{"kind":"Field","name":{"kind":"Name","value":"isCompleted"}}]}}]}}]} as unknown as DocumentNode<GetMyLessonVideoProgressesQuery, GetMyLessonVideoProgressesQueryVariables>;
+export const GetMyLessonVideosDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyLessonVideos"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lectureId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lecture"},"name":{"kind":"Name","value":"myLecture"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lectureId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"lessons"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}}]}}]}},{"kind":"Field","alias":{"kind":"Name","value":"lessonVideos"},"name":{"kind":"Name","value":"myLessonVideos"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lectureId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lectureId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyLessonVideos_LessonVideo"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"progresses"},"name":{"kind":"Name","value":"myLessonVideoProgresses"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"lectureId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lectureId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyLessonVideos_LessonVideoProgress"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyLessonVideos_LessonVideo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonVideo"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"lessonId"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"durationSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyLessonVideos_LessonVideoProgress"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonVideoProgress"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lessonVideoId"}},{"kind":"Field","name":{"kind":"Name","value":"lastPositionSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"watchedSeconds"}},{"kind":"Field","name":{"kind":"Name","value":"progressRatio"}},{"kind":"Field","name":{"kind":"Name","value":"isCompleted"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<GetMyLessonVideosQuery, GetMyLessonVideosQueryVariables>;
 export const GetMyMaterialsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<GetMyMaterialsQuery, GetMyMaterialsQueryVariables>;
 export const GetMyNoticesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyNotices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myNotices"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"pinnedAt"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetMyNoticesQuery, GetMyNoticesQueryVariables>;
 export const GetMyNotificationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyNotifications"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"order"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NotificationRelayOrder"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"skip"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"NotificationFilterInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"asc"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"myNotificationPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"order"},"value":{"kind":"Variable","name":{"kind":"Name","value":"order"}}},{"kind":"Argument","name":{"kind":"Name","value":"skip"},"value":{"kind":"Variable","name":{"kind":"Name","value":"skip"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"asc"},"value":{"kind":"Variable","name":{"kind":"Name","value":"asc"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"link"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"__typename"}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureInvoice"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Material"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Notice"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"lectureInvoice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"price"}},{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"paidAt"}},{"kind":"Field","name":{"kind":"Name","value":"method"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"dueDate"}},{"kind":"Field","name":{"kind":"Name","value":"books"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"price"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"material"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"notice"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"link"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"lectures"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"contents"}},{"kind":"Field","name":{"kind":"Name","value":"title"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}}]}}]}}]}}]} as unknown as DocumentNode<GetMyNotificationsQuery, GetMyNotificationsQueryVariables>;
 export const GetMyStudyMaterialsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyStudyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"studyMaterials"},"name":{"kind":"Name","value":"my_studyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StudyMaterial"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"materialAttachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<GetMyStudyMaterialsQuery, GetMyStudyMaterialsQueryVariables>;
+export const GetMyWrongAnswersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyWrongAnswers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientWrongAnswerFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"wrongAnswers"},"name":{"kind":"Name","value":"myWrongAnswers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyWrongAnswers_WrongAnswer"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyWrongAnswers_WrongAnswer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ClientWrongAnswer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isResolved"}},{"kind":"Field","name":{"kind":"Name","value":"exam"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"maxScore"}}]}},{"kind":"Field","name":{"kind":"Name","value":"examAnswer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"earnedPoint"}},{"kind":"Field","name":{"kind":"Name","value":"question"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"no"}},{"kind":"Field","name":{"kind":"Name","value":"point"}},{"kind":"Field","name":{"kind":"Name","value":"unit"}},{"kind":"Field","name":{"kind":"Name","value":"questionType"}}]}},{"kind":"Field","name":{"kind":"Name","value":"retries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"questionFile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<GetMyWrongAnswersQuery, GetMyWrongAnswersQueryVariables>;
 export const GetUserChatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserChats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"userChats"},"name":{"kind":"Name","value":"my_userChatPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"5000"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserChat"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserChat"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserChat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"administrator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<GetUserChatsQuery, GetUserChatsQueryVariables>;
 export const GetGradeMonthlyTabDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGradeMonthlyTab"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientLessonGradesFilterInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"order"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGradeRelayOrder"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"asc"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lessonGrades"},"name":{"kind":"Name","value":"myLessonGrades"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"asc"},"value":{"kind":"Variable","name":{"kind":"Name","value":"asc"}}},{"kind":"Argument","name":{"kind":"Name","value":"order"},"value":{"kind":"Variable","name":{"kind":"Name","value":"order"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGrade"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"school"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"birthDate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attendanceStatus"}},{"kind":"Field","name":{"kind":"Name","value":"supplementary"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryMemo"}},{"kind":"Field","name":{"kind":"Name","value":"retest"}},{"kind":"Field","name":{"kind":"Name","value":"retestDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"retestMemo"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"value2"}},{"kind":"Field","name":{"kind":"Name","value":"maxValue"}}]}},{"kind":"Field","name":{"kind":"Name","value":"comment"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetGradeMonthlyTabQuery, GetGradeMonthlyTabQueryVariables>;

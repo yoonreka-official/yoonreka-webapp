@@ -1,0 +1,44 @@
+query GetMyWrongAnswers($filter: ClientWrongAnswerFilterInput) {
+  wrongAnswers: myWrongAnswers(filter: $filter) {
+    ...MyWrongAnswers_WrongAnswer
+  }
+}
+
+fragment MyWrongAnswers_WrongAnswer on ClientWrongAnswer {
+  isResolved
+
+  exam {
+    id
+    title
+    category
+    maxScore
+  }
+
+  examAnswer {
+    id
+    value
+    isCorrect
+    earnedPoint
+
+    question {
+      id
+      no
+      point
+      unit
+      questionType
+    }
+
+    retries {
+      id
+      value
+      isCorrect
+      createdAt
+    }
+  }
+
+  questionFile {
+    id
+    filename
+    url
+  }
+}

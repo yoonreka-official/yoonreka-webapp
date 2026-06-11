@@ -42,6 +42,7 @@ export const getLectureGrades = (myLectureId: string, gradeType: GradeType) => {
               comment
               attendanceStatus
               supplementary
+              retest
               data {
                 id
                 label

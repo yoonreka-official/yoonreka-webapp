@@ -1,0 +1,44 @@
+query GetMyLessonVideo($id: ID!) {
+  lessonVideo: myLessonVideo(id: $id) {
+    id
+    title
+    memo
+    lessonId
+    sourceType
+    youtubeVideoId
+    durationSeconds
+    chapters {
+      label
+      seconds
+    }
+    attachment {
+      id
+      filename
+      mimeType
+      size
+      url
+    }
+    materials {
+      id
+      title
+      attachments {
+        id
+        filename
+        mimeType
+        size
+        url
+      }
+    }
+  }
+}
+
+query GetMyLessonVideoProgresses($lectureId: ID!) {
+  progresses: myLessonVideoProgresses(lectureId: $lectureId) {
+    id
+    lessonVideoId
+    lastPositionSeconds
+    watchedSeconds
+    progressRatio
+    isCompleted
+  }
+}

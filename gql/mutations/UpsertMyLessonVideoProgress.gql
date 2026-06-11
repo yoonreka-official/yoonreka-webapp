@@ -1,0 +1,13 @@
+mutation UpsertMyLessonVideoProgress(
+  $input: ClientUpsertLessonVideoProgressInput!
+) {
+  upsertMyLessonVideoProgress(input: $input) {
+    id
+    lessonVideoId
+    lastPositionSeconds
+    watchedSeconds
+    progressRatio
+    isCompleted
+    updatedAt
+  }
+}

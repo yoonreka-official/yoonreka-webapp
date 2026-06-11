@@ -1,6 +1,6 @@
 import type { AttachmentFile } from '~/types/lectures.type.ts'
 import type { Nullable, NullableString } from '~/types/utils/nullable.type.ts'
-import { Supplementary } from './api'
+import { Retest, Supplementary } from './api'
 
 /** 출석 상태 */
 export enum AttendanceStatus {
@@ -26,6 +26,7 @@ export interface MyLessonGrade {
   gradeType: GradeType
   attendanceStatus: AttendanceStatus
   supplementary: Supplementary
+  retest: Retest
   data: LectureGradeData[]
 
   comment: string

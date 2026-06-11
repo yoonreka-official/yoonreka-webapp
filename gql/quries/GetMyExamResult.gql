@@ -1,0 +1,64 @@
+query GetMyExamResult($submissionId: ID!) {
+  examResult: myExamResult(submissionId: $submissionId) {
+    exam {
+      id
+      title
+      category
+      maxScore
+      isRetest
+      levelCuts {
+        level
+        score
+      }
+    }
+
+    submission {
+      id
+      examId
+      totalScore
+      isPassed
+      status
+      submitType
+      confirmedAt
+    }
+
+    statistics {
+      applicants
+      histogram
+      max
+      mean
+      myRank
+      stddev
+      topTenPercentMean
+    }
+
+    displaySettings {
+      showHistogram
+      showLevel
+      showRank
+      showStatistics
+    }
+
+    questionResults {
+      ...MyExamResult_QuestionResult
+    }
+
+    questionFile {
+      id
+      filename
+      url
+    }
+  }
+}
+
+fragment MyExamResult_QuestionResult on ClientExamQuestionResult {
+  examAnswerId
+  no
+  unit
+  questionType
+  point
+  earnedPoint
+  isCorrect
+  value
+  answer
+}

@@ -1,0 +1,38 @@
+query GetMyLessonVideos($lectureId: ID!) {
+  lecture: myLecture(id: $lectureId) {
+    id
+    title
+    lessons {
+      id
+      date
+    }
+  }
+
+  lessonVideos: myLessonVideos(lectureId: $lectureId) {
+    ...MyLessonVideos_LessonVideo
+  }
+
+  progresses: myLessonVideoProgresses(lectureId: $lectureId) {
+    ...MyLessonVideos_LessonVideoProgress
+  }
+}
+
+fragment MyLessonVideos_LessonVideo on LessonVideo {
+  id
+  title
+  lessonId
+  sourceType
+  durationSeconds
+  createdAt
+  updatedAt
+}
+
+fragment MyLessonVideos_LessonVideoProgress on LessonVideoProgress {
+  id
+  lessonVideoId
+  lastPositionSeconds
+  watchedSeconds
+  progressRatio
+  isCompleted
+  updatedAt
+}

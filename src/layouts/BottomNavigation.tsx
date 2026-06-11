@@ -17,7 +17,7 @@ const NAV_ITEMS = [
     icon: <IconSchedules />,
   },
   {
-    title: '공부하기',
+    title: '강의영상',
     path: '/lectures',
     icon: <IconStudies />,
   },

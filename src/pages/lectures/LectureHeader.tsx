@@ -11,15 +11,22 @@ import { DEFAULT_PAGINATION } from '~/stores/NotificationSlice.ts'
 import { NotificationType } from '~/types/api'
 
 const LECTURE_TABS = [
+  { key: 'videos', label: '복습영상' },
   { key: 'materials', label: '수업자료' },
   { key: 'study-materials', label: '개별자료' },
 ]
 
+export type LectureTabType = 'videos' | 'materials' | 'study-materials'
+
 export interface LectureHeaderProps {
-  onTypeChange: (type: 'materials' | 'study-materials') => void
+  defaultType?: LectureTabType
+  onTypeChange: (type: LectureTabType) => void
 }
 
-export default function LectureHeader({ onTypeChange }: LectureHeaderProps) {
+export default function LectureHeader({
+  defaultType = 'videos',
+  onTypeChange,
+}: LectureHeaderProps) {
   const { fetchData, handleChangeType } = useNotifications()
   const [open, setOpen] = useState(false)
 
@@ -47,11 +54,11 @@ export default function LectureHeader({ onTypeChange }: LectureHeaderProps) {
 
         <Tabs
           css={styles.tabs}
-          defaultActiveKey={'materials'}
-          indicator={{ align: 'center', size: 168 }}
+          defaultActiveKey={defaultType}
+          indicator={{ align: 'center', size: (origin) => origin - 16 }}
           items={LECTURE_TABS}
           onChange={(activeKey) => {
-            onTypeChange(activeKey as 'materials' | 'study-materials')
+            onTypeChange(activeKey as LectureTabType)
           }}
         />
       </header>

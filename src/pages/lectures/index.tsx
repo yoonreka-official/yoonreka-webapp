@@ -8,7 +8,10 @@ import ScreenBase from '~/layouts/ScreenBase.tsx'
 import LectureAttachmentViewer from '~/pages/lectures/LectureAttachmentViewer.tsx'
 import LectureFilter from '~/pages/lectures/LectureFilter.tsx'
 import LectureHeader from '~/pages/lectures/LectureHeader.tsx'
+import LessonVideos from '~/pages/lectures/LessonVideos.tsx'
 import { StudyMaterials } from './StudyMaterials'
+
+import type { LectureTabType } from '~/pages/lectures/LectureHeader.tsx'
 
 function LecturesPage() {
   const {
@@ -21,7 +24,10 @@ function LecturesPage() {
   const lectureId = params.get('lectureId')
   const lessonDate = params.get('date')
 
-  const [type, setType] = useState<'materials' | 'study-materials'>('materials')
+  // ? 수업자료 딥링크(lectureId/date 파라미터)로 진입한 경우 기존처럼 수업자료 탭 유지
+  const [type, setType] = useState<LectureTabType>(
+    lectureId || lessonDate ? 'materials' : 'videos',
+  )
 
   useLoading(isLoading)
 
@@ -36,13 +42,21 @@ function LecturesPage() {
   }, [])
 
   return (
-    <ScreenBase header={<LectureHeader onTypeChange={setType} />}>
-      {type === 'materials' ? (
+    <ScreenBase header={<LectureHeader defaultType={type} onTypeChange={setType} />}>
+      {type === 'videos' && (
+        <Container>
+          <LessonVideos />
+        </Container>
+      )}
+
+      {type === 'materials' && (
         <Container>
           <LectureFilter />
           <LectureAttachmentViewer />
         </Container>
-      ) : (
+      )}
+
+      {type === 'study-materials' && (
         <Container>
           <StudyMaterials />
         </Container>

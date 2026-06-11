@@ -2,15 +2,21 @@ import { useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import CardCollapse from '~/components/cards/CardCollapse.tsx'
 import Flex from '~/components/display/Flex.tsx'
 import Body from '~/components/typography/Body.tsx'
 import Caption from '~/components/typography/Caption.tsx'
+import StatusTag from '~/components/utils/StatusTag.tsx'
 import { COLORS } from '~/configs/theme.ts'
 import useAuth from '~/hooks/useAuth.tsx'
 import useGrades from '~/hooks/useGrades.ts'
-import { GetDailyGradeCommentDocument, Supplementary } from '~/types/api'
+import {
+  GetDailyGradeCommentDocument,
+  Retest,
+  Supplementary,
+} from '~/types/api'
 import { AttendanceStatus } from '~/types/grades.type.ts'
 
 import type {
@@ -69,6 +75,25 @@ function CardDailyGrade({
             )}
           </div>
         </Caption>
+
+        {/* 보강/재시험 상태 뱃지 */}
+        {(lesson.myLessonGrade?.retest === Retest.Need ||
+          lesson.myLessonGrade?.retest === Retest.Done ||
+          lesson.myLessonGrade?.supplementary === Supplementary.Need) && (
+          <Flex gap={4} style={{ marginTop: 2 }} wrap="wrap">
+            {lesson.myLessonGrade?.retest === Retest.Need && (
+              <StatusTag status="danger">재시험 대상</StatusTag>
+            )}
+
+            {lesson.myLessonGrade?.retest === Retest.Done && (
+              <StatusTag status="success">재시험 완료</StatusTag>
+            )}
+
+            {lesson.myLessonGrade?.supplementary === Supplementary.Need && (
+              <StatusTag status="warning">보강 예정</StatusTag>
+            )}
+          </Flex>
+        )}
       </Flex>
 
       {labelGroups.map((group) => (
@@ -149,13 +174,24 @@ function GradeGroup({
   )
 }
 
+/** 시험 자동 채점 성적 항목 id 접두사 (exam:<examId>) */
+const EXAM_LABEL_PREFIX = 'exam:'
+
 function GradeSection({
   lesson,
   label,
 }: CardDailyGradeProps & {
   label: LectureGradeFormLabel
 }) {
+  const navigate = useNavigate()
+
   const grade = lesson.myLessonGrade?.data?.find((item) => item.id === label.id)
+
+  // ? 시험(자동 채점) 항목이면서 성적이 반영된 경우 [성적 보기] 버튼 노출
+  const examId = label.id.startsWith(EXAM_LABEL_PREFIX)
+    ? label.id.slice(EXAM_LABEL_PREFIX.length)
+    : undefined
+  const showExamResultButton = !!examId && grade?.value != null
 
   return (
     <Flex key={label.id} gap={6} items="stretch">
@@ -173,6 +209,16 @@ function GradeSection({
           {grade?.value || <EmptyData />}
           {grade?.maxValue && `/${grade?.maxValue}`}
         </Caption>
+
+        {showExamResultButton && (
+          <button
+            css={gradeStyles.examResultButton}
+            type="button"
+            onClick={() => navigate(`/grades/exams/${examId}`)}
+          >
+            성적 보기
+          </button>
+        )}
       </Flex>
     </Flex>
   )
@@ -198,6 +244,19 @@ export const gradeStyles = {
     padding: 12px;
     border-radius: 8px;
     background: ${COLORS.BG['01']};
+  `,
+
+  examResultButton: css`
+    flex-shrink: 0;
+    margin-left: auto;
+    padding: 2px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    line-height: 16px;
+    color: #fff;
+    background: ${COLORS.POINT.PRIMARY};
   `,
 }
 
