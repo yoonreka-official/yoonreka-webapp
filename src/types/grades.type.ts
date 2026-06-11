@@ -39,6 +39,8 @@ export interface LectureGradeLesson {
   attachment: Nullable<AttachmentFile>
   date: string
   myLessonGrade: Nullable<MyLessonGrade>
+  /** 시험(자동 채점, EXAM) 성적 - 데일리 카드의 시험 항목/재시험 뱃지에 사용 */
+  myExamLessonGrade: Nullable<Pick<MyLessonGrade, 'retest' | 'data'>>
   topGrades: LectureTopGrade[]
   topThirtyPercentGrades: LectureTopGrade[]
 }
@@ -77,6 +79,8 @@ export interface LectureGradeDetail {
   id: string
   title: string
   gradeFormLabels: LectureGradeFormLabel[]
+  /** 시험(EXAM) 성적 항목들 - 조회 gradeType과 무관하게 항상 EXAM 기준 */
+  examGradeFormLabels: LectureGradeFormLabel[]
   lessons: LectureGradeLesson[]
   myLabelComments: LectureLabelComment[]
 }

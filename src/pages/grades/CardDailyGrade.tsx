@@ -31,6 +31,9 @@ interface CardDailyGradeProps {
   scrollId?: string
 }
 
+/** 시험 자동 채점 성적 항목 id 접두사 (exam:<examId>) */
+const EXAM_LABEL_PREFIX = 'exam:'
+
 function CardDailyGrade({
   lesson,
   defaultOpen,
@@ -41,8 +44,50 @@ function CardDailyGrade({
   } = useAuth()
 
   const {
-    state: { labelGroups },
+    state: { labelGroups, lecture },
   } = useGrades()
+
+  // ? 데일리(DEFAULT) 항목 + 이 회차에 점수가 반영된 시험(자동 채점, EXAM) 항목
+  const gradeGroups = useMemo<GradeFormLabelGroup[]>(() => {
+    const groups = labelGroups
+      .map((group) => ({
+        ...group,
+        children: group.children.filter(
+          (label) => !label.id.startsWith(EXAM_LABEL_PREFIX),
+        ),
+      }))
+      .filter((group) => group.children.length > 0)
+
+    const examLabels = (lecture?.examGradeFormLabels ?? []).filter(
+      (label) =>
+        label.id.startsWith(EXAM_LABEL_PREFIX) &&
+        lesson.myExamLessonGrade?.data?.some(
+          (item) => item.id === label.id && item.value != null,
+        ),
+    )
+
+    examLabels.forEach((label) => {
+      const group = groups.find((item) => item.type === label.type)
+      if (group) {
+        group.children.push(label)
+      } else {
+        groups.push({ type: label.type, children: [label] })
+      }
+    })
+
+    return groups
+  }, [labelGroups, lecture, lesson])
+
+  // ? 데일리(DEFAULT)·시험(EXAM) 성적 중 하나라도 재시험 대상이면 "재시험 대상" 우선 표시
+  const retests = [
+    lesson.myLessonGrade?.retest,
+    lesson.myExamLessonGrade?.retest,
+  ]
+  const retest = retests.includes(Retest.Need)
+    ? Retest.Need
+    : retests.includes(Retest.Done)
+      ? Retest.Done
+      : undefined
 
   const { data } = useQuery(GetDailyGradeCommentDocument)
   const lessonGradeComment = useMemo(
@@ -77,15 +122,15 @@ function CardDailyGrade({
         </Caption>
 
         {/* 보강/재시험 상태 뱃지 */}
-        {(lesson.myLessonGrade?.retest === Retest.Need ||
-          lesson.myLessonGrade?.retest === Retest.Done ||
+        {(retest === Retest.Need ||
+          retest === Retest.Done ||
           lesson.myLessonGrade?.supplementary === Supplementary.Need) && (
           <Flex gap={4} style={{ marginTop: 2 }} wrap="wrap">
-            {lesson.myLessonGrade?.retest === Retest.Need && (
+            {retest === Retest.Need && (
               <StatusTag status="danger">재시험 대상</StatusTag>
             )}
 
-            {lesson.myLessonGrade?.retest === Retest.Done && (
+            {retest === Retest.Done && (
               <StatusTag status="success">재시험 완료</StatusTag>
             )}
 
@@ -96,7 +141,7 @@ function CardDailyGrade({
         )}
       </Flex>
 
-      {labelGroups.map((group) => (
+      {gradeGroups.map((group) => (
         <GradeGroup
           key={`${lesson.date}-${group.type}`}
           group={group}
@@ -174,9 +219,6 @@ function GradeGroup({
   )
 }
 
-/** 시험 자동 채점 성적 항목 id 접두사 (exam:<examId>) */
-const EXAM_LABEL_PREFIX = 'exam:'
-
 function GradeSection({
   lesson,
   label,
@@ -185,12 +227,16 @@ function GradeSection({
 }) {
   const navigate = useNavigate()
 
-  const grade = lesson.myLessonGrade?.data?.find((item) => item.id === label.id)
-
-  // ? 시험(자동 채점) 항목이면서 성적이 반영된 경우 [성적 보기] 버튼 노출
   const examId = label.id.startsWith(EXAM_LABEL_PREFIX)
     ? label.id.slice(EXAM_LABEL_PREFIX.length)
     : undefined
+
+  // ? 시험(자동 채점) 항목은 EXAM 성적에서, 그 외 항목은 데일리(DEFAULT) 성적에서 조회
+  const grade = (
+    examId ? lesson.myExamLessonGrade : lesson.myLessonGrade
+  )?.data?.find((item) => item.id === label.id)
+
+  // ? 시험(자동 채점) 항목이면서 성적이 반영된 경우 [성적 보기] 버튼 노출
   const showExamResultButton = !!examId && grade?.value != null
 
   return (

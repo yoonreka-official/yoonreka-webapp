@@ -25,6 +25,13 @@ export const getLectureGrades = (myLectureId: string, gradeType: GradeType) => {
             value # 성적 항목 라벨 이름값 (ex. 단어, 리스닝, 구문, 어법 ...)
           }
 
+          # 시험(자동 채점) 성적 항목들 모음 (id: "exam:<examId>")
+          examGradeFormLabels: gradeFormLabels(gradeType: EXAM) {
+            id
+            type
+            value
+          }
+
           lessons: myLessons {
             date
 
@@ -55,6 +62,19 @@ export const getLectureGrades = (myLectureId: string, gradeType: GradeType) => {
               id
               createdAt
               updatedAt
+            }
+
+            # 시험(자동 채점) 성적 - 데일리 카드의 시험 항목/재시험 뱃지에 사용
+            myExamLessonGrade: myLessonGrade(gradeType: EXAM) {
+              retest
+              data {
+                id
+                label
+                maxValue
+                type
+                value
+                value2
+              }
             }
 
             topThirtyPercentGrades(gradeType: $gradeType) {
