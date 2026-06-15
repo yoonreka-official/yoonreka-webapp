@@ -12,6 +12,7 @@ jobs:
       AWS_DEFAULT_REGION: ap-northeast-2
       S3_BUCKET: web.yoonreka.app
       CLOUDFRONT_DISTRIBUTION_ID: EXH0TEBRWGM63
+      CLOUDFRONT_FUNCTION_NAME: yoonreka-webapp-spa-rewrite
 
     steps:
       - name: Checkout code
@@ -53,9 +54,43 @@ jobs:
 
       - name: Ensure CloudFront SPA fallback
         run: |
+          cat > /tmp/spa-rewrite.js <<'EOF'
+          function handler(event) {
+            var request = event.request;
+            var uri = request.uri;
+            var lastSegment = uri.substring(uri.lastIndexOf('/') + 1);
+
+            if (uri === '/' || uri.endsWith('/') || lastSegment.indexOf('.') === -1) {
+              request.uri = '/index.html';
+            }
+
+            return request;
+          }
+          EOF
+
+          if aws cloudfront describe-function --name "${CLOUDFRONT_FUNCTION_NAME}" --stage DEVELOPMENT > /tmp/function.json 2>/dev/null; then
+            FUNCTION_ETAG="$(jq -r .ETag /tmp/function.json)"
+            aws cloudfront update-function \
+              --name "${CLOUDFRONT_FUNCTION_NAME}" \
+              --if-match "${FUNCTION_ETAG}" \
+              --function-config Comment="Yoonreka webapp SPA route rewrite",Runtime=cloudfront-js-2.0 \
+              --function-code fileb:///tmp/spa-rewrite.js > /tmp/function-update.json
+          else
+            aws cloudfront create-function \
+              --name "${CLOUDFRONT_FUNCTION_NAME}" \
+              --function-config Comment="Yoonreka webapp SPA route rewrite",Runtime=cloudfront-js-2.0 \
+              --function-code fileb:///tmp/spa-rewrite.js > /tmp/function-update.json
+          fi
+
+          FUNCTION_ETAG="$(jq -r .ETag /tmp/function-update.json)"
+          aws cloudfront publish-function \
+            --name "${CLOUDFRONT_FUNCTION_NAME}" \
+            --if-match "${FUNCTION_ETAG}" > /tmp/function-publish.json
+          FUNCTION_ARN="$(jq -r .FunctionSummary.FunctionMetadata.FunctionARN /tmp/function-publish.json)"
+
           aws cloudfront get-distribution-config --id "${CLOUDFRONT_DISTRIBUTION_ID}" > /tmp/distribution.json
           ETAG="$(jq -r .ETag /tmp/distribution.json)"
-          jq '
+          jq --arg functionArn "${FUNCTION_ARN}" '
             def spaFallback($code): {
               "ErrorCode": $code,
               "ResponsePagePath": "/index.html",
@@ -70,6 +105,15 @@ jobs:
                 + [spaFallback(403), spaFallback(404)]
               )
             | .CustomErrorResponses.Quantity = (.CustomErrorResponses.Items | length)
+            | (.DefaultCacheBehavior.FunctionAssociations //= {"Quantity": 0, "Items": []})
+            | (.DefaultCacheBehavior.FunctionAssociations.Items //= [])
+            | .DefaultCacheBehavior.FunctionAssociations.Items = (
+                [.DefaultCacheBehavior.FunctionAssociations.Items[]? | select(.EventType != "viewer-request")]
+                + [{"EventType": "viewer-request", "FunctionARN": $functionArn}]
+              )
+            | .DefaultCacheBehavior.FunctionAssociations.Quantity = (
+                .DefaultCacheBehavior.FunctionAssociations.Items | length
+              )
           ' /tmp/distribution.json > /tmp/distribution-config.json
           aws cloudfront update-distribution \
             --id "${CLOUDFRONT_DISTRIBUTION_ID}" \
