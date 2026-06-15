@@ -41,4 +41,6 @@ fragment MyWrongAnswers_WrongAnswer on ClientWrongAnswer {
     filename
     url
   }
+
+  questionImageDataUrl
 }

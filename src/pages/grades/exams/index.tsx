@@ -383,6 +383,14 @@ function QuestionResultRow({ result, onWrongNoteClick }: QuestionResultRowProps)
             배점 {formatScore(result.point)}점 · 득점{' '}
             {formatScore(result.earnedPoint ?? 0)}점
           </Caption>
+
+          {result.questionImageDataUrl && (
+            <img
+              alt={`문항 ${result.no}번`}
+              css={styles.questionImage}
+              src={result.questionImageDataUrl}
+            />
+          )}
         </Flex>
 
         {isWrong && (
@@ -461,6 +469,17 @@ const styles = {
     padding: 10px 12px;
     border-radius: 12px;
     background: ${isWrong ? COLORS.TAG.RED01 : COLORS.BG.BACKGROUND};
+  `,
+
+  questionImage: css`
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    margin-top: 6px;
+    object-fit: contain;
+    border: 1px solid ${COLORS.BG['03']};
+    border-radius: 10px;
+    background: #fff;
   `,
 
   resultIcon: css`

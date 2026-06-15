@@ -18,7 +18,7 @@ interface WrongAnswerCardProps {
 }
 
 function WrongAnswerCard({ wrongAnswer }: WrongAnswerCardProps) {
-  const { exam, examAnswer, questionFile } = wrongAnswer
+  const { exam, examAnswer, questionFile, questionImageDataUrl } = wrongAnswer
   const { question } = examAnswer
 
   // ? 내가 쓴 답 가리기 토글 (기본 가림)
@@ -108,6 +108,14 @@ function WrongAnswerCard({ wrongAnswer }: WrongAnswerCardProps) {
             {revealed ? <BiHide size={16} /> : <BiShow size={16} />}
           </button>
         </Flex>
+
+        {questionImageDataUrl && (
+          <img
+            alt={`문항 ${question.no}번`}
+            css={styles.questionImage}
+            src={questionImageDataUrl}
+          />
+        )}
 
         {questionFile?.url && (
           <a
@@ -217,6 +225,16 @@ const styles = {
     border-radius: 8px;
     color: ${COLORS.FONT['40']};
     background: ${COLORS.BG.BACKGROUND};
+  `,
+
+  questionImage: css`
+    display: block;
+    width: 100%;
+    max-height: 280px;
+    object-fit: contain;
+    border: 1px solid ${COLORS.BG['03']};
+    border-radius: 10px;
+    background: #fff;
   `,
 
   pdfLink: css`

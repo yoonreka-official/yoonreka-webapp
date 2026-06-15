@@ -55,6 +55,7 @@ fragment MyExamResult_QuestionResult on ClientExamQuestionResult {
   examAnswerId
   no
   unit
+  questionImageDataUrl
   questionType
   point
   earnedPoint
