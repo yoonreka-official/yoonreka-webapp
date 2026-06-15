@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
+import Hls from 'hls.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BiDownload } from 'react-icons/bi'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
@@ -66,13 +67,57 @@ function LessonVideoPage() {
 
   useLoading(loading)
 
+  useEffect(() => {
+    resumedRef.current = false
+    playerHandleRef.current = null
+    setPlayerReady(false)
+  }, [video?.id])
+
+  useEffect(() => {
+    const element = videoRef.current
+    if (
+      !element ||
+      !video?.hlsPlaylistText ||
+      video.sourceType !== LessonVideoSourceType.Upload
+    ) {
+      return
+    }
+
+    const playlistUrl = URL.createObjectURL(
+      new Blob([video.hlsPlaylistText], {
+        type: 'application/vnd.apple.mpegurl',
+      }),
+    )
+
+    if (element.canPlayType('application/vnd.apple.mpegurl')) {
+      element.src = playlistUrl
+      return () => {
+        URL.revokeObjectURL(playlistUrl)
+      }
+    }
+
+    if (Hls.isSupported()) {
+      const hls = new Hls()
+      hls.loadSource(playlistUrl)
+      hls.attachMedia(element)
+      return () => {
+        hls.destroy()
+        URL.revokeObjectURL(playlistUrl)
+      }
+    }
+
+    if (video.attachment?.url) {
+      element.src = video.attachment.url
+    }
+    URL.revokeObjectURL(playlistUrl)
+  }, [video])
+
   const lastPositionSeconds = useMemo(() => {
     if (!videoId) return 0
 
     return (
-      progressData?.progresses.find(
-        (item) => item.lessonVideoId === videoId,
-      )?.lastPositionSeconds ?? 0
+      progressData?.progresses.find((item) => item.lessonVideoId === videoId)
+        ?.lastPositionSeconds ?? 0
     )
   }, [progressData, videoId])
 
@@ -170,7 +215,9 @@ function LessonVideoPage() {
                   playsInline
                   css={styles.video}
                   preload="metadata"
-                  src={video.attachment?.url}
+                  src={
+                    video.hlsPlaylistText ? undefined : video.attachment?.url
+                  }
                   onEnded={(e) => {
                     progress.handleEnded(e.currentTarget.currentTime)
                   }}
