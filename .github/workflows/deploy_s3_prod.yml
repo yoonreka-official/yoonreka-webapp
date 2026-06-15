@@ -130,5 +130,28 @@ jobs:
             --if-match "${ETAG}" \
             --distribution-config file:///tmp/distribution-config.json
 
+      - name: Wait for CloudFront deployment
+        run: aws cloudfront wait distribution-deployed --id "${TARGET_CLOUDFRONT_DISTRIBUTION_ID}"
+
       - name: Invalidate CloudFront
         run: aws cloudfront create-invalidation --distribution-id "${TARGET_CLOUDFRONT_DISTRIBUTION_ID}" --paths "/*"
+
+      - name: Verify student SPA direct routes
+        run: |
+          for path in /auth/login /grades/exams /wrong-answers; do
+            status=""
+            for attempt in {1..20}; do
+              status="$(curl -L -s -o /dev/null -w "%{http_code}" "https://${CLOUDFRONT_ALIAS}${path}")"
+              if [ "${status}" = "200" ]; then
+                echo "${path} -> 200"
+                break
+              fi
+              echo "${path} -> ${status}; retry ${attempt}/20"
+              sleep 15
+            done
+
+            if [ "${status}" != "200" ]; then
+              echo "${path} failed with ${status}"
+              exit 1
+            fi
+          done
