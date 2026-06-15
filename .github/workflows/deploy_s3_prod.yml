@@ -11,6 +11,7 @@ jobs:
     env:
       AWS_DEFAULT_REGION: ap-northeast-2
       S3_BUCKET: web.yoonreka.app
+      CLOUDFRONT_ALIAS: student.yoonreka.app
       CLOUDFRONT_DISTRIBUTION_ID: EXH0TEBRWGM63
       CLOUDFRONT_FUNCTION_NAME: yoonreka-webapp-spa-rewrite
 
@@ -88,7 +89,16 @@ jobs:
             --if-match "${FUNCTION_ETAG}" > /tmp/function-publish.json
           FUNCTION_ARN="$(jq -r .FunctionSummary.FunctionMetadata.FunctionARN /tmp/function-publish.json)"
 
-          aws cloudfront get-distribution-config --id "${CLOUDFRONT_DISTRIBUTION_ID}" > /tmp/distribution.json
+          TARGET_DISTRIBUTION_ID="$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?Aliases.Items && contains(Aliases.Items, '${CLOUDFRONT_ALIAS}')].Id | [0]" \
+            --output text)"
+          if [ -z "${TARGET_DISTRIBUTION_ID}" ] || [ "${TARGET_DISTRIBUTION_ID}" = "None" ]; then
+            TARGET_DISTRIBUTION_ID="${CLOUDFRONT_DISTRIBUTION_ID}"
+          fi
+          echo "TARGET_CLOUDFRONT_DISTRIBUTION_ID=${TARGET_DISTRIBUTION_ID}" >> "${GITHUB_ENV}"
+          echo "Using CloudFront distribution ${TARGET_DISTRIBUTION_ID} for ${CLOUDFRONT_ALIAS}"
+
+          aws cloudfront get-distribution-config --id "${TARGET_DISTRIBUTION_ID}" > /tmp/distribution.json
           ETAG="$(jq -r .ETag /tmp/distribution.json)"
           jq --arg functionArn "${FUNCTION_ARN}" '
             def spaFallback($code): {
@@ -116,9 +126,9 @@ jobs:
               )
           ' /tmp/distribution.json > /tmp/distribution-config.json
           aws cloudfront update-distribution \
-            --id "${CLOUDFRONT_DISTRIBUTION_ID}" \
+            --id "${TARGET_DISTRIBUTION_ID}" \
             --if-match "${ETAG}" \
             --distribution-config file:///tmp/distribution-config.json
 
       - name: Invalidate CloudFront
-        run: aws cloudfront create-invalidation --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" --paths "/*"
+        run: aws cloudfront create-invalidation --distribution-id "${TARGET_CLOUDFRONT_DISTRIBUTION_ID}" --paths "/*"
