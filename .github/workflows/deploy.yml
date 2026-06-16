@@ -1,6 +1,7 @@
 name: Deploy Production
 
 on:
+  workflow_dispatch:
   release:
     types:
       - published
@@ -11,6 +12,10 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      AWS_DEFAULT_REGION: ap-northeast-2
+      AMPLIFY_APP_ID: dr7ztta6o2gyn
+      AMPLIFY_SPA_REWRITE_SOURCE: '</^[^.]+$|\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|woff2|ttf|map|json|webp)$)([^.]+$)/>'
 
     steps:
       - name: Checkout code
@@ -25,3 +30,23 @@ jobs:
           git checkout -B release
           git merge --ff-only main
           git push origin release
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+      - name: Ensure Amplify SPA rewrite
+        run: |
+          app_json="$(aws amplify get-app --app-id "${AMPLIFY_APP_ID}")"
+          custom_rules="$(
+            jq -c \
+              --arg source "${AMPLIFY_SPA_REWRITE_SOURCE}" \
+              '(.app.customRules // [])
+                | map(select(.source != $source))
+                | [{"source": $source, "target": "/index.html", "status": "200", "condition": null}] + .' \
+              <<< "${app_json}"
+          )"
+          aws amplify update-app \
+            --app-id "${AMPLIFY_APP_ID}" \
+            --custom-rules "${custom_rules}"
