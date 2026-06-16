@@ -1,6 +1,7 @@
 name: Deploy S3 Production
 
 on:
+  workflow_dispatch:
   release:
     types:
       - published
