@@ -12,7 +12,7 @@ jobs:
       AWS_DEFAULT_REGION: ap-northeast-2
       S3_BUCKET: web.yoonreka.app
       CLOUDFRONT_ALIAS: student.yoonreka.app
-      CLOUDFRONT_DNS_DOMAIN: d2e974l3ppuqd4.cloudfront.net
+      CLOUDFRONT_DNS_DOMAIN: d2tnbs0m9os4i0.cloudfront.net
       CLOUDFRONT_DISTRIBUTION_ID: EXH0TEBRWGM63
       CLOUDFRONT_FUNCTION_NAME: yoonreka-webapp-spa-rewrite
 
@@ -33,6 +33,40 @@ jobs:
 
       - name: Build
         run: yarn build
+
+      - name: Verify production DNS target
+        run: |
+          node <<'NODE'
+          const dns = require('node:dns').promises;
+
+          const alias = process.env.CLOUDFRONT_ALIAS;
+          const expected = process.env.CLOUDFRONT_DNS_DOMAIN.replace(/\.$/, '');
+          const normalize = (value) => value.replace(/\.$/, '');
+          const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+          let lastCnames = [];
+
+          for (let attempt = 1; attempt <= 20; attempt += 1) {
+            try {
+              lastCnames = (await dns.resolveCname(alias)).map(normalize);
+            } catch (error) {
+              lastCnames = [`<lookup failed: ${error.code || error.message}>`];
+            }
+
+            if (lastCnames.includes(expected)) {
+              console.log(`${alias} -> ${lastCnames.join(', ')}`);
+              process.exit(0);
+            }
+
+            console.log(
+              `${alias} -> ${lastCnames.join(', ')}; waiting for ${expected} (${attempt}/20)`,
+            );
+            await sleep(15000);
+          }
+
+          console.error(`${alias} must point to ${expected} before production deploy.`);
+          console.error(`Current CNAME: ${lastCnames.join(', ')}`);
+          process.exit(1);
+          NODE
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
