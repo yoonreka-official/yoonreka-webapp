@@ -44,7 +44,7 @@ jobs:
               --arg source "${AMPLIFY_SPA_REWRITE_SOURCE}" \
               '(.app.customRules // [])
                 | map(select(.source != $source))
-                | [{"source": $source, "target": "/index.html", "status": "200", "condition": null}] + .' \
+                | [{"source": $source, "target": "/index.html", "status": "200"}] + .' \
               <<< "${app_json}"
           )"
           aws amplify update-app \
