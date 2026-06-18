@@ -125,7 +125,7 @@ function WrongAnswerCard({ wrongAnswer }: WrongAnswerCardProps) {
             target="_blank"
           >
             <BiFile size={14} />
-            문제 PDF 열기
+            문제 파일 열기
           </a>
         )}
 

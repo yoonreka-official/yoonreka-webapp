@@ -466,7 +466,7 @@ function ExamResultDetailPage({ examId }: { examId: string }) {
                     target="_blank"
                   >
                     <BiFile size={14} />
-                    문제 PDF
+                    문제 파일
                   </a>
                 )}
               </Flex>
