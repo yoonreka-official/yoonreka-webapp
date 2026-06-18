@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
+import dayjs from 'dayjs'
 import { useMemo } from 'react'
 import { BiCheckCircle, BiFile, BiMinusCircle, BiXCircle } from 'react-icons/bi'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -23,16 +24,172 @@ import {
   GetMyExamSubmissionsDocument,
 } from '~/types/api'
 
-import type { MyExamResult_QuestionResultFragment } from '~/types/api'
+import type {
+  GetMyExamSubmissionsQuery,
+  MyExamResult_QuestionResultFragment,
+} from '~/types/api'
 
 /** 소수점 1자리까지 점수 표기 */
 const formatScore = (value?: number | null) =>
   value == null ? '-' : `${Math.round(value * 10) / 10}`
 
 function ExamResultPage() {
-  const navigate = useNavigate()
+  const { examId } = useParams<{ examId?: string }>()
 
-  const { examId } = useParams<{ examId: string }>()
+  if (!examId) {
+    return <ExamSubmissionsPage />
+  }
+
+  return <ExamResultDetailPage examId={examId} />
+}
+
+function ExamSubmissionsPage() {
+  const navigate = useNavigate()
+  const { data, loading } = useQuery(GetMyExamSubmissionsDocument, {
+    fetchPolicy: 'cache-and-network',
+    notifyOnNetworkStatusChange: true,
+  })
+
+  useLoading(loading && !data)
+
+  const submissions = useMemo(
+    () =>
+      [...(data?.submissions ?? [])].sort(
+        (a, b) => (b.confirmedAt ?? b.createdAt) - (a.confirmedAt ?? a.createdAt),
+      ),
+    [data],
+  )
+
+  return (
+    <ScreenBase
+      header={
+        <header css={styles.header}>
+          <Flex gap={6} items="center">
+            <button
+              css={styles.backButton}
+              type="button"
+              onClick={() => navigate(-1)}
+            >
+              <IconExpandLeft24 />
+            </button>
+
+            <Headline>시험 성적</Headline>
+          </Flex>
+        </header>
+      }
+    >
+      <Container>
+        <Flex direction="column" gap={10}>
+          {!loading && submissions.length === 0 && (
+            <NoData
+              description={
+                <Body color={COLORS.FONT['30']} size={14}>
+                  확정된 시험 성적이 없습니다.
+                </Body>
+              }
+              disableWrapper
+            />
+          )}
+
+          {submissions.length > 0 && (
+            <Caption color={COLORS.FONT['40']} size={12}>
+              총 {submissions.length}개의 시험 성적
+            </Caption>
+          )}
+
+          {submissions.map((submission) => (
+            <ExamSubmissionCard key={submission.id} submission={submission} />
+          ))}
+        </Flex>
+      </Container>
+    </ScreenBase>
+  )
+}
+
+type ExamSubmissionItem = GetMyExamSubmissionsQuery['submissions'][number]
+
+function ExamSubmissionCard({ submission }: { submission: ExamSubmissionItem }) {
+  const navigate = useNavigate()
+  const { data, loading } = useQuery(GetMyExamResultDocument, {
+    fetchPolicy: 'cache-first',
+    variables: { submissionId: submission.id },
+  })
+
+  const result = data?.examResult
+  const exam = result?.exam
+  const resultSubmission = result?.submission ?? submission
+  const statistics = result?.statistics
+  const confirmedAt = resultSubmission.confirmedAt ?? submission.createdAt
+
+  return (
+    <button
+      css={styles.examListCard}
+      type="button"
+      onClick={() => navigate(`/grades/exams/${submission.examId}`)}
+    >
+      <Flex direction="column" gap={10}>
+        <Flex gap={6} items="center" wrap="wrap">
+          {exam?.category && <StatusTag status="default">{exam.category}</StatusTag>}
+
+          <StatusTag status="info">
+            {resultSubmission.submitType === ExamSubmitType.Onsite
+              ? '현장 응시'
+              : '온라인 응시'}
+          </StatusTag>
+
+          {resultSubmission.isPassed != null && (
+            <StatusTag status={resultSubmission.isPassed ? 'success' : 'danger'}>
+              {resultSubmission.isPassed ? '통과' : '미통과'}
+            </StatusTag>
+          )}
+        </Flex>
+
+        <Flex direction="column" gap={3}>
+          <Body size={16} weight="bold">
+            {loading ? '시험 정보를 불러오는 중입니다.' : exam?.title ?? `시험 ${submission.examId}`}
+          </Body>
+
+          <Caption color={COLORS.FONT['40']} size={12}>
+            {dayjs(confirmedAt).format('YYYY.MM.DD HH:mm')} 확정
+          </Caption>
+        </Flex>
+
+        <div css={styles.examListSummaryGrid}>
+          <div css={styles.examListSummaryItem}>
+            <Caption color={COLORS.FONT['40']} size={10}>
+              내 점수
+            </Caption>
+            <Body size={16} weight="bold">
+              {formatScore(resultSubmission.totalScore)}
+              {exam ? ` / ${formatScore(exam.maxScore)}점` : '점'}
+            </Body>
+          </div>
+
+          <div css={styles.examListSummaryItem}>
+            <Caption color={COLORS.FONT['40']} size={10}>
+              내 등수
+            </Caption>
+            <Body size={16} weight="bold">
+              {statistics?.myRank != null ? `${statistics.myRank}등` : '-'}
+            </Body>
+          </div>
+
+          <div css={styles.examListSummaryItem}>
+            <Caption color={COLORS.FONT['40']} size={10}>
+              평균
+            </Caption>
+            <Body size={16} weight="bold">
+              {formatScore(statistics?.mean)}
+            </Body>
+          </div>
+        </div>
+      </Flex>
+    </button>
+  )
+}
+
+function ExamResultDetailPage({ examId }: { examId: string }) {
+  const navigate = useNavigate()
 
   // ? 시험 ID → 내 제출(채점 확정분) 매칭
   const { data: submissionsData, loading: submissionsLoading } = useQuery(
@@ -424,6 +581,31 @@ const styles = {
 
   noMarginCard: css`
     margin-bottom: 0;
+  `,
+
+  examListCard: css`
+    width: 100%;
+    padding: 14px;
+    border: 0;
+    text-align: left;
+    color: inherit;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0px 4px 20px 0px rgba(206, 218, 241, 0.4);
+    cursor: pointer;
+  `,
+
+  examListSummaryGrid: css`
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  `,
+
+  examListSummaryItem: css`
+    min-width: 0;
+    padding: 10px;
+    border-radius: 12px;
+    background: ${COLORS.BG.BACKGROUND};
   `,
 
   myScore: css`

@@ -45,6 +45,10 @@ export const router = createBrowserRouter([
             element: <GradesPage />,
           },
           {
+            path: 'grades/exams',
+            element: <ExamResultPage />,
+          },
+          {
             path: 'grades/exams/:examId',
             element: <ExamResultPage />,
           },
