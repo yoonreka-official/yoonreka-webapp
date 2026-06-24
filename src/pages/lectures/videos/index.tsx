@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
 import Hls from 'hls.js'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -33,6 +33,32 @@ const PLAYBACK_RATES = [1, 1.25, 1.5, 2]
 /** 이어보기 최소 위치 (초) — 이보다 짧으면 처음부터 재생 */
 const RESUME_MIN_SECONDS = 5
 
+const GET_MY_LESSON_VIDEO_HLS_DOCUMENTS = gql`
+  query GetMyLessonVideoHlsDocuments($id: ID!) {
+    lessonVideo: myLessonVideo(id: $id) {
+      id
+      hlsPlaylistDocuments {
+        path
+        text
+        isMaster
+      }
+    }
+  }
+`
+
+interface HlsPlaylistDocument {
+  path: string
+  text: string
+  isMaster: boolean
+}
+
+interface GetMyLessonVideoHlsDocumentsQuery {
+  lessonVideo: {
+    id: string
+    hlsPlaylistDocuments: HlsPlaylistDocument[] | null
+  } | null
+}
+
 function LessonVideoPage() {
   const navigate = useNavigate()
 
@@ -53,6 +79,22 @@ function LessonVideoPage() {
   })
 
   const video = data?.lessonVideo
+  const { data: hlsDocumentsData } =
+    useQuery<GetMyLessonVideoHlsDocumentsQuery>(
+      GET_MY_LESSON_VIDEO_HLS_DOCUMENTS,
+      {
+        skip:
+          !videoId ||
+          !video ||
+          video.sourceType !== LessonVideoSourceType.Upload ||
+          Boolean(video.hlsPlaylistText),
+        variables: { id: videoId as string },
+      },
+    )
+  const hlsPlaylistDocuments = useMemo(
+    () => hlsDocumentsData?.lessonVideo?.hlsPlaylistDocuments ?? [],
+    [hlsDocumentsData],
+  )
 
   const progress = useLessonVideoProgress(videoId)
 
@@ -75,42 +117,49 @@ function LessonVideoPage() {
 
   useEffect(() => {
     const element = videoRef.current
+    const currentVideo = video
     if (
       !element ||
-      !video?.hlsPlaylistText ||
-      video.sourceType !== LessonVideoSourceType.Upload
+      !currentVideo ||
+      (!currentVideo.hlsPlaylistText && hlsPlaylistDocuments.length === 0) ||
+      currentVideo.sourceType !== LessonVideoSourceType.Upload
     ) {
       return
     }
 
-    const playlistUrl = URL.createObjectURL(
-      new Blob([video.hlsPlaylistText], {
-        type: 'application/vnd.apple.mpegurl',
-      }),
-    )
+    const playlistResource =
+      hlsPlaylistDocuments.length > 0
+        ? createHlsPlaylistResource(hlsPlaylistDocuments)
+        : createHlsPlaylistResource([
+            {
+              path: 'index.m3u8',
+              text: currentVideo.hlsPlaylistText ?? '',
+              isMaster: true,
+            },
+          ])
 
     if (element.canPlayType('application/vnd.apple.mpegurl')) {
-      element.src = playlistUrl
+      element.src = playlistResource.url
       return () => {
-        URL.revokeObjectURL(playlistUrl)
+        playlistResource.revoke()
       }
     }
 
     if (Hls.isSupported()) {
       const hls = new Hls()
-      hls.loadSource(playlistUrl)
+      hls.loadSource(playlistResource.url)
       hls.attachMedia(element)
       return () => {
         hls.destroy()
-        URL.revokeObjectURL(playlistUrl)
+        playlistResource.revoke()
       }
     }
 
-    if (video.attachment?.url) {
-      element.src = video.attachment.url
+    if (currentVideo.attachment?.url) {
+      element.src = currentVideo.attachment.url
     }
-    URL.revokeObjectURL(playlistUrl)
-  }, [video])
+    playlistResource.revoke()
+  }, [hlsPlaylistDocuments, video])
 
   const lastPositionSeconds = useMemo(() => {
     if (!videoId) return 0
@@ -216,7 +265,9 @@ function LessonVideoPage() {
                   css={styles.video}
                   preload="metadata"
                   src={
-                    video.hlsPlaylistText ? undefined : video.attachment?.url
+                    video.hlsPlaylistText || hlsPlaylistDocuments.length > 0
+                      ? undefined
+                      : video.attachment?.url
                   }
                   onEnded={(e) => {
                     progress.handleEnded(e.currentTarget.currentTime)
@@ -414,6 +465,84 @@ function LessonVideoPage() {
       </Container>
     </ScreenBase>
   )
+}
+
+function createHlsPlaylistResource(documents: HlsPlaylistDocument[]) {
+  const objectUrls: string[] = []
+  const masterDocument =
+    documents.find((document) => document.isMaster) ?? documents[0]
+  const childDocuments = documents.filter(
+    (document) => document.path !== masterDocument.path,
+  )
+  const childUrlByPath = new Map(
+    childDocuments.map((document) => {
+      const url = URL.createObjectURL(
+        new Blob([document.text], {
+          type: 'application/vnd.apple.mpegurl',
+        }),
+      )
+      objectUrls.push(url)
+      return [document.path, url] as const
+    }),
+  )
+  const masterText = replaceHlsPlaylistUris(masterDocument.text, (uri) => {
+    const resolvedPath = resolveHlsRelativeUri(masterDocument.path, uri)
+    return (resolvedPath && childUrlByPath.get(resolvedPath)) || uri
+  })
+  const masterUrl = URL.createObjectURL(
+    new Blob([masterText], {
+      type: 'application/vnd.apple.mpegurl',
+    }),
+  )
+  objectUrls.push(masterUrl)
+
+  return {
+    url: masterUrl,
+    revoke: () => objectUrls.forEach((url) => URL.revokeObjectURL(url)),
+  }
+}
+
+function replaceHlsPlaylistUris(
+  playlistText: string,
+  mapper: (uri: string) => string,
+) {
+  return playlistText
+    .split(/\r?\n/)
+    .map((line) => {
+      const trimmed = line.trim()
+      if (!trimmed || trimmed.startsWith('#')) {
+        return line
+      }
+      return mapper(trimmed)
+    })
+    .join('\n')
+}
+
+function resolveHlsRelativeUri(playlistPath: string, uri: string) {
+  const trimmed = uri.trim()
+  if (!trimmed || trimmed.startsWith('/') || /^[a-z][a-z0-9+.-]*:/i.test(trimmed)) {
+    return null
+  }
+  if (trimmed.split('/').includes('..')) {
+    return null
+  }
+  const baseSegments = playlistPath.split('/').slice(0, -1)
+  const segments = [...baseSegments, ...trimmed.split('/')].filter(Boolean)
+  const resolvedSegments: string[] = []
+  for (const segment of segments) {
+    if (segment === '.') {
+      continue
+    }
+    if (segment === '..') {
+      if (resolvedSegments.length === 0) {
+        return null
+      }
+      resolvedSegments.pop()
+      continue
+    }
+    resolvedSegments.push(segment)
+  }
+  return resolvedSegments.join('/')
 }
 
 const styles = {
