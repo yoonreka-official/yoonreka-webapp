@@ -2,6 +2,7 @@ import { COLORS } from '~/configs/theme.ts'
 import useAuth from '~/hooks/useAuth.tsx'
 import { useAppDispatch, useAppSelector } from '~/stores'
 import {
+  clearGrades,
   fetchGradesByLectureId,
   setActiveTab,
   setGradeType,
@@ -45,30 +46,25 @@ const useGrades = () => {
     state: { authUser },
   } = useAuth()
 
-  const fetchData = async (
-    id?: string,
-    gradeType: GradeType = GradeType.DEFAULT,
-  ) => {
+  const fetchData = async (id?: string, gradeType?: GradeType) => {
     const lectureId = id || authUser?.lectures[0]?.id
+    const requestedGradeType =
+      gradeType ??
+      (state.activeTab === 'total' ? state.gradeType : GradeType.DEFAULT)
 
     if (!lectureId) {
+      dispatch(clearGrades())
       return
     }
 
     try {
       const data = await dispatch(
-        fetchGradesByLectureId({ lectureId, gradeType }),
+        fetchGradesByLectureId({
+          lectureId,
+          gradeType: requestedGradeType,
+        }),
       ).unwrap()
-
-      handleSelectedLabel(
-        data.gradeFormLabels.filter(
-          gradeType === GradeType.DEFAULT
-            ? (item) => item.type === '테스트'
-            : (item) => item.type === '과제성적',
-        )[0],
-        0,
-      )
-      handleSetLabelColor(0)
+      return data
     } catch (e) {
       console.error(e)
     }
@@ -76,15 +72,18 @@ const useGrades = () => {
 
   const handleChangeTab = async (key: GradeTab, reload = true) => {
     dispatch(setActiveTab(key))
-    if (reload) {
-      await fetchData(state.lecture?.id)
+    if (reload && key !== 'monthly') {
+      await fetchData(
+        state.lectureId,
+        key === 'total' ? state.gradeType : GradeType.DEFAULT,
+      )
     }
   }
 
   const handleChangeType = (gradeType: GradeType, reload = true) => {
     dispatch(setGradeType(gradeType))
     if (reload) {
-      return fetchData(state.lecture?.id, gradeType)
+      return fetchData(state.lectureId, gradeType)
     }
   }
 
@@ -97,9 +96,14 @@ const useGrades = () => {
     dispatch(setLabelColor(getLabelColor(index)))
   }
 
+  const handleClearGrades = () => {
+    dispatch(clearGrades())
+  }
+
   return {
     state,
     fetchData,
+    handleClearGrades,
     handleChangeTab,
     handleChangeType,
     handleSelectedLabel,

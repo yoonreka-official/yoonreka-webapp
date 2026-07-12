@@ -14,21 +14,23 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   Date: { input: string; output: string; }
-  /** A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address. */
   EmailAddress: { input: string; output: string; }
-  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any; }
-  /** A field whose value conforms to the standard phone number format. */
   PhoneNumber: { input: any; output: any; }
-  /** `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch. */
   Timestamp: { input: number; output: number; }
-  /** A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt. */
   URL: { input: string; output: string; }
 };
 
 export type AdminAdministratorFilterInput = {
   nameContains?: InputMaybe<Scalars['String']['input']>;
   roles?: InputMaybe<Array<AdministratorRole>>;
+};
+
+export type AdminApplyLessonVideoLocalHlsInput = {
+  id: Scalars['ID']['input'];
+  playlistFileId: Scalars['ID']['input'];
+  segmentFileIds: Array<Scalars['ID']['input']>;
+  variantPlaylistFileIds?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
 export type AdminBookFilterInput = {
@@ -55,6 +57,7 @@ export type AdminCreateBookInput = {
 
 export type AdminCreateExamInput = {
   answerFileId?: InputMaybe<Scalars['ID']['input']>;
+  answerFileIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   category?: InputMaybe<Scalars['String']['input']>;
   cutline?: InputMaybe<Scalars['Float']['input']>;
   displaySettings?: InputMaybe<ExamDisplaySettingsInput>;
@@ -64,6 +67,7 @@ export type AdminCreateExamInput = {
   maxScore?: InputMaybe<Scalars['Float']['input']>;
   originExamId?: InputMaybe<Scalars['ID']['input']>;
   questionFileId?: InputMaybe<Scalars['ID']['input']>;
+  questionFileIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   status?: InputMaybe<ExamStatus>;
   title: Scalars['String']['input'];
 };
@@ -218,6 +222,18 @@ export type AdminDeleteUserFromLectureInput = {
   userId: Scalars['ID']['input'];
 };
 
+export type AdminExamDocumentFileClassification = {
+  __typename?: 'AdminExamDocumentFileClassification';
+  answerCandidateCount: Scalars['Int']['output'];
+  confidence: Scalars['Float']['output'];
+  containsAnswerCandidates: Scalars['Boolean']['output'];
+  extractedTextLength: Scalars['Int']['output'];
+  fileId: Scalars['ID']['output'];
+  filename: Scalars['String']['output'];
+  reasons: Array<Scalars['String']['output']>;
+  role: ExamDocumentFileRole;
+};
+
 export type AdminExamFilterInput = {
   categories?: InputMaybe<Array<Scalars['String']['input']>>;
   ids?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -225,6 +241,20 @@ export type AdminExamFilterInput = {
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   lessonIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   statuses?: InputMaybe<Array<ExamStatus>>;
+};
+
+export type AdminExamQuestionCandidate = {
+  __typename?: 'AdminExamQuestionCandidate';
+  allowedAnswers?: Maybe<Array<Scalars['String']['output']>>;
+  answer: Scalars['String']['output'];
+  confidence: Scalars['Float']['output'];
+  no: Scalars['Int']['output'];
+  point: Scalars['Float']['output'];
+  questionType: ExamQuestionType;
+  reasons: Array<Scalars['String']['output']>;
+  sourceFileId: Scalars['ID']['output'];
+  sourceFilename: Scalars['String']['output'];
+  unit?: Maybe<Scalars['String']['output']>;
 };
 
 export type AdminExamQuestionInput = {
@@ -289,6 +319,7 @@ export type AdminLessonFilterInput = {
 };
 
 export type AdminLessonGradePaginationFilterInput = {
+  gradeTypes?: InputMaybe<Array<GradeType>>;
   ids?: InputMaybe<Array<Scalars['ID']['input']>>;
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   lectureStates?: InputMaybe<Array<LectureState>>;
@@ -300,6 +331,7 @@ export type AdminLessonGradePaginationFilterInput = {
 };
 
 export type AdminLessonGradesFilterInput = {
+  gradeTypes?: InputMaybe<Array<GradeType>>;
   ids?: InputMaybe<Array<Scalars['ID']['input']>>;
   lectureIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   lessonIds?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -418,6 +450,7 @@ export type AdminUpdateBookInput = {
 
 export type AdminUpdateExamInput = {
   answerFileId?: InputMaybe<Scalars['ID']['input']>;
+  answerFileIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   category?: InputMaybe<Scalars['String']['input']>;
   cutline?: InputMaybe<Scalars['Float']['input']>;
   displaySettings?: InputMaybe<ExamDisplaySettingsInput>;
@@ -428,6 +461,7 @@ export type AdminUpdateExamInput = {
   maxScore?: InputMaybe<Scalars['Float']['input']>;
   originExamId?: InputMaybe<Scalars['ID']['input']>;
   questionFileId?: InputMaybe<Scalars['ID']['input']>;
+  questionFileIds?: InputMaybe<Array<Scalars['ID']['input']>>;
   status?: InputMaybe<ExamStatus>;
   title: Scalars['String']['input'];
 };
@@ -891,7 +925,15 @@ export type ClientLessonFilterInput = {
 };
 
 export type ClientLessonGradesFilterInput = {
+  gradeTypes?: InputMaybe<Array<GradeType>>;
   userIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+export type ClientLessonVideoHlsPlaylistDocument = {
+  __typename?: 'ClientLessonVideoHlsPlaylistDocument';
+  isMaster: Scalars['Boolean']['output'];
+  path: Scalars['String']['output'];
+  text: Scalars['String']['output'];
 };
 
 export type ClientRequestLectureInvoiceInput = {
@@ -1093,6 +1135,12 @@ export type ExamDisplaySettingsInput = {
   showStatistics?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export enum ExamDocumentFileRole {
+  Answer = 'ANSWER',
+  Question = 'QUESTION',
+  Unknown = 'UNKNOWN'
+}
+
 export type ExamEdge = {
   __typename?: 'ExamEdge';
   cursor: Scalars['String']['output'];
@@ -1149,13 +1197,12 @@ export type ExamQuestionRecognitionRegion = {
   __typename?: 'ExamQuestionRecognitionRegion';
   /** 원본 이미지 높이 대비 영역 높이 비율 (0~1) */
   height: Scalars['Float']['output'];
-  /** 답안지 자동 인식 영역 유형 */
   kind: ExamQuestionRecognitionRegionKind;
-  /** 스캔 파일 페이지 번호 */
+  /** 1부터 시작하는 스캔 파일 페이지 번호 */
   page: Scalars['Int']['output'];
-  /** 버블 판정 최소 흑색 픽셀 비율 */
+  /** 자동 선택 판정 최소 점수 */
   threshold?: Maybe<Scalars['Float']['output']>;
-  /** 버블 영역이 선택됐을 때 저장할 답안 값 */
+  /** 선택됐을 때 저장할 답안 값 */
   value?: Maybe<Scalars['String']['output']>;
   /** 원본 이미지 너비 대비 영역 너비 비율 (0~1) */
   width: Scalars['Float']['output'];
@@ -1168,13 +1215,12 @@ export type ExamQuestionRecognitionRegion = {
 export type ExamQuestionRecognitionRegionInput = {
   /** 원본 이미지 높이 대비 영역 높이 비율 (0~1) */
   height: Scalars['Float']['input'];
-  /** 답안지 자동 인식 영역 유형 */
   kind: ExamQuestionRecognitionRegionKind;
-  /** 스캔 파일 페이지 번호 */
+  /** 1부터 시작하는 스캔 파일 페이지 번호 */
   page?: Scalars['Int']['input'];
-  /** 버블 판정 최소 흑색 픽셀 비율 */
+  /** 자동 선택 판정 최소 점수 */
   threshold?: InputMaybe<Scalars['Float']['input']>;
-  /** 버블 영역이 선택됐을 때 저장할 답안 값 */
+  /** 선택됐을 때 저장할 답안 값 */
   value?: InputMaybe<Scalars['String']['input']>;
   /** 원본 이미지 너비 대비 영역 너비 비율 (0~1) */
   width: Scalars['Float']['input'];
@@ -1188,6 +1234,8 @@ export type ExamQuestionRecognitionRegionInput = {
 export enum ExamQuestionRecognitionRegionKind {
   /** OMR 버블 영역 */
   Bubble = 'BUBBLE',
+  /** 선택지 필기 표시 영역 */
+  ChoiceMark = 'CHOICE_MARK',
   /** 문항 이미지 크롭 영역 */
   Question = 'QUESTION',
   /** OCR 텍스트 영역 */
@@ -1754,12 +1802,12 @@ export type LessonVideo = {
   deletedAt?: Maybe<Scalars['Timestamp']['output']>;
   /** 영상 길이 (초) */
   durationSeconds?: Maybe<Scalars['Int']['output']>;
-  /** HLS 인코딩 실패 사유 */
   encodingError?: Maybe<Scalars['String']['output']>;
-  /** 강의 영상 HLS 인코딩 상태 */
   encodingStatus: LessonVideoEncodingStatus;
   /** HLS 재생목록 파일 */
   hlsPlaylist?: Maybe<PrivateFile>;
+  /** 서명 URL이 적용된 HLS master/variant playlist 문서 목록 */
+  hlsPlaylistDocuments?: Maybe<Array<ClientLessonVideoHlsPlaylistDocument>>;
   /** 서명 URL로 변환된 HLS playlist 텍스트 */
   hlsPlaylistText?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -1904,7 +1952,9 @@ export type Mutation = {
   adminDeleteAdministrator: Administrator;
   adminTestNotification: Scalars['Boolean']['output'];
   adminUpdateAdministrator: Administrator;
+  admin_applyLessonVideoLocalHls: LessonVideo;
   admin_checkIn: Scalars['Boolean']['output'];
+  admin_classifyExamDocumentFiles: Array<AdminExamDocumentFileClassification>;
   admin_confirmExamSubmission: ExamSubmission;
   admin_copyExam: Exam;
   admin_createBook: Book;
@@ -1938,6 +1988,7 @@ export type Mutation = {
   admin_deleteUserChat: UserChat;
   admin_deleteUserFromLecture: Lecture;
   admin_encodeLessonVideoHls: LessonVideo;
+  admin_extractExamQuestionCandidates: Array<AdminExamQuestionCandidate>;
   admin_notifyLessonGrades: Scalars['Boolean']['output'];
   admin_readAllUserChats: Scalars['Boolean']['output'];
   admin_recognizeExamSubmission: Array<ExamAnswer>;
@@ -2031,9 +2082,19 @@ export type MutationAdminUpdateAdministratorArgs = {
 };
 
 
+export type MutationAdmin_ApplyLessonVideoLocalHlsArgs = {
+  input: AdminApplyLessonVideoLocalHlsInput;
+};
+
+
 export type MutationAdmin_CheckInArgs = {
   lectureId: Scalars['ID']['input'];
   phoneNumber: Scalars['String']['input'];
+};
+
+
+export type MutationAdmin_ClassifyExamDocumentFilesArgs = {
+  fileIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -2201,6 +2262,11 @@ export type MutationAdmin_DeleteUserFromLectureArgs = {
 
 export type MutationAdmin_EncodeLessonVideoHlsArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationAdmin_ExtractExamQuestionCandidatesArgs = {
+  fileIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -3720,13 +3786,13 @@ export type GetGradeMonthlyTabQueryVariables = Exact<{
 }>;
 
 
-export type GetGradeMonthlyTabQuery = { __typename?: 'Query', lessonGrades: Array<{ __typename?: 'LessonGrade', id: string, attendanceStatus?: AttendanceStatus | null, supplementary: Supplementary, supplementaryDoneAt?: number | null, supplementaryMemo?: string | null, retest: Retest, retestDoneAt?: number | null, retestMemo?: string | null, comment?: string | null, createdAt: number, updatedAt: number, user?: { __typename?: 'User', id: string, name: string, birthDate: string, school: { __typename?: 'School', id: string, name: string } } | null, lesson?: { __typename?: 'Lesson', id: string, date: string, startTime: string, endTime: string, lecture: { __typename?: 'Lecture', id: string, title: string, gradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null } } | null, data?: Array<{ __typename?: 'LectureGradeFormData', id: string, type: string, label: string, value?: any | null, value2?: any | null, maxValue?: number | null }> | null }> };
+export type GetGradeMonthlyTabQuery = { __typename?: 'Query', lessonGrades: Array<{ __typename?: 'LessonGrade', id: string, updatedAt: number, gradeType: GradeType, comment?: string | null, lesson?: { __typename?: 'Lesson', id: string, date: string, startTime: string, endTime: string, lecture: { __typename?: 'Lecture', id: string, title: string, defaultGradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null, examGradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null } } | null, data?: Array<{ __typename?: 'LectureGradeFormData', id: string, type: string, label: string, value?: any | null, value2?: any | null, maxValue?: number | null }> | null }> };
 
-export type GradeMonthlyTab_LessonGradeFragment = { __typename?: 'LessonGrade', id: string, attendanceStatus?: AttendanceStatus | null, supplementary: Supplementary, supplementaryDoneAt?: number | null, supplementaryMemo?: string | null, retest: Retest, retestDoneAt?: number | null, retestMemo?: string | null, comment?: string | null, createdAt: number, updatedAt: number, user?: { __typename?: 'User', id: string, name: string, birthDate: string, school: { __typename?: 'School', id: string, name: string } } | null, lesson?: { __typename?: 'Lesson', id: string, date: string, startTime: string, endTime: string, lecture: { __typename?: 'Lecture', id: string, title: string, gradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null } } | null, data?: Array<{ __typename?: 'LectureGradeFormData', id: string, type: string, label: string, value?: any | null, value2?: any | null, maxValue?: number | null }> | null };
+export type GradeMonthlyTab_LessonGradeFragment = { __typename?: 'LessonGrade', id: string, updatedAt: number, gradeType: GradeType, comment?: string | null, lesson?: { __typename?: 'Lesson', id: string, date: string, startTime: string, endTime: string, lecture: { __typename?: 'Lecture', id: string, title: string, defaultGradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null, examGradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null } } | null, data?: Array<{ __typename?: 'LectureGradeFormData', id: string, type: string, label: string, value?: any | null, value2?: any | null, maxValue?: number | null }> | null };
 
-export type GradeMonthlyTab_LessonFragment = { __typename?: 'Lesson', id: string, date: string, startTime: string, endTime: string, lecture: { __typename?: 'Lecture', id: string, title: string, gradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null } };
+export type GradeMonthlyTab_LessonFragment = { __typename?: 'Lesson', id: string, date: string, startTime: string, endTime: string, lecture: { __typename?: 'Lecture', id: string, title: string, defaultGradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null, examGradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null } };
 
-export type GradeMonthlyTab_LectureFragment = { __typename?: 'Lecture', id: string, title: string, gradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null };
+export type GradeMonthlyTab_LectureFragment = { __typename?: 'Lecture', id: string, title: string, defaultGradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null, examGradeForm?: { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> } | null };
 
 export type GradeMonthlyTab_GradeFormFragment = { __typename?: 'LectureGradeForm', id: string, labels: Array<{ __typename?: 'LectureGradeFormLabel', id: string, type: string, value: string }> };
 
@@ -3738,9 +3804,9 @@ export const MyStudyMaterials_StudyMaterialFragmentDoc = {"kind":"Document","def
 export const MyWrongAnswers_WrongAnswerFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyWrongAnswers_WrongAnswer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ClientWrongAnswer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isResolved"}},{"kind":"Field","name":{"kind":"Name","value":"exam"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"maxScore"}}]}},{"kind":"Field","name":{"kind":"Name","value":"examAnswer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"earnedPoint"}},{"kind":"Field","name":{"kind":"Name","value":"question"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"no"}},{"kind":"Field","name":{"kind":"Name","value":"point"}},{"kind":"Field","name":{"kind":"Name","value":"unit"}},{"kind":"Field","name":{"kind":"Name","value":"questionType"}}]}},{"kind":"Field","name":{"kind":"Name","value":"retries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"questionFile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"questionImageDataUrl"}}]}}]} as unknown as DocumentNode<MyWrongAnswers_WrongAnswerFragment, unknown>;
 export const UserChatFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserChat"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserChat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"administrator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<UserChatFragment, unknown>;
 export const GradeMonthlyTab_GradeFormFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_GradeFormFragment, unknown>;
-export const GradeMonthlyTab_LectureFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LectureFragment, unknown>;
-export const GradeMonthlyTab_LessonFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LessonFragment, unknown>;
-export const GradeMonthlyTab_LessonGradeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGrade"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"school"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"birthDate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attendanceStatus"}},{"kind":"Field","name":{"kind":"Name","value":"supplementary"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryMemo"}},{"kind":"Field","name":{"kind":"Name","value":"retest"}},{"kind":"Field","name":{"kind":"Name","value":"retestDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"retestMemo"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"value2"}},{"kind":"Field","name":{"kind":"Name","value":"maxValue"}}]}},{"kind":"Field","name":{"kind":"Name","value":"comment"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LessonGradeFragment, unknown>;
+export const GradeMonthlyTab_LectureFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","alias":{"kind":"Name","value":"defaultGradeForm"},"name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"examGradeForm"},"name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"EXAM"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LectureFragment, unknown>;
+export const GradeMonthlyTab_LessonFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","alias":{"kind":"Name","value":"defaultGradeForm"},"name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"examGradeForm"},"name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"EXAM"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LessonFragment, unknown>;
+export const GradeMonthlyTab_LessonGradeFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGrade"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"gradeType"}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"}}]}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"value2"}},{"kind":"Field","name":{"kind":"Name","value":"maxValue"}}]}},{"kind":"Field","name":{"kind":"Name","value":"comment"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","alias":{"kind":"Name","value":"defaultGradeForm"},"name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"examGradeForm"},"name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"EXAM"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GradeMonthlyTab_LessonGradeFragment, unknown>;
 export const AnalyzePrivateFileMetadataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AnalyzePrivateFileMetadata"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"key"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filename"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"size"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"analyzePrivateFileMetadata"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"Variable","name":{"kind":"Name","value":"key"}}},{"kind":"Argument","name":{"kind":"Name","value":"filename"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filename"}}},{"kind":"Argument","name":{"kind":"Name","value":"mimeType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mimeType"}}},{"kind":"Argument","name":{"kind":"Name","value":"size"},"value":{"kind":"Variable","name":{"kind":"Name","value":"size"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]} as unknown as DocumentNode<AnalyzePrivateFileMetadataMutation, AnalyzePrivateFileMetadataMutationVariables>;
 export const CreateInquiryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateInquiry"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientCreateInquiryInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createInquiry"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode<CreateInquiryMutation, CreateInquiryMutationVariables>;
 export const ReadAllUserChatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"ReadAllUserChats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"my_readAllUserChats"}}]}}]} as unknown as DocumentNode<ReadAllUserChatsMutation, ReadAllUserChatsMutationVariables>;
@@ -3760,4 +3826,4 @@ export const GetMyNotificationsDocument = {"kind":"Document","definitions":[{"ki
 export const GetMyStudyMaterialsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyStudyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"studyMaterials"},"name":{"kind":"Name","value":"my_studyMaterials"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyStudyMaterials_StudyMaterial"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"StudyMaterial"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"isAll"}},{"kind":"Field","name":{"kind":"Name","value":"materialAttachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"attachment"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]} as unknown as DocumentNode<GetMyStudyMaterialsQuery, GetMyStudyMaterialsQueryVariables>;
 export const GetMyWrongAnswersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMyWrongAnswers"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientWrongAnswerFilterInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"wrongAnswers"},"name":{"kind":"Name","value":"myWrongAnswers"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MyWrongAnswers_WrongAnswer"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MyWrongAnswers_WrongAnswer"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ClientWrongAnswer"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"isResolved"}},{"kind":"Field","name":{"kind":"Name","value":"exam"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"category"}},{"kind":"Field","name":{"kind":"Name","value":"maxScore"}}]}},{"kind":"Field","name":{"kind":"Name","value":"examAnswer"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"earnedPoint"}},{"kind":"Field","name":{"kind":"Name","value":"question"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"no"}},{"kind":"Field","name":{"kind":"Name","value":"point"}},{"kind":"Field","name":{"kind":"Name","value":"unit"}},{"kind":"Field","name":{"kind":"Name","value":"questionType"}}]}},{"kind":"Field","name":{"kind":"Name","value":"retries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"isCorrect"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"questionFile"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}},{"kind":"Field","name":{"kind":"Name","value":"questionImageDataUrl"}}]}}]} as unknown as DocumentNode<GetMyWrongAnswersQuery, GetMyWrongAnswersQueryVariables>;
 export const GetUserChatsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserChats"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"userChats"},"name":{"kind":"Name","value":"my_userChatPagination"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"IntValue","value":"5000"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserChat"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserChat"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"UserChat"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"administrator"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attachments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mimeType"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"url"}},{"kind":"Field","name":{"kind":"Name","value":"filename"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<GetUserChatsQuery, GetUserChatsQueryVariables>;
-export const GetGradeMonthlyTabDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGradeMonthlyTab"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientLessonGradesFilterInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"order"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGradeRelayOrder"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"asc"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lessonGrades"},"name":{"kind":"Name","value":"myLessonGrades"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"asc"},"value":{"kind":"Variable","name":{"kind":"Name","value":"asc"}}},{"kind":"Argument","name":{"kind":"Name","value":"order"},"value":{"kind":"Variable","name":{"kind":"Name","value":"order"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGrade"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"school"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"birthDate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"}}]}},{"kind":"Field","name":{"kind":"Name","value":"attendanceStatus"}},{"kind":"Field","name":{"kind":"Name","value":"supplementary"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"supplementaryMemo"}},{"kind":"Field","name":{"kind":"Name","value":"retest"}},{"kind":"Field","name":{"kind":"Name","value":"retestDoneAt"}},{"kind":"Field","name":{"kind":"Name","value":"retestMemo"}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"value2"}},{"kind":"Field","name":{"kind":"Name","value":"maxValue"}}]}},{"kind":"Field","name":{"kind":"Name","value":"comment"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetGradeMonthlyTabQuery, GetGradeMonthlyTabQueryVariables>;
+export const GetGradeMonthlyTabDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetGradeMonthlyTab"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ClientLessonGradesFilterInput"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"order"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGradeRelayOrder"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"asc"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"lessonGrades"},"name":{"kind":"Name","value":"myLessonGrades"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"asc"},"value":{"kind":"Variable","name":{"kind":"Name","value":"asc"}}},{"kind":"Argument","name":{"kind":"Name","value":"order"},"value":{"kind":"Variable","name":{"kind":"Name","value":"order"}}},{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_LessonGrade"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LessonGrade"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"gradeType"}},{"kind":"Field","name":{"kind":"Name","value":"lesson"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"}}]}},{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"value2"}},{"kind":"Field","name":{"kind":"Name","value":"maxValue"}}]}},{"kind":"Field","name":{"kind":"Name","value":"comment"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lesson"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lesson"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"startTime"}},{"kind":"Field","name":{"kind":"Name","value":"endTime"}},{"kind":"Field","name":{"kind":"Name","value":"lecture"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_Lecture"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Lecture"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","alias":{"kind":"Name","value":"defaultGradeForm"},"name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"DEFAULT"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}},{"kind":"Field","alias":{"kind":"Name","value":"examGradeForm"},"name":{"kind":"Name","value":"gradeForm"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gradeType"},"value":{"kind":"EnumValue","value":"EXAM"}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"GradeMonthlyTab_GradeForm"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"LectureGradeForm"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"labels"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"value"}}]}}]}}]} as unknown as DocumentNode<GetGradeMonthlyTabQuery, GetGradeMonthlyTabQueryVariables>;

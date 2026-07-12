@@ -19,7 +19,7 @@ function GradeFilter() {
 
   const {
     state: {
-      lecture,
+      lectureId,
       // activeTab,
     },
     fetchData,
@@ -28,7 +28,7 @@ function GradeFilter() {
   return (
     <Flex direction="column" gap={8} style={{ marginTop: 2, marginBottom: 10 }}>
       <Select
-        value={lecture?.id}
+        value={lectureId}
         css={[
           styles.borderPrimary,
           // activeTab === 'daily' && styles.borderPrimary,

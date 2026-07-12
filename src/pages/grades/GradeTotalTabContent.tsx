@@ -12,6 +12,20 @@ function GradeTotalTabContent() {
     state: { selectedLabel, statistics },
   } = useGrades()
 
+  if (!selectedLabel || !statistics?.length) {
+    return (
+      <Flex
+        items="center"
+        justify="center"
+        style={{ minHeight: 160, width: '100%' }}
+      >
+        <Caption color={COLORS.FONT['30']} size={12}>
+          누적 성적 데이터가 없습니다.
+        </Caption>
+      </Flex>
+    )
+  }
+
   return (
     <Flex direction="column" gap={28} style={{ marginTop: 28 }}>
       <section>
