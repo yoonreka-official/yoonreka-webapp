@@ -1,6 +1,9 @@
 import { css } from '@emotion/react'
 import { Tabs } from 'antd'
+import { BiEditAlt } from 'react-icons/bi'
+import { useNavigate } from 'react-router-dom'
 
+import ButtonNav from '~/components/buttons/ButtonNav.tsx'
 import Headline from '~/components/typography/Headline.tsx'
 import { COLORS } from '~/configs/theme.ts'
 import useGrades from '~/hooks/useGrades.ts'
@@ -17,6 +20,7 @@ const GRADE_TABS: Array<{
 ]
 
 function GradeHeader() {
+  const navigate = useNavigate()
   const {
     state: { activeTab },
     handleChangeTab,
@@ -26,6 +30,17 @@ function GradeHeader() {
     <header css={styles.header}>
       <div css={styles.titleBox}>
         <Headline>수업성적</Headline>
+
+        <ButtonNav
+          style={{
+            minHeight: 40,
+            color: COLORS.POINT.TERTIARY,
+          }}
+          onClick={() => navigate('/wrong-answers')}
+        >
+          <BiEditAlt aria-hidden size={16} />
+          오답노트
+        </ButtonNav>
       </div>
 
       <Tabs
@@ -45,6 +60,10 @@ const styles = {
   `,
 
   titleBox: css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
     padding: 15px 14px 13px;
   `,
 
