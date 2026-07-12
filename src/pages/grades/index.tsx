@@ -10,7 +10,8 @@ import GradeTabContainer from '~/pages/grades/GradeTabContainer.tsx'
 import { GradeType } from '~/types/grades.type.ts'
 
 function GradesPage() {
-  const { fetchData, handleChangeTab, handleChangeType } = useGrades()
+  const { fetchData, handleChangeTab, handleChangeType, handleClearGrades } =
+    useGrades()
 
   const { toggleLoading } = useLoading()
 
@@ -27,6 +28,7 @@ function GradesPage() {
     return () => {
       handleChangeTab('daily', false)
       handleChangeType(GradeType.DEFAULT, false)
+      handleClearGrades()
     }
   }, [])
 

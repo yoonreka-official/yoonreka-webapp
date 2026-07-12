@@ -10,28 +10,11 @@ query GetGradeMonthlyTab(
 
 fragment GradeMonthlyTab_LessonGrade on LessonGrade {
   id
-  user {
-    id
-    name
-    school {
-      id
-      name
-    }
-    birthDate
-  }
+  updatedAt
+  gradeType
   lesson {
     ...GradeMonthlyTab_Lesson
   }
-  attendanceStatus
-
-  supplementary
-  supplementaryDoneAt
-  supplementaryMemo
-
-  retest
-  retestDoneAt
-  retestMemo
-
   data {
     id
     type
@@ -41,8 +24,6 @@ fragment GradeMonthlyTab_LessonGrade on LessonGrade {
     maxValue
   }
   comment
-  createdAt
-  updatedAt
 }
 
 fragment GradeMonthlyTab_Lesson on Lesson {
@@ -60,7 +41,10 @@ fragment GradeMonthlyTab_Lecture on Lecture {
   id
   title
 
-  gradeForm(gradeType: DEFAULT) {
+  defaultGradeForm: gradeForm(gradeType: DEFAULT) {
+    ...GradeMonthlyTab_GradeForm
+  }
+  examGradeForm: gradeForm(gradeType: EXAM) {
     ...GradeMonthlyTab_GradeForm
   }
 }

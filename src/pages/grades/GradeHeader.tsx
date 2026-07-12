@@ -30,7 +30,7 @@ function GradeHeader() {
 
       <Tabs
         css={styles.tabs}
-        defaultActiveKey={activeTab}
+        activeKey={activeTab}
         indicator={{ align: 'center', size: 168 }}
         items={GRADE_TABS}
         onChange={(activeKey) => handleChangeTab(activeKey as GradeTab)}

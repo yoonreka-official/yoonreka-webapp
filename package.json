@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "prepare": "husky install",
     "preview": "vite preview",
+    "test": "node --experimental-strip-types --test src/utils/grades.util.test.ts",
     "generate-types": "graphql-codegen --config codegen.ts && eslint './src/types/api.ts' --fix"
   },
   "lint-staged": {

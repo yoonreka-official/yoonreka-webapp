@@ -3,7 +3,11 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getLectureGrades } from '~/api/grades.api.ts'
 import { COLORS } from '~/configs/theme.ts'
 import { GradeType } from '~/types/grades.type.ts'
-import calculator from '~/utils/calculator.util.ts'
+import {
+  buildGradeStatistics,
+  getCumulativeLabels,
+  getInitialCumulativeLabel,
+} from '~/utils/grades.util.ts'
 
 import type { PayloadAction } from '@reduxjs/toolkit'
 
@@ -20,7 +24,10 @@ export type GradeTab = 'daily' | 'total' | 'monthly'
 const DEFAULT_COLOR = COLORS.STATUS['06']
 
 export interface GradeState {
+  currentRequestId?: string
+  error?: string
   isLoading: boolean
+  lectureId?: string
 
   lecture: Nullable<LectureGradeDetail>
 
@@ -65,14 +72,26 @@ export const fetchGradesByLectureId = createAsyncThunk<
 const GradeSlice = createSlice({
   extraReducers: (builder) => {
     builder
-      .addCase(fetchGradesByLectureId.pending, (state) => {
+      .addCase(fetchGradesByLectureId.pending, (state, action) => {
+        state.currentRequestId = action.meta.requestId
+        state.error = undefined
         state.isLoading = true
+        state.lectureId = action.meta.arg.lectureId
+        state.lecture = null
+        state.labelGroups = []
+        state.testLabels = []
+        state.selectedLabel = undefined
+        state.labelColor = DEFAULT_COLOR
+        state.statistics = undefined
       })
 
       .addCase(fetchGradesByLectureId.fulfilled, (state, action) => {
+        if (state.currentRequestId !== action.meta.requestId) return
+
         const lecture = action.payload
 
         state.lecture = lecture
+        state.currentRequestId = undefined
 
         if (lecture) {
           // ? 데일리 성적 출력시 사용할 라벨 그룹
@@ -90,16 +109,36 @@ const GradeSlice = createSlice({
           state.labelGroups = labelGroups
 
           // ? 누적 성적 그래프 태그 기본값 설정
-          state.testLabels = lecture.gradeFormLabels.filter((item) => {
-            return action.meta.arg.gradeType === GradeType.DEFAULT
-              ? item.type === '테스트'
-              : item.type === '과제성적'
-          })
+          state.testLabels = getCumulativeLabels(
+            lecture.gradeFormLabels,
+            action.meta.arg.gradeType,
+          )
+
+          const selectedLabel = getInitialCumulativeLabel(
+            state.testLabels,
+            lecture.lessons,
+          )
+          if (selectedLabel) {
+            state.selectedLabel = {
+              ...selectedLabel,
+              comment: lecture.myLabelComments.find(
+                (item) => item.labelId === selectedLabel.id,
+              )?.comment,
+            }
+            state.statistics = buildGradeStatistics(
+              lecture.lessons,
+              selectedLabel,
+            )
+          }
         }
         state.isLoading = false
       })
 
-      .addCase(fetchGradesByLectureId.rejected, (state) => {
+      .addCase(fetchGradesByLectureId.rejected, (state, action) => {
+        if (state.currentRequestId !== action.meta.requestId) return
+
+        state.currentRequestId = undefined
+        state.error = '성적 데이터를 불러오지 못했습니다.'
         state.lecture = null
         state.isLoading = false
       })
@@ -107,6 +146,19 @@ const GradeSlice = createSlice({
   initialState,
   name: 'lecture',
   reducers: {
+    clearGrades: (state) => {
+      state.currentRequestId = undefined
+      state.error = undefined
+      state.isLoading = false
+      state.lectureId = undefined
+      state.lecture = null
+      state.labelGroups = []
+      state.testLabels = []
+      state.selectedLabel = undefined
+      state.labelColor = DEFAULT_COLOR
+      state.statistics = undefined
+    },
+
     setActiveTab: (state, action: PayloadAction<GradeTab>) => {
       state.activeTab = action.payload
     },
@@ -123,9 +175,6 @@ const GradeSlice = createSlice({
 
       state.selectedLabel = selectedLabel
 
-      // ? 차트 데이터 계산
-      const data: LectureGradeStatistics[] = []
-
       if (state.lecture && selectedLabel) {
         state.selectedLabel = {
           ...selectedLabel,
@@ -133,40 +182,13 @@ const GradeSlice = createSlice({
             (item) => item.labelId === selectedLabel.id,
           )?.comment,
         }
-
-        state.lecture.lessons.forEach((lesson) => {
-          const gradeData = lesson.myLessonGrade?.data?.find(
-            (item) => item.id === selectedLabel.id,
-          )
-
-          const top30Data = lesson.topThirtyPercentGrades.find(
-            (item) => item.labelId === selectedLabel.id,
-          )
-
-          const highestData = lesson.topGrades.find(
-            (item) => item.labelId === selectedLabel.id,
-          )
-
-          data.push({
-            id: selectedLabel.id,
-            date: lesson.date,
-            comment: lesson.myLessonGrade?.comment,
-            type: selectedLabel.type,
-            label: selectedLabel.value,
-            value: gradeData?.value || null,
-            value2: gradeData?.value2 || null,
-            maxValue: gradeData?.maxValue || null,
-            score:
-              calculator.rates(gradeData?.value, gradeData?.maxValue) || null,
-            top30: calculator.rates(top30Data?.value, gradeData?.maxValue),
-            highest: calculator.rates(highestData?.value, gradeData?.maxValue),
-          })
-        })
+        state.statistics = buildGradeStatistics(
+          state.lecture.lessons,
+          selectedLabel,
+        )
+      } else {
+        state.statistics = undefined
       }
-
-      const chartLength =
-        data.filter((item) => item.value && item.maxValue).length > 8 ? 16 : 8
-      state.statistics = data.filter((_, i) => i < chartLength)
     },
 
     setLabelColor: (state, action: PayloadAction<string | undefined>) => {
@@ -175,6 +197,11 @@ const GradeSlice = createSlice({
   },
 })
 
-export const { setActiveTab, setGradeType, setLabel, setLabelColor } =
-  GradeSlice.actions
+export const {
+  clearGrades,
+  setActiveTab,
+  setGradeType,
+  setLabel,
+  setLabelColor,
+} = GradeSlice.actions
 export default GradeSlice

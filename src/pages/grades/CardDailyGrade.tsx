@@ -18,6 +18,11 @@ import {
   Supplementary,
 } from '~/types/api'
 import { AttendanceStatus } from '~/types/grades.type.ts'
+import {
+  EXAM_LABEL_PREFIX,
+  formatGradeValue,
+  hasGradeValue,
+} from '~/utils/grades.util.ts'
 
 import type {
   GradeFormLabelGroup,
@@ -30,9 +35,6 @@ interface CardDailyGradeProps {
   defaultOpen?: boolean
   scrollId?: string
 }
-
-/** 시험 자동 채점 성적 항목 id 접두사 (exam:<examId>) */
-const EXAM_LABEL_PREFIX = 'exam:'
 
 function CardDailyGrade({
   lesson,
@@ -62,7 +64,7 @@ function CardDailyGrade({
       (label) =>
         label.id.startsWith(EXAM_LABEL_PREFIX) &&
         lesson.myExamLessonGrade?.data?.some(
-          (item) => item.id === label.id && item.value != null,
+          (item) => item.id === label.id && hasGradeValue(item.value),
         ),
     )
 
@@ -235,9 +237,10 @@ function GradeSection({
   const grade = (
     examId ? lesson.myExamLessonGrade : lesson.myLessonGrade
   )?.data?.find((item) => item.id === label.id)
+  const formattedGrade = formatGradeValue(grade)
 
   // ? 시험(자동 채점) 항목이면서 성적이 반영된 경우 [성적 보기] 버튼 노출
-  const showExamResultButton = !!examId && grade?.value != null
+  const showExamResultButton = !!examId && hasGradeValue(grade?.value)
 
   return (
     <Flex key={label.id} gap={6} items="stretch">
@@ -251,9 +254,7 @@ function GradeSection({
 
       <Flex css={gradeStyles.scoreBox}>
         <Caption color={COLORS.FONT['80']} size={12} weight="semibold">
-          {grade?.value2 && `${grade?.value2} `}
-          {grade?.value || <EmptyData />}
-          {grade?.maxValue && `/${grade?.maxValue}`}
+          {formattedGrade || <EmptyData />}
         </Caption>
 
         {showExamResultButton && (
