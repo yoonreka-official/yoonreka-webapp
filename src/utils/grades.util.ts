@@ -12,7 +12,14 @@ const DEFAULT_TEST_LABEL_TYPE = '테스트'
 const EXAM_TEST_LABEL_TYPES = new Set(['시험', '과제성적'])
 
 export function hasGradeValue(value: unknown): boolean {
-  return value !== null && value !== undefined && value !== ''
+  if (typeof value === 'string') {
+    return value.trim().length > 0
+  }
+  return value !== null && value !== undefined
+}
+
+function toGradeDisplayText(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : `${value}`
 }
 
 export function getCumulativeLabels(
@@ -168,6 +175,56 @@ interface FormattableGradeData {
   value2?: unknown
 }
 
+export interface MonthlyGradeDisplayValue {
+  detail: string
+  score: string
+}
+
+export function hasMonthlyGradeData(data?: FormattableGradeData): boolean {
+  return !!data && (hasGradeValue(data.value) || hasGradeValue(data.value2))
+}
+
+export function getMonthlyGradeDisplayValue(
+  data?: FormattableGradeData,
+): MonthlyGradeDisplayValue {
+  if (!data) {
+    return { detail: '', score: '' }
+  }
+
+  const hasValue = hasGradeValue(data.value)
+  const hasMaxValue = hasGradeValue(data.maxValue)
+  const hasNumericScore =
+    hasValue &&
+    hasMaxValue &&
+    Number.isFinite(Number(toGradeDisplayText(data.value))) &&
+    Number.isFinite(Number(toGradeDisplayText(data.maxValue)))
+  const details = [
+    hasGradeValue(data.value2) ? toGradeDisplayText(data.value2) : '',
+    hasValue && !hasNumericScore
+      ? hasMaxValue
+        ? `${toGradeDisplayText(data.value)} / ${toGradeDisplayText(data.maxValue)}`
+        : toGradeDisplayText(data.value)
+      : '',
+  ].filter(Boolean)
+
+  return {
+    detail: details.join(' · '),
+    score: hasNumericScore
+      ? `${toGradeDisplayText(data.value)} / ${toGradeDisplayText(data.maxValue)}`
+      : '',
+  }
+}
+
+export function formatLessonTime(
+  startTime?: string | null,
+  endTime?: string | null,
+): string {
+  return [startTime, endTime]
+    .filter(hasGradeValue)
+    .map(toGradeDisplayText)
+    .join('–')
+}
+
 export function buildMonthlyGradeSections(
   sources: MonthlyGradeSource[],
 ): MonthlyGradeSection[] {
@@ -179,9 +236,29 @@ export function buildMonthlyGradeSections(
     const labelsById = new Map(labels.map((label) => [label.id, label]))
 
     const visibleLabels = [
-      ...labels.filter((label) => !onlyWithData || dataById.has(label.id)),
+      ...labels
+        .filter(
+          (label) =>
+            !onlyWithData || hasMonthlyGradeData(dataById.get(label.id)),
+        )
+        .map((label) => {
+          const item = dataById.get(label.id)
+          if (!item) {
+            return label
+          }
+
+          return {
+            id: label.id,
+            type: hasGradeValue(item.type) ? item.type.trim() : label.type,
+            value: hasGradeValue(item.label) ? item.label.trim() : label.value,
+          }
+        }),
       ...gradeData
-        .filter((item) => !labelsById.has(item.id))
+        .filter(
+          (item) =>
+            !labelsById.has(item.id) &&
+            (!onlyWithData || hasMonthlyGradeData(item)),
+        )
         .map((item) => ({ id: item.id, type: item.type, value: item.label })),
     ]
 
@@ -207,9 +284,13 @@ export function formatGradeValue(data?: FormattableGradeData): string {
     return ''
   }
 
-  const value2 = hasGradeValue(data.value2) ? `${data.value2} ` : ''
-  const value = hasGradeValue(data.value) ? `${data.value}` : ''
-  const maxValue = hasGradeValue(data.maxValue) ? `/${data.maxValue}` : ''
+  const value2 = hasGradeValue(data.value2)
+    ? `${toGradeDisplayText(data.value2)} `
+    : ''
+  const value = hasGradeValue(data.value) ? toGradeDisplayText(data.value) : ''
+  const maxValue = hasGradeValue(data.maxValue)
+    ? `/${toGradeDisplayText(data.maxValue)}`
+    : ''
 
   return `${value2}${value}${maxValue}`.trim()
 }

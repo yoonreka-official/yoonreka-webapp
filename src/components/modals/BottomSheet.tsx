@@ -28,6 +28,7 @@ function BottomSheet({
 }: BottomSheetProps) {
   return (
     <Drawer
+      aria-label={typeof title === 'string' ? title : undefined}
       closable={false}
       css={styles.bottomSheet}
       placement="bottom"
@@ -38,7 +39,9 @@ function BottomSheet({
       <header css={styles.header}>
         {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
         <button
+          aria-label="닫기"
           css={styles.handleButton}
+          type="button"
           onClick={() => onClose?.()}
           onTouchMove={() => onClose?.()}
         >
