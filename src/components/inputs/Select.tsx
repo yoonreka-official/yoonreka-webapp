@@ -1,5 +1,5 @@
 import { css } from '@emotion/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import IconArrowDown24 from '~/assets/svg/icon_arrow_down_24.svg?react'
 import IconExpandRight24 from '~/assets/svg/icon_expand_right_24.svg?react'
@@ -16,6 +16,7 @@ export interface SelectOption {
 }
 
 interface Props extends Omit<SelectProps, 'onChange'> {
+  ariaLabel?: string
   options?: SelectOption[]
   defaultValue?: string
   placeholder?: string
@@ -25,6 +26,7 @@ interface Props extends Omit<SelectProps, 'onChange'> {
 }
 
 function Select({
+  ariaLabel,
   className,
   options = [],
   defaultValue,
@@ -34,6 +36,7 @@ function Select({
   onChange,
 }: Props) {
   const form = useFormInstance()
+  const triggerRef = useRef<HTMLButtonElement>(null)
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -75,6 +78,14 @@ function Select({
   return (
     <>
       <button
+        ref={triggerRef}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        aria-label={
+          ariaLabel
+            ? `${ariaLabel}: ${selected?.label ?? placeholder}`
+            : undefined
+        }
         className={className}
         css={[
           styles.select,
@@ -82,6 +93,7 @@ function Select({
           isInput && isOpen && styles.open,
         ]}
         type="button"
+        data-open={isOpen}
         onClick={() => setIsOpen(true)}
       >
         {selected ? (
@@ -98,10 +110,16 @@ function Select({
       </button>
 
       <BottomSheet
+        afterOpenChange={(open) => {
+          if (!open) {
+            triggerRef.current?.focus()
+          }
+        }}
         footer={null}
         open={isOpen}
         push={{ distance: 0 }}
         rootClassName="dialog"
+        title={ariaLabel}
         onClose={() => handleClose()}
         onConfirm={() => handleClose()}
       >
@@ -111,7 +129,9 @@ function Select({
               <li key={option.value}>
                 <button
                   id={`option-${option.value}`}
+                  aria-current={value === option.value ? 'true' : undefined}
                   css={[value === option.value && styles.selected]}
+                  type="button"
                   onClick={() => {
                     handleClose()
                     onChange?.(option.value, option)
