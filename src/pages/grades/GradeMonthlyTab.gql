@@ -6,12 +6,16 @@ query GetGradeMonthlyTab(
   lessonGrades: myLessonGrades(asc: $asc, order: $order, filter: $filter) {
     ...GradeMonthlyTab_LessonGrade
   }
+  lessonGradeMonthlies: myLessonGradeMonthlies {
+    ...GradeMonthlyTab_LessonGradeMonthly
+  }
 }
 
 fragment GradeMonthlyTab_LessonGrade on LessonGrade {
   id
   updatedAt
   gradeType
+  attendanceStatus
   lesson {
     ...GradeMonthlyTab_Lesson
   }
@@ -24,6 +28,18 @@ fragment GradeMonthlyTab_LessonGrade on LessonGrade {
     maxValue
   }
   comment
+}
+
+fragment GradeMonthlyTab_LessonGradeMonthly on LessonGradeMonthly {
+  id
+  month
+  score {
+    attendance
+    assignment
+    test
+    progress
+    comment
+  }
 }
 
 fragment GradeMonthlyTab_Lesson on Lesson {

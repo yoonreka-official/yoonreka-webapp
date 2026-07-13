@@ -6,19 +6,23 @@ import Select from '~/components/inputs/Select.tsx'
 import { COLORS } from '~/configs/theme.ts'
 import { GradeType } from '~/types/api'
 import {
-  buildMonthlyGradeSections,
+  buildMonthlyReportGradeRows,
   formatLessonTime,
-  getMonthlyGradeDisplayValue,
+  formatMonthlyReportAttendanceStatus,
+  getMonthlyReportComments,
+  getMonthlyReportMonthKey,
+  mapMonthlyReportSummariesByMonth,
   mergeLessonGradesByLesson,
 } from '~/utils/grades.util.ts'
 
 import type {
   GradeMonthlyTab_LessonFragment,
   GradeMonthlyTab_LessonGradeFragment,
+  GradeMonthlyTab_LessonGradeMonthlyFragment,
 } from '~/types/api'
 import type {
   MergedLessonGrade,
-  MonthlyGradeSection,
+  MonthlyReportGradeRow,
 } from '~/utils/grades.util.ts'
 
 type MergedMonthlyGrade = MergedLessonGrade<
@@ -31,36 +35,44 @@ type MonthlyGroupedData = {
   month: string
 }
 
+type MonthlySummaryScore =
+  GradeMonthlyTab_LessonGradeMonthlyFragment['score']
+
 export interface MonthlyGradesProps {
+  lessonGradeMonthlies: GradeMonthlyTab_LessonGradeMonthlyFragment[]
   lessonGrades: GradeMonthlyTab_LessonGradeFragment[]
 }
 
-export function MonthlyGrades({ lessonGrades }: MonthlyGradesProps) {
+export function MonthlyGrades({
+  lessonGradeMonthlies,
+  lessonGrades,
+}: MonthlyGradesProps) {
   const [selectedMonth, setSelectedMonth] = useState<string | 'all'>('all')
 
   const dataSource = useMemo<MonthlyGroupedData[]>(() => {
-    const mergedLessonGrades = mergeLessonGradesByLesson<
+    const groupedByMonth = new Map<string, MergedMonthlyGrade[]>()
+
+    for (const lessonGrade of mergeLessonGradesByLesson<
       GradeMonthlyTab_LessonFragment,
       GradeMonthlyTab_LessonGradeFragment
-    >(lessonGrades)
-    const groupedByMonth = mergedLessonGrades.reduce(
-      (acc, lessonGrade) => {
-        const monthKey = dayjs(lessonGrade.lesson.date).format('YYYY-MM')
+    >(lessonGrades)) {
+      const month = getMonthlyReportMonthKey(lessonGrade.lesson.date)
+      if (!month) continue
 
-        if (!acc[monthKey]) {
-          acc[monthKey] = []
-        }
-        acc[monthKey].push(lessonGrade)
+      const items = groupedByMonth.get(month) ?? []
+      items.push(lessonGrade)
+      groupedByMonth.set(month, items)
+    }
 
-        return acc
-      },
-      {} as Record<string, MergedMonthlyGrade[]>,
+    return Array.from(groupedByMonth, ([month, items]) => ({ month, items })).sort(
+      (a, b) => a.month.localeCompare(b.month),
     )
-
-    return Object.entries(groupedByMonth)
-      .map(([month, items]) => ({ month, items }))
-      .sort((a, b) => b.month.localeCompare(a.month))
   }, [lessonGrades])
+
+  const monthlySummaries = useMemo(
+    () => mapMonthlyReportSummariesByMonth(lessonGradeMonthlies),
+    [lessonGradeMonthlies],
+  )
 
   const monthOptions = useMemo(
     () => [
@@ -83,11 +95,17 @@ export function MonthlyGrades({ lessonGrades }: MonthlyGradesProps) {
   }, [dataSource, selectedMonth])
 
   const filteredDataSource = useMemo(() => {
-    if (selectedMonth === 'all') {
-      return dataSource
-    }
+    if (selectedMonth === 'all') return dataSource
     return dataSource.filter((monthGroup) => monthGroup.month === selectedMonth)
   }, [dataSource, selectedMonth])
+
+  if (!dataSource.length) {
+    return (
+      <div css={styles.emptyReport} role="status">
+        표시할 월별 성적 데이터가 없습니다.
+      </div>
+    )
+  }
 
   return (
     <div css={styles.wrapper}>
@@ -115,12 +133,11 @@ export function MonthlyGrades({ lessonGrades }: MonthlyGradesProps) {
             >
               <header css={styles.monthHeader}>
                 <div>
-                  <div css={styles.monthEyebrow}>월별 성적 요약</div>
+                  <div css={styles.monthEyebrow}>월간 레포트</div>
                   <h2 id={headingId} css={styles.monthTitle}>
                     {dayjs(`${monthGroup.month}-01`).format('YYYY년 M월')}
                   </h2>
                 </div>
-
                 <span css={styles.lessonCount}>
                   성적 회차 {monthGroup.items.length}회
                 </span>
@@ -133,6 +150,9 @@ export function MonthlyGrades({ lessonGrades }: MonthlyGradesProps) {
                     lessonGrade={lessonGrade}
                   />
                 ))}
+                <MonthlySummary
+                  score={monthlySummaries.get(monthGroup.month)}
+                />
               </div>
             </section>
           )
@@ -150,79 +170,87 @@ function MonthlyLessonGrade({
   const { grades, lesson } = lessonGrade
   const defaultGrade = grades[GradeType.Default]
   const examGrade = grades[GradeType.Exam]
-
-  const sections = useMemo(
-    () =>
-      buildMonthlyGradeSections([
-        ...(defaultGrade
-          ? [
-              {
-                gradeType: GradeType.Default,
-                labels: lesson.lecture.defaultGradeForm?.labels ?? [],
-                data: defaultGrade.data,
-                onlyWithData: true,
-              },
-            ]
-          : []),
-        ...(examGrade
-          ? [
-              {
-                gradeType: GradeType.Exam,
-                labels: lesson.lecture.examGradeForm?.labels ?? [],
-                data: examGrade.data,
-                onlyWithData: true,
-              },
-            ]
-          : []),
-      ]),
-    [defaultGrade?.data, examGrade?.data, lesson.lecture],
-  )
-
-  const comments = [
-    ...new Set(
-      [defaultGrade?.comment, examGrade?.comment]
-        .map((comment) => comment?.trim())
-        .filter((comment): comment is string => !!comment),
-    ),
-  ]
+  const defaultLabels = lesson.lecture.defaultGradeForm?.labels ?? []
+  const examLabels = lesson.lecture.examGradeForm?.labels ?? []
+  const attendanceStatus =
+    defaultGrade?.attendanceStatus ?? examGrade?.attendanceStatus
   const lessonHeadingId = `monthly-lesson-${lesson.id}`
+
+  const assignmentRows = defaultGrade
+    ? buildMonthlyReportGradeRows({
+        labels: defaultLabels,
+        data: defaultGrade.data,
+        types: ['과제성적'],
+      })
+    : []
+  const testRows = defaultGrade
+    ? buildMonthlyReportGradeRows({
+        labels: defaultLabels,
+        data: defaultGrade.data,
+        types: ['테스트'],
+      })
+    : []
+  const examRows = examGrade
+    ? buildMonthlyReportGradeRows({
+        labels: examLabels,
+        data: examGrade.data,
+        onlyWithData: true,
+      })
+    : []
+  const progressRows = defaultGrade
+    ? buildMonthlyReportGradeRows({
+        labels: defaultLabels,
+        data: defaultGrade.data,
+        types: ['진도'],
+      })
+    : []
 
   return (
     <article aria-labelledby={lessonHeadingId} css={styles.lessonCard}>
-      <Lecture headingId={lessonHeadingId} lesson={lesson} />
+      <Lecture
+        defaultGrade={!!defaultGrade}
+        examGrade={!!examGrade}
+        headingId={lessonHeadingId}
+        lesson={lesson}
+      />
 
-      <div css={styles.lessonContent}>
-        {sections.map((section, index) => (
-          <Grades
-            key={section.type}
-            headingId={`${lessonHeadingId}-section-${index}`}
-            section={section}
+      <div css={styles.reportFields}>
+        <ReportField title="출석">
+          <ReportText
+            value={formatMonthlyReportAttendanceStatus(attendanceStatus)}
           />
-        ))}
-
-        {!sections.length && (
-          <div css={styles.emptyGrades}>입력된 성적이 없습니다.</div>
-        )}
-
-        {!!comments.length && (
-          <section aria-label="선생님 코멘트" css={styles.commentSection}>
-            <h4 css={styles.commentTitle}>선생님 코멘트</h4>
-            <div css={styles.commentBox}>
-              {comments.map((comment) => (
-                <p key={comment}>{comment}</p>
-              ))}
+        </ReportField>
+        <ReportField title="과제 성적">
+          <GradeRows rows={assignmentRows} />
+        </ReportField>
+        <ReportField title="테스트 / 모의고사">
+          <GradeRows rows={testRows} />
+          {!!examGrade && (
+            <div css={testRows.length ? styles.examRows : undefined}>
+              <div css={styles.examTitle}>지윤T 모의고사</div>
+              <GradeRows rows={examRows} />
             </div>
-          </section>
-        )}
+          )}
+        </ReportField>
+        <ReportField title="진도">
+          <GradeRows rows={progressRows} />
+        </ReportField>
+        <ReportField title="코멘트">
+          <GradeComments defaultGrade={defaultGrade} examGrade={examGrade} />
+        </ReportField>
       </div>
     </article>
   )
 }
 
 function Lecture({
+  defaultGrade,
+  examGrade,
   headingId,
   lesson,
 }: {
+  defaultGrade: boolean
+  examGrade: boolean
   headingId: string
   lesson: GradeMonthlyTab_LessonFragment
 }) {
@@ -239,64 +267,124 @@ function Lecture({
         </time>
         {lessonTime && <span>{lessonTime}</span>}
       </div>
+      <div css={styles.gradeBadges}>
+        {defaultGrade && <span css={styles.dailyBadge}>데일리</span>}
+        {examGrade && <span css={styles.examBadge}>모의고사</span>}
+      </div>
     </header>
   )
 }
 
-function Grades({
-  headingId,
-  section,
+function ReportField({
+  children,
+  title,
 }: {
-  headingId: string
-  section: MonthlyGradeSection
+  children: React.ReactNode
+  title: string
 }) {
   return (
-    <section aria-labelledby={headingId} css={styles.gradeSection}>
-      <div css={styles.sectionHeader}>
-        <h4 id={headingId}>{formatSectionTitle(section.type)}</h4>
-        <span>{section.rows.length}개 항목</span>
-      </div>
-
-      <div css={styles.gradeRows}>
-        {section.rows.map((row) => {
-          const displayValue = getMonthlyGradeDisplayValue(row.data)
-
-          return (
-            <div key={row.key} css={styles.gradeRow}>
-              <div css={styles.gradeText}>
-                <div css={styles.gradeLabel}>{row.label.value}</div>
-                {displayValue.detail && (
-                  <div css={styles.gradeDetail}>{displayValue.detail}</div>
-                )}
-              </div>
-
-              {displayValue.score && (
-                <div css={styles.gradeScore}>{displayValue.score}</div>
-              )}
-            </div>
-          )
-        })}
-      </div>
+    <section css={styles.reportField}>
+      <h4 css={styles.reportFieldTitle}>{title}</h4>
+      <div css={styles.reportFieldContent}>{children}</div>
     </section>
   )
 }
 
-function formatSectionTitle(type: string): string {
-  return type === '지윤T모의고사' ? '지윤T 모의고사' : type
+function GradeRows({ rows }: { rows: MonthlyReportGradeRow[] }) {
+  if (!rows.length) return <ReportText value="" />
+
+  return (
+    <div css={styles.gradeRows}>
+      {rows.map((row) => (
+        <div key={row.id} css={styles.gradeRow}>
+          {row.label !== '-' && (
+            <span css={styles.gradeLabel}>{row.label}:</span>
+          )}
+          {row.value && <span css={styles.gradeValue}>{row.value}</span>}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function ReportText({ value }: { value?: string | null }) {
+  return <div css={value ? styles.reportText : styles.emptyText}>{value || '-'}</div>
+}
+
+function GradeComments({
+  defaultGrade,
+  examGrade,
+}: {
+  defaultGrade?: GradeMonthlyTab_LessonGradeFragment
+  examGrade?: GradeMonthlyTab_LessonGradeFragment
+}) {
+  const comments = getMonthlyReportComments(
+    defaultGrade?.comment,
+    examGrade?.comment,
+  )
+
+  if (!comments.length) return <ReportText value="" />
+  if (comments.length === 1) return <ReportText value={comments[0]} />
+
+  return (
+    <div css={styles.comments}>
+      {comments.map((comment) => (
+        <div key={comment}>{comment}</div>
+      ))}
+    </div>
+  )
+}
+
+function MonthlySummary({ score }: { score?: MonthlySummaryScore }) {
+  const fields = [
+    ['출석 총평', score?.attendance],
+    ['과제 총평', score?.assignment],
+    ['테스트 총평', score?.test],
+    ['진도 총평', score?.progress],
+    ['전체 코멘트', score?.comment],
+  ] as const
+
+  return (
+    <section aria-label="월 전체 총평" css={styles.summaryCard}>
+      <div css={styles.summaryHeader}>
+        <h3>월 전체 총평</h3>
+        <span>학원 작성</span>
+      </div>
+      <div css={styles.summaryFields}>
+        {fields.map(([label, value]) => (
+          <div key={label} css={styles.summaryField}>
+            <h4>{label}</h4>
+            <p>{value || '-'}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
 }
 
 const styles = {
   wrapper: css`
     padding-top: 2px;
   `,
-
+  emptyReport: css`
+    display: flex;
+    min-height: 128px;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    border-radius: 16px;
+    color: ${COLORS.FONT['30']};
+    background: #fff;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+  `,
   monthFilter: css`
     display: flex;
     flex-direction: column;
     gap: 6px;
     margin-bottom: 18px;
   `,
-
   filterLabel: css`
     padding-left: 4px;
     color: ${COLORS.FONT['70']};
@@ -304,7 +392,6 @@ const styles = {
     font-weight: 700;
     line-height: 18px;
   `,
-
   monthSelect: css`
     min-height: 52px;
     border: 1px solid ${COLORS.BG['03']};
@@ -318,20 +405,17 @@ const styles = {
       outline-offset: 2px;
     }
   `,
-
   monthList: css`
     display: flex;
     flex-direction: column;
     gap: 20px;
   `,
-
   monthCard: css`
     overflow: hidden;
     border-radius: 24px;
     background: #fff;
     box-shadow: 0 8px 28px rgba(110, 133, 174, 0.12);
   `,
-
   monthHeader: css`
     display: flex;
     align-items: flex-end;
@@ -340,25 +424,20 @@ const styles = {
     padding: 20px 16px 16px;
     border-bottom: 1px solid ${COLORS.BG['03']};
   `,
-
   monthEyebrow: css`
     margin-bottom: 3px;
     color: ${COLORS.POINT.TERTIARY};
     font-size: 10px;
     font-weight: 800;
     line-height: 14px;
-    letter-spacing: -0.1px;
   `,
-
   monthTitle: css`
     margin: 0;
     color: ${COLORS.FONT['90']};
     font-size: 22px;
     font-weight: 800;
     line-height: 30px;
-    letter-spacing: -0.4px;
   `,
-
   lessonCount: css`
     flex-shrink: 0;
     padding: 5px 9px;
@@ -369,37 +448,30 @@ const styles = {
     font-weight: 700;
     line-height: 16px;
   `,
-
   lessonList: css`
     display: flex;
     flex-direction: column;
     gap: 12px;
     padding: 12px;
   `,
-
   lessonCard: css`
     overflow: hidden;
     border: 1px solid ${COLORS.BG['03']};
     border-radius: 18px;
     background: #fff;
   `,
-
   lessonHeader: css`
     padding: 14px;
     background: ${COLORS.BG.BACKGROUND_TEXT};
   `,
-
   lessonTitle: css`
     margin: 0;
     color: ${COLORS.FONT['90']};
     font-size: 16px;
     font-weight: 800;
     line-height: 22px;
-    letter-spacing: -0.2px;
-    word-break: keep-all;
     overflow-wrap: anywhere;
   `,
-
   lessonMeta: css`
     display: flex;
     flex-wrap: wrap;
@@ -416,140 +488,168 @@ const styles = {
       color: ${COLORS.BG['04']};
     }
   `,
-
-  lessonContent: css`
+  gradeBadges: css`
     display: flex;
-    flex-direction: column;
-    gap: 18px;
-    padding: 14px;
+    gap: 6px;
+    margin-top: 9px;
   `,
-
-  gradeSection: css`
-    min-width: 0;
-  `,
-
-  sectionHeader: css`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 7px;
-
-    h4 {
-      margin: 0;
-      color: ${COLORS.FONT['90']};
-      font-size: 14px;
-      font-weight: 800;
-      line-height: 20px;
-      word-break: keep-all;
-    }
-
-    span {
-      flex-shrink: 0;
-      color: ${COLORS.FONT['70']};
-      font-size: 11px;
-      font-weight: 600;
-      line-height: 16px;
-    }
-  `,
-
-  gradeRows: css`
-    overflow: hidden;
-    border: 1px solid ${COLORS.BG['03']};
-    border-radius: 14px;
-  `,
-
-  gradeRow: css`
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) max-content;
-    align-items: start;
-    gap: 12px;
-    padding: 12px;
-
-    & + & {
-      border-top: 1px solid ${COLORS.BG['03']};
-    }
-  `,
-
-  gradeText: css`
-    min-width: 0;
-  `,
-
-  gradeLabel: css`
-    color: ${COLORS.FONT['80']};
-    font-size: 14px;
-    font-weight: 650;
-    line-height: 20px;
-    letter-spacing: -0.15px;
-    word-break: keep-all;
-    overflow-wrap: anywhere;
-  `,
-
-  gradeDetail: css`
-    margin-top: 3px;
+  dailyBadge: css`
+    padding: 3px 7px;
+    border-radius: 6px;
     color: ${COLORS.FONT['70']};
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 18px;
-    word-break: keep-all;
-    overflow-wrap: anywhere;
+    background: ${COLORS.BG['03']};
+    font-size: 10px;
+    font-weight: 700;
   `,
-
-  gradeScore: css`
-    min-width: 66px;
-    padding: 6px 9px;
-    border-radius: 10px;
+  examBadge: css`
+    padding: 3px 7px;
+    border-radius: 6px;
     color: ${COLORS.POINT.TERTIARY};
     background: ${COLORS.BG['01']};
-    font-size: 14px;
+    font-size: 10px;
+    font-weight: 700;
+  `,
+  reportFields: css`
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  `,
+  reportField: css`
+    display: grid;
+    grid-template-columns: 104px minmax(0, 1fr);
+    border-top: 1px solid ${COLORS.BG['03']};
+  `,
+  reportFieldTitle: css`
+    margin: 0;
+    padding: 13px 10px;
+    color: ${COLORS.FONT['80']};
+    background: ${COLORS.BG.BACKGROUND_TEXT};
+    font-size: 12px;
     font-weight: 800;
-    line-height: 20px;
-    text-align: center;
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
+    line-height: 19px;
   `,
-
-  emptyGrades: css`
-    padding: 14px;
-    border-radius: 12px;
-    color: ${COLORS.FONT['70']};
-    background: ${COLORS.BG.BACKGROUND};
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 20px;
-    text-align: center;
+  reportFieldContent: css`
+    min-width: 0;
+    padding: 12px;
+    border-left: 1px solid ${COLORS.BG['03']};
   `,
-
-  commentSection: css`
+  gradeRows: css`
     display: flex;
     flex-direction: column;
     gap: 7px;
   `,
-
-  commentTitle: css`
-    margin: 0;
-    color: ${COLORS.FONT['90']};
-    font-size: 14px;
-    font-weight: 800;
-    line-height: 20px;
-  `,
-
-  commentBox: css`
+  gradeRow: css`
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    border-radius: 12px;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 3px 10px;
     color: ${COLORS.FONT['80']};
-    background: ${COLORS.BG['01']};
     font-size: 12px;
-    font-weight: 500;
+    line-height: 19px;
+  `,
+  gradeLabel: css`
+    min-width: 0;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  `,
+  gradeValue: css`
+    color: ${COLORS.POINT.TERTIARY};
+    font-weight: 800;
+    overflow-wrap: anywhere;
+  `,
+  examRows: css`
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid ${COLORS.BG['03']};
+  `,
+  examTitle: css`
+    margin-bottom: 6px;
+    color: ${COLORS.POINT.TERTIARY};
+    font-size: 11px;
+    font-weight: 800;
+  `,
+  reportText: css`
+    color: ${COLORS.FONT['80']};
+    font-size: 12px;
+    font-weight: 600;
     line-height: 19px;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+  `,
+  emptyText: css`
+    color: ${COLORS.FONT['30']};
+    font-size: 12px;
+    line-height: 19px;
+  `,
+  comments: css`
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    color: ${COLORS.FONT['80']};
+    font-size: 12px;
+    line-height: 19px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  `,
+  summaryCard: css`
+    overflow: hidden;
+    border: 1px solid #cfdcf3;
+    border-radius: 18px;
+    background: #f7faff;
+  `,
+  summaryHeader: css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 13px 14px;
+    border-bottom: 1px solid #dce6f7;
+
+    h3 {
+      margin: 0;
+      color: ${COLORS.FONT['90']};
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    span {
+      color: ${COLORS.POINT.TERTIARY};
+      font-size: 10px;
+      font-weight: 700;
+    }
+  `,
+  summaryFields: css`
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  `,
+  summaryField: css`
+    display: grid;
+    grid-template-columns: 104px minmax(0, 1fr);
+    border-top: 1px solid #e3ebf8;
+
+    &:first-of-type {
+      border-top: 0;
+    }
+
+    h4 {
+      margin: 0;
+      padding: 12px 10px;
+      color: ${COLORS.FONT['80']};
+      background: #eef4ff;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 19px;
+    }
 
     p {
       margin: 0;
+      padding: 12px;
+      border-left: 1px solid #e3ebf8;
+      color: ${COLORS.FONT['80']};
+      font-size: 12px;
+      line-height: 19px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
   `,
 }

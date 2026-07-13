@@ -34,7 +34,12 @@ function GradeMonthlyTab() {
     return <MonthlyStatus message="월별 성적 데이터가 없습니다." />
   }
 
-  return <MonthlyGrades lessonGrades={data.lessonGrades} />
+  return (
+    <MonthlyGrades
+      lessonGradeMonthlies={data.lessonGradeMonthlies}
+      lessonGrades={data.lessonGrades}
+    />
+  )
 }
 
 function MonthlyStatus({

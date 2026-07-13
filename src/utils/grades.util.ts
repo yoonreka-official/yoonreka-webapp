@@ -97,6 +97,7 @@ export function getInitialCumulativeLabel(
 interface LessonLike {
   date: string
   id: string
+  startTime?: string | null
 }
 
 interface LessonGradeLike<TLesson extends LessonLike> {
@@ -131,8 +132,11 @@ export function mergeLessonGradesByLesson<
     merged.set(lesson.id, item)
   })
 
-  return [...merged.values()].sort((a, b) =>
-    a.lesson.date.localeCompare(b.lesson.date),
+  return [...merged.values()].sort(
+    (a, b) =>
+      a.lesson.date.localeCompare(b.lesson.date) ||
+      (a.lesson.startTime ?? '').localeCompare(b.lesson.startTime ?? '') ||
+      a.lesson.id.localeCompare(b.lesson.id),
   )
 }
 
@@ -178,6 +182,116 @@ interface FormattableGradeData {
 export interface MonthlyGradeDisplayValue {
   detail: string
   score: string
+}
+
+export interface MonthlyReportGradeRow {
+  id: string
+  label: string
+  value: string
+}
+
+export function formatMonthlyReportAttendanceStatus(
+  status?: string | null,
+): string {
+  return (
+    {
+      ABSENT: '결석',
+      EARLY_LEAVE: '조퇴',
+      LATE: '지각',
+      PRESENT: '출석',
+    }[status ?? ''] ?? ''
+  )
+}
+
+export function getMonthlyReportComments(
+  defaultComment?: string | null,
+  examComment?: string | null,
+): string[] {
+  const normalizedDefault = defaultComment?.trim()
+  const normalizedExam = examComment?.trim()
+
+  if (normalizedDefault && normalizedExam) {
+    return [
+      `데일리: ${normalizedDefault}`,
+      `모의고사: ${normalizedExam}`,
+    ]
+  }
+  if (normalizedDefault) return [normalizedDefault]
+  if (normalizedExam) return [`모의고사: ${normalizedExam}`]
+  return []
+}
+
+export function getMonthlyReportMonthKey(date?: string | null): string | null {
+  const match = date?.match(/^(\d{4})-(\d{2})/)
+  if (!match) return null
+
+  const month = Number(match[2])
+  return month >= 1 && month <= 12 ? `${match[1]}-${match[2]}` : null
+}
+
+export function mapMonthlyReportSummariesByMonth<T>(
+  monthlies: Array<{ month: string; score?: T }>,
+): Map<string, T | undefined> {
+  return new Map(
+    monthlies.map((monthly) => [
+      monthly.month.slice(0, 7),
+      monthly.score,
+    ]),
+  )
+}
+
+export function buildMonthlyReportGradeRows({
+  data = [],
+  labels,
+  onlyWithData = false,
+  types,
+}: {
+  data?: MonthlyGradeDataLike[] | null
+  labels: MonthlyGradeLabelLike[]
+  onlyWithData?: boolean
+  types?: string[]
+}): MonthlyReportGradeRow[] {
+  const gradeData = data ?? []
+  const matchesType = (type: string) => !types || types.includes(type)
+  const dataIds = new Set(gradeData.map((item) => item.id))
+  const visibleLabels = labels
+    .filter(
+      (label) =>
+        matchesType(label.type) && (!onlyWithData || dataIds.has(label.id)),
+    )
+    .map((label) => ({ id: label.id, label: label.value }))
+  const knownIds = new Set(visibleLabels.map((label) => label.id))
+
+  for (const item of gradeData) {
+    if (matchesType(item.type) && !knownIds.has(item.id)) {
+      visibleLabels.push({ id: item.id, label: item.label })
+    }
+  }
+
+  return visibleLabels.map((label) => ({
+    ...label,
+    value: formatMonthlyReportGradeValue(
+      gradeData.find((item) => item.id === label.id),
+    ),
+  }))
+}
+
+export function formatMonthlyReportGradeValue(
+  data?: FormattableGradeData,
+): string {
+  if (!data) return ''
+
+  const values = [data.value2, data.value]
+    .filter((value) => value !== null && value !== undefined && value !== '')
+    .map(String)
+
+  if (values.length === 0) return ''
+
+  const maxValue =
+    data.maxValue !== null && data.maxValue !== undefined
+      ? `/${data.maxValue}`
+      : ''
+  return `${values.join(' ')}${maxValue}`
 }
 
 export function hasMonthlyGradeData(data?: FormattableGradeData): boolean {
