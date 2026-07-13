@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
 import Hls from 'hls.js'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BiDownload } from 'react-icons/bi'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 
@@ -17,6 +17,7 @@ import useLoading from '~/hooks/useLoading.ts'
 import Container from '~/layouts/Container.tsx'
 import ScreenBase from '~/layouts/ScreenBase.tsx'
 import YoutubePlayer from '~/pages/lectures/videos/YoutubePlayer.tsx'
+import { getUploadPlaybackMode } from '~/pages/lectures/videos/playback.ts'
 import useLessonVideoProgress from '~/pages/lectures/videos/useLessonVideoProgress.ts'
 import {
   GetMyLessonVideoDocument,
@@ -66,7 +67,12 @@ function LessonVideoPage() {
   const [params] = useSearchParams()
   const lectureId = params.get('lectureId')
 
-  const { data, loading } = useQuery(GetMyLessonVideoDocument, {
+  const {
+    data,
+    loading,
+    refetch: refetchVideo,
+  } = useQuery(GetMyLessonVideoDocument, {
+    fetchPolicy: 'no-cache',
     skip: !videoId,
     variables: { id: videoId as string },
   })
@@ -78,42 +84,143 @@ function LessonVideoPage() {
     variables: { lectureId: lectureId as string },
   })
 
-  const video = data?.lessonVideo
-  const { data: hlsDocumentsData } =
-    useQuery<GetMyLessonVideoHlsDocumentsQuery>(
-      GET_MY_LESSON_VIDEO_HLS_DOCUMENTS,
-      {
-        skip:
-          !videoId ||
-          !video ||
-          video.sourceType !== LessonVideoSourceType.Upload ||
-          Boolean(video.hlsPlaylistText),
-        variables: { id: videoId as string },
-      },
-    )
-  const hlsPlaylistDocuments = useMemo(
-    () => hlsDocumentsData?.lessonVideo?.hlsPlaylistDocuments ?? [],
-    [hlsDocumentsData],
+  const queriedVideo = data?.lessonVideo
+  const video = queriedVideo?.id === videoId ? queriedVideo : undefined
+  const shouldLoadHlsDocuments = Boolean(
+    videoId &&
+      video &&
+      video.sourceType === LessonVideoSourceType.Upload &&
+      !video.hlsPlaylistText,
   )
+  const {
+    data: hlsDocumentsData,
+    error: hlsDocumentsError,
+    loading: hlsDocumentsLoading,
+    refetch: refetchHlsDocuments,
+  } = useQuery<GetMyLessonVideoHlsDocumentsQuery>(
+    GET_MY_LESSON_VIDEO_HLS_DOCUMENTS,
+    {
+      fetchPolicy: 'no-cache',
+      skip: !shouldLoadHlsDocuments,
+      variables: { id: videoId as string },
+    },
+  )
+  const hlsPlaylistDocuments = useMemo(() => {
+    const queriedHlsVideo = hlsDocumentsData?.lessonVideo
+    if (!queriedHlsVideo || queriedHlsVideo.id !== videoId) return []
+    return queriedHlsVideo.hlsPlaylistDocuments ?? []
+  }, [hlsDocumentsData, videoId])
+  const hasCurrentHlsDocuments = hlsDocumentsData?.lessonVideo?.id === videoId
+  const hlsDocumentsPending =
+    shouldLoadHlsDocuments &&
+    (hlsDocumentsLoading || (!hasCurrentHlsDocuments && !hlsDocumentsError))
 
   const progress = useLessonVideoProgress(videoId)
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const playerHandleRef = useRef<VideoPlayerHandle | null>(null)
   const [playerReady, setPlayerReady] = useState(false)
+  const nativeHlsActiveRef = useRef(false)
+  const pendingPlaybackRestoreRef = useRef<{
+    position: number
+    shouldResume: boolean
+  } | null>(null)
+  const refreshInFlightRef = useRef(false)
+  const signedRefreshAttemptedRef = useRef(false)
 
   const resumedRef = useRef(false)
   const [resumeNotice, setResumeNotice] = useState<string | null>(null)
 
   const [playbackRate, setPlaybackRate] = useState(1)
+  const [forceMp4Fallback, setForceMp4Fallback] = useState(false)
+  const [playbackError, setPlaybackError] = useState<string | null>(null)
+  const [playbackNotice, setPlaybackNotice] = useState<string | null>(null)
 
-  useLoading(loading)
+  const uploadPlaybackMode = getUploadPlaybackMode({
+    forceMp4Fallback,
+    hlsDocumentCount: hlsPlaylistDocuments.length,
+    hlsDocumentsPending,
+    hlsPlaylistText: video?.hlsPlaylistText,
+  })
+  const hasHlsSource = Boolean(
+    video?.hlsPlaylistText || hlsPlaylistDocuments.length > 0,
+  )
+  const isUploadVideo = video?.sourceType === LessonVideoSourceType.Upload
+  const isPlaybackPreparing = isUploadVideo && uploadPlaybackMode === 'loading'
+  const effectivePlaybackError =
+    playbackError ??
+    (isUploadVideo && uploadPlaybackMode === 'mp4' && !video?.attachment?.url
+      ? '재생할 영상 파일이 없습니다.'
+      : null)
+  const effectivePlaybackNotice =
+    playbackNotice ??
+    (hlsDocumentsError && uploadPlaybackMode === 'mp4'
+      ? '적응형 재생을 불러오지 못해 원본 영상으로 재생합니다.'
+      : null)
+
+  useLoading(loading || hlsDocumentsPending)
+
+  const capturePlaybackState = useCallback(() => {
+    const element = videoRef.current
+    if (!element) return
+
+    pendingPlaybackRestoreRef.current = {
+      position: Number.isFinite(element.currentTime) ? element.currentTime : 0,
+      shouldResume: !element.paused && !element.ended,
+    }
+  }, [])
+
+  const fallbackToMp4 = useCallback(
+    (message: string) => {
+      if (!video?.attachment?.url) {
+        setPlaybackNotice(null)
+        setPlaybackError(
+          '영상을 재생할 수 없습니다. 잠시 후 다시 시도해주세요.',
+        )
+        return
+      }
+
+      capturePlaybackState()
+      setPlaybackError(null)
+      setPlaybackNotice(message)
+      setForceMp4Fallback(true)
+    },
+    [capturePlaybackState, video?.attachment?.url],
+  )
+
+  const refreshPlaybackSources = useCallback(async () => {
+    if (!videoId || refreshInFlightRef.current) return
+
+    refreshInFlightRef.current = true
+    capturePlaybackState()
+    try {
+      const requests: Promise<unknown>[] = [refetchVideo({ id: videoId })]
+      if (shouldLoadHlsDocuments) {
+        requests.push(refetchHlsDocuments({ id: videoId }))
+      }
+      await Promise.all(requests)
+    } finally {
+      refreshInFlightRef.current = false
+    }
+  }, [
+    capturePlaybackState,
+    refetchHlsDocuments,
+    refetchVideo,
+    shouldLoadHlsDocuments,
+    videoId,
+  ])
 
   useEffect(() => {
     resumedRef.current = false
     playerHandleRef.current = null
+    nativeHlsActiveRef.current = false
+    pendingPlaybackRestoreRef.current = null
+    signedRefreshAttemptedRef.current = false
     setPlayerReady(false)
-  }, [video?.id])
+    setForceMp4Fallback(false)
+    setPlaybackError(null)
+    setPlaybackNotice(null)
+  }, [videoId])
 
   useEffect(() => {
     const element = videoRef.current
@@ -121,7 +228,7 @@ function LessonVideoPage() {
     if (
       !element ||
       !currentVideo ||
-      (!currentVideo.hlsPlaylistText && hlsPlaylistDocuments.length === 0) ||
+      uploadPlaybackMode !== 'hls' ||
       currentVideo.sourceType !== LessonVideoSourceType.Upload
     ) {
       return
@@ -139,14 +246,60 @@ function LessonVideoPage() {
           ])
 
     if (element.canPlayType('application/vnd.apple.mpegurl')) {
+      nativeHlsActiveRef.current = true
       element.src = playlistResource.url
+      element.load()
       return () => {
+        nativeHlsActiveRef.current = false
+        if (element.src === playlistResource.url) {
+          element.removeAttribute('src')
+          element.load()
+        }
         playlistResource.revoke()
       }
     }
 
     if (Hls.isSupported()) {
       const hls = new Hls()
+      let isFallingBack = false
+      let mediaRecoveryCount = 0
+      let networkRecoveryCount = 0
+
+      hls.on(Hls.Events.ERROR, (_event, hlsError) => {
+        if (!hlsError.fatal || isFallingBack) return
+
+        if (hlsError.type === Hls.ErrorTypes.NETWORK_ERROR) {
+          if (networkRecoveryCount === 0) {
+            networkRecoveryCount += 1
+            hls.startLoad()
+            return
+          }
+
+          if (refreshInFlightRef.current) return
+          if (!signedRefreshAttemptedRef.current) {
+            signedRefreshAttemptedRef.current = true
+            void refreshPlaybackSources().catch(() => {
+              isFallingBack = true
+              fallbackToMp4(
+                '적응형 재생을 복구하지 못해 원본 영상으로 재생합니다.',
+              )
+            })
+            return
+          }
+        }
+
+        if (
+          hlsError.type === Hls.ErrorTypes.MEDIA_ERROR &&
+          mediaRecoveryCount === 0
+        ) {
+          mediaRecoveryCount += 1
+          hls.recoverMediaError()
+          return
+        }
+
+        isFallingBack = true
+        fallbackToMp4('적응형 재생에 문제가 있어 원본 영상으로 재생합니다.')
+      })
       hls.loadSource(playlistResource.url)
       hls.attachMedia(element)
       return () => {
@@ -155,11 +308,15 @@ function LessonVideoPage() {
       }
     }
 
-    if (currentVideo.attachment?.url) {
-      element.src = currentVideo.attachment.url
-    }
     playlistResource.revoke()
-  }, [hlsPlaylistDocuments, video])
+    fallbackToMp4('이 기기에서는 원본 영상으로 재생합니다.')
+  }, [
+    fallbackToMp4,
+    hlsPlaylistDocuments,
+    refreshPlaybackSources,
+    uploadPlaybackMode,
+    video,
+  ])
 
   const lastPositionSeconds = useMemo(() => {
     if (!videoId) return 0
@@ -211,6 +368,46 @@ function LessonVideoPage() {
   const handleChapterClick = (seconds: number) => {
     playerHandleRef.current?.seekTo(seconds)
     playerHandleRef.current?.play?.()
+  }
+
+  const handlePlaybackRetry = () => {
+    setPlaybackError(null)
+    signedRefreshAttemptedRef.current = false
+    void refreshPlaybackSources()
+      .then(() => {
+        setForceMp4Fallback(false)
+        setPlaybackNotice(null)
+      })
+      .catch(() => {
+        setPlaybackError(
+          '영상을 다시 불러오지 못했습니다. 잠시 후 다시 시도해주세요.',
+        )
+      })
+  }
+
+  const handleUploadVideoError = () => {
+    if (uploadPlaybackMode === 'loading') return
+
+    if (uploadPlaybackMode === 'hls' && nativeHlsActiveRef.current) {
+      if (refreshInFlightRef.current) return
+      if (!signedRefreshAttemptedRef.current) {
+        signedRefreshAttemptedRef.current = true
+        void refreshPlaybackSources().catch(() => {
+          fallbackToMp4('적응형 재생을 복구하지 못해 원본 영상으로 재생합니다.')
+        })
+        return
+      }
+
+      fallbackToMp4('적응형 재생에 문제가 있어 원본 영상으로 재생합니다.')
+      return
+    }
+
+    if (!hasHlsSource || uploadPlaybackMode === 'mp4') {
+      setPlaybackNotice(null)
+      setPlaybackError(
+        '영상을 재생할 수 없습니다. 네트워크 연결을 확인한 뒤 다시 시도해주세요.',
+      )
+    }
   }
 
   const attachments = useMemo(
@@ -265,15 +462,18 @@ function LessonVideoPage() {
                   css={styles.video}
                   preload="metadata"
                   src={
-                    video.hlsPlaylistText || hlsPlaylistDocuments.length > 0
-                      ? undefined
-                      : video.attachment?.url
+                    uploadPlaybackMode === 'mp4'
+                      ? video.attachment?.url
+                      : undefined
                   }
                   onEnded={(e) => {
                     progress.handleEnded(e.currentTarget.currentTime)
                   }}
+                  onError={handleUploadVideoError}
                   onLoadedMetadata={(e) => {
                     const element = e.currentTarget
+                    const pendingRestore = pendingPlaybackRestoreRef.current
+                    pendingPlaybackRestoreRef.current = null
 
                     playerHandleRef.current = {
                       getCurrentTime: () => element.currentTime,
@@ -285,7 +485,16 @@ function LessonVideoPage() {
                       },
                     }
 
+                    element.playbackRate = playbackRate
+                    if (pendingRestore && pendingRestore.position > 0) {
+                      element.currentTime = pendingRestore.position
+                    }
+
+                    setPlaybackError(null)
                     setPlayerReady(true)
+                    if (pendingRestore?.shouldResume) {
+                      element.play().catch(() => undefined)
+                    }
                   }}
                   onPause={(e) => {
                     progress.handlePause(e.currentTarget.currentTime)
@@ -325,6 +534,29 @@ function LessonVideoPage() {
                   />
                 ))}
 
+              {isPlaybackPreparing && (
+                <div css={styles.playerStatus}>
+                  <Caption color="#fff" size={12} weight="medium">
+                    영상을 준비하고 있어요.
+                  </Caption>
+                </div>
+              )}
+
+              {isUploadVideo && effectivePlaybackError && (
+                <div css={styles.playerStatus}>
+                  <Caption color="#fff" size={12} weight="medium">
+                    {effectivePlaybackError}
+                  </Caption>
+                  <button
+                    css={styles.retryButton}
+                    type="button"
+                    onClick={handlePlaybackRetry}
+                  >
+                    다시 시도
+                  </button>
+                </div>
+              )}
+
               {resumeNotice && (
                 <div css={styles.resumeNotice}>
                   <Caption color="#fff" size={12} weight="medium">
@@ -333,6 +565,14 @@ function LessonVideoPage() {
                 </div>
               )}
             </div>
+
+            {isUploadVideo &&
+              effectivePlaybackNotice &&
+              !effectivePlaybackError && (
+                <Caption color={COLORS.FONT['30']} size={12}>
+                  {effectivePlaybackNotice}
+                </Caption>
+              )}
 
             {video.sourceType === LessonVideoSourceType.Youtube &&
               native.enabled() && (
@@ -520,7 +760,11 @@ function replaceHlsPlaylistUris(
 
 function resolveHlsRelativeUri(playlistPath: string, uri: string) {
   const trimmed = uri.trim()
-  if (!trimmed || trimmed.startsWith('/') || /^[a-z][a-z0-9+.-]*:/i.test(trimmed)) {
+  if (
+    !trimmed ||
+    trimmed.startsWith('/') ||
+    /^[a-z][a-z0-9+.-]*:/i.test(trimmed)
+  ) {
     return null
   }
   if (trimmed.split('/').includes('..')) {
@@ -567,8 +811,33 @@ const styles = {
   video: css`
     width: 100%;
     max-height: 60vh;
+    aspect-ratio: 16 / 9;
     border-radius: 16px;
     background: #000;
+    object-fit: contain;
+  `,
+
+  playerStatus: css`
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.72);
+    text-align: center;
+  `,
+
+  retryButton: css`
+    padding: 7px 14px;
+    border-radius: 8px;
+    color: #fff;
+    background: ${COLORS.POINT.PRIMARY};
+    font-size: 12px;
+    font-weight: 600;
   `,
 
   resumeNotice: css`

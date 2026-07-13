@@ -28,6 +28,7 @@ const useLessonVideoProgress = (videoId?: string) => {
   const lastSentPositionRef = useRef<number | null>(null)
   const lastSentAtRef = useRef(0)
   const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const sendQueueRef = useRef<Promise<void>>(Promise.resolve())
 
   const send = useCallback(
     (position: number, segment?: { s: number; e: number }) => {
@@ -44,17 +45,37 @@ const useLessonVideoProgress = (videoId?: string) => {
       lastSentPositionRef.current = lastPositionSeconds
       lastSentAtRef.current = Date.now()
 
-      upsertProgress({
-        variables: {
-          input: {
-            lessonVideoId: videoId,
-            lastPositionSeconds,
-            segment,
+      const request = async () => {
+        await upsertProgress({
+          context: {
+            fetchOptions: { keepalive: true },
           },
-        },
-      }).catch((e) => {
-        console.error('upsertMyLessonVideoProgress 실패', e)
-      })
+          variables: {
+            input: {
+              lessonVideoId: videoId,
+              lastPositionSeconds,
+              segment,
+            },
+          },
+        })
+      }
+
+      // ? heartbeat/pause 순서를 보존하고 일시적인 네트워크 실패는 한 번 재시도
+      sendQueueRef.current = sendQueueRef.current
+        .then(async () => {
+          try {
+            await request()
+          } catch {
+            await request()
+          }
+        })
+        .catch((e) => {
+          if (lastSentPositionRef.current === lastPositionSeconds) {
+            lastSentPositionRef.current = null
+            lastSentAtRef.current = 0
+          }
+          console.error('upsertMyLessonVideoProgress 실패', e)
+        })
     },
     [videoId, upsertProgress],
   )
