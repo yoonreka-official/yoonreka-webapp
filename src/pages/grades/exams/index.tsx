@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { css } from '@emotion/react'
 import dayjs from 'dayjs'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { BiCheckCircle, BiFile, BiMinusCircle, BiXCircle } from 'react-icons/bi'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -26,12 +26,15 @@ import {
 
 import type {
   GetMyExamSubmissionsQuery,
-  MyExamResult_QuestionResultFragment,
+  MyExamResult_QuestionResultFragment as MyExamResultQuestionResultFragment,
 } from '~/types/api'
 
 /** 소수점 1자리까지 점수 표기 */
 const formatScore = (value?: number | null) =>
   value == null ? '-' : `${Math.round(value * 10) / 10}`
+
+const formatScoreWithUnit = (value?: number | null) =>
+  value == null ? '-' : `${formatScore(value)}점`
 
 function ExamResultPage() {
   const { examId } = useParams<{ examId?: string }>()
@@ -45,17 +48,21 @@ function ExamResultPage() {
 
 function ExamSubmissionsPage() {
   const navigate = useNavigate()
-  const { data, loading } = useQuery(GetMyExamSubmissionsDocument, {
-    fetchPolicy: 'cache-and-network',
-    notifyOnNetworkStatusChange: true,
-  })
+  const { data, error, loading, refetch } = useQuery(
+    GetMyExamSubmissionsDocument,
+    {
+      fetchPolicy: 'cache-and-network',
+      notifyOnNetworkStatusChange: true,
+    },
+  )
 
   useLoading(loading && !data)
 
   const submissions = useMemo(
     () =>
       [...(data?.submissions ?? [])].sort(
-        (a, b) => (b.confirmedAt ?? b.createdAt) - (a.confirmedAt ?? a.createdAt),
+        (a, b) =>
+          (b.confirmedAt ?? b.createdAt) - (a.confirmedAt ?? a.createdAt),
       ),
     [data],
   )
@@ -80,7 +87,15 @@ function ExamSubmissionsPage() {
     >
       <Container>
         <Flex direction="column" gap={10}>
-          {!loading && submissions.length === 0 && (
+          {error && !data && (
+            <LoadError
+              onRetry={() => {
+                refetch().catch(() => undefined)
+              }}
+            />
+          )}
+
+          {!error && !loading && submissions.length === 0 && (
             <NoData
               description={
                 <Body color={COLORS.FONT['30']} size={14}>
@@ -108,7 +123,11 @@ function ExamSubmissionsPage() {
 
 type ExamSubmissionItem = GetMyExamSubmissionsQuery['submissions'][number]
 
-function ExamSubmissionCard({ submission }: { submission: ExamSubmissionItem }) {
+function ExamSubmissionCard({
+  submission,
+}: {
+  submission: ExamSubmissionItem
+}) {
   const navigate = useNavigate()
   const { data, loading } = useQuery(GetMyExamResultDocument, {
     fetchPolicy: 'cache-first',
@@ -129,7 +148,9 @@ function ExamSubmissionCard({ submission }: { submission: ExamSubmissionItem }) 
     >
       <Flex direction="column" gap={10}>
         <Flex gap={6} items="center" wrap="wrap">
-          {exam?.category && <StatusTag status="default">{exam.category}</StatusTag>}
+          {exam?.category && (
+            <StatusTag status="default">{exam.category}</StatusTag>
+          )}
 
           <StatusTag status="info">
             {resultSubmission.submitType === ExamSubmitType.Onsite
@@ -138,7 +159,9 @@ function ExamSubmissionCard({ submission }: { submission: ExamSubmissionItem }) 
           </StatusTag>
 
           {resultSubmission.isPassed != null && (
-            <StatusTag status={resultSubmission.isPassed ? 'success' : 'danger'}>
+            <StatusTag
+              status={resultSubmission.isPassed ? 'success' : 'danger'}
+            >
               {resultSubmission.isPassed ? '통과' : '미통과'}
             </StatusTag>
           )}
@@ -146,7 +169,9 @@ function ExamSubmissionCard({ submission }: { submission: ExamSubmissionItem }) 
 
         <Flex direction="column" gap={3}>
           <Body size={16} weight="bold">
-            {loading ? '시험 정보를 불러오는 중입니다.' : exam?.title ?? `시험 ${submission.examId}`}
+            {loading
+              ? '시험 정보를 불러오는 중입니다.'
+              : (exam?.title ?? `시험 ${submission.examId}`)}
           </Body>
 
           <Caption color={COLORS.FONT['40']} size={12}>
@@ -188,26 +213,113 @@ function ExamSubmissionCard({ submission }: { submission: ExamSubmissionItem }) 
   )
 }
 
+function ExamResultTabs({
+  activeExamId,
+  activeExamTitle,
+  submissions,
+}: {
+  activeExamId: string
+  activeExamTitle?: string
+  submissions: ExamSubmissionItem[]
+}) {
+  return (
+    <nav aria-label="시험 성적 선택" css={styles.examTabs}>
+      {submissions.map((submission) => {
+        const active = submission.examId === activeExamId
+        const fallbackLabel = `${dayjs(
+          submission.confirmedAt ?? submission.createdAt,
+        ).format('M.D')} 성적`
+
+        return (
+          <ExamResultTab
+            key={submission.id}
+            label={active ? (activeExamTitle ?? fallbackLabel) : fallbackLabel}
+            active={active}
+            submission={submission}
+          />
+        )
+      })}
+    </nav>
+  )
+}
+
+function ExamResultTab({
+  active,
+  label,
+  submission,
+}: {
+  active: boolean
+  label: string
+  submission: ExamSubmissionItem
+}) {
+  const navigate = useNavigate()
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (active) {
+      buttonRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      })
+    }
+  }, [active, label])
+
+  return (
+    <button
+      aria-current={active ? 'page' : undefined}
+      css={styles.examTab(active)}
+      ref={buttonRef}
+      type="button"
+      onClick={() => navigate(`/grades/exams/${submission.examId}`)}
+    >
+      {label}
+    </button>
+  )
+}
+
 function ExamResultDetailPage({ examId }: { examId: string }) {
   const navigate = useNavigate()
 
   // ? 시험 ID → 내 제출(채점 확정분) 매칭
-  const { data: submissionsData, loading: submissionsLoading } = useQuery(
-    GetMyExamSubmissionsDocument,
-    {
-      fetchPolicy: 'cache-and-network',
-    },
-  )
+  const {
+    data: submissionsData,
+    error: submissionsError,
+    loading: submissionsLoading,
+    refetch: refetchSubmissions,
+  } = useQuery(GetMyExamSubmissionsDocument, {
+    fetchPolicy: 'cache-and-network',
+  })
+
+  const submissions = useMemo(() => {
+    const examIds = new Set<string>()
+
+    return [...(submissionsData?.submissions ?? [])]
+      .sort(
+        (a, b) =>
+          (b.confirmedAt ?? b.createdAt) - (a.confirmedAt ?? a.createdAt),
+      )
+      .filter((submission) => {
+        if (examIds.has(submission.examId)) {
+          return false
+        }
+
+        examIds.add(submission.examId)
+        return true
+      })
+  }, [submissionsData])
 
   const submissionId = useMemo(
-    () =>
-      submissionsData?.submissions.find(
-        (submission) => submission.examId === examId,
-      )?.id,
-    [submissionsData, examId],
+    () => submissions.find((submission) => submission.examId === examId)?.id,
+    [submissions, examId],
   )
 
-  const { data, loading: resultLoading } = useQuery(GetMyExamResultDocument, {
+  const {
+    data,
+    error: resultError,
+    loading: resultLoading,
+    refetch: refetchResult,
+  } = useQuery(GetMyExamResultDocument, {
     skip: !submissionId,
     variables: { submissionId: submissionId as string },
   })
@@ -268,13 +380,16 @@ function ExamResultDetailPage({ examId }: { examId: string }) {
 
     if (showStatistics) {
       cards.push(
-        { label: '평균', value: formatScore(statistics.mean) },
+        { label: '평균', value: formatScoreWithUnit(statistics.mean) },
         {
           label: '상위 10% 평균',
-          value: formatScore(statistics.topTenPercentMean),
+          value: formatScoreWithUnit(statistics.topTenPercentMean),
         },
-        { label: '표준편차', value: formatScore(statistics.stddev) },
-        { label: '최고 점수', value: formatScore(statistics.max) },
+        {
+          label: '표준편차',
+          value: formatScoreWithUnit(statistics.stddev),
+        },
+        { label: '최고 점수', value: formatScoreWithUnit(statistics.max) },
         { label: '응시 인원', value: `${statistics.applicants}명` },
       )
     }
@@ -283,12 +398,12 @@ function ExamResultDetailPage({ examId }: { examId: string }) {
   }, [statistics, showLevel, showStatistics, myLevel])
 
   const questionResults = useMemo(
-    () =>
-      [...(result?.questionResults ?? [])].sort((a, b) => a.no - b.no),
+    () => [...(result?.questionResults ?? [])].sort((a, b) => a.no - b.no),
     [result],
   )
 
-  const notFound = !loading && !!submissionsData && !result
+  const loadError = submissionsError ?? resultError
+  const notFound = !loading && !loadError && !!submissionsData && !result
 
   return (
     <ScreenBase
@@ -309,6 +424,25 @@ function ExamResultDetailPage({ examId }: { examId: string }) {
       }
     >
       <Container>
+        {submissions.length > 0 && (
+          <ExamResultTabs
+            activeExamId={examId}
+            activeExamTitle={exam?.title}
+            submissions={submissions}
+          />
+        )}
+
+        {loadError && (
+          <LoadError
+            onRetry={() => {
+              refetchSubmissions().catch(() => undefined)
+              if (submissionId) {
+                refetchResult({ submissionId }).catch(() => undefined)
+              }
+            }}
+          />
+        )}
+
         {notFound && (
           <NoData
             description={
@@ -321,60 +455,79 @@ function ExamResultDetailPage({ examId }: { examId: string }) {
 
         {result && exam && submission && statistics && (
           <Flex direction="column" gap={10}>
-            <CardBase css={styles.noMarginCard}>
-              <Flex direction="column" gap={8}>
-                <Flex gap={6} items="center" wrap="wrap">
-                  {exam.category && (
-                    <StatusTag status="default">{exam.category}</StatusTag>
-                  )}
+            <CardBase css={[styles.noMarginCard, styles.heroCard]}>
+              <Flex direction="column" gap={14}>
+                <Flex gap={8} items="center" justify="space-between">
+                  <Flex gap={6} items="center" wrap="wrap">
+                    {exam.category && (
+                      <StatusTag status="default">{exam.category}</StatusTag>
+                    )}
 
-                  <StatusTag status="info">
-                    {submission.submitType === ExamSubmitType.Onsite
-                      ? '현장 응시'
-                      : '온라인 응시'}
-                  </StatusTag>
+                    {exam.isRetest && (
+                      <StatusTag status="warning">재시험</StatusTag>
+                    )}
+                  </Flex>
 
-                  {exam.isRetest && <StatusTag status="warning">재시험</StatusTag>}
+                  <div
+                    aria-label={`응시 방식: ${
+                      submission.submitType === ExamSubmitType.Onsite
+                        ? '현장'
+                        : '온라인'
+                    }`}
+                    css={styles.submitTypeSwitch}
+                    role="group"
+                  >
+                    <span
+                      css={styles.submitType(
+                        submission.submitType === ExamSubmitType.Onsite,
+                      )}
+                      aria-hidden
+                    >
+                      현장
+                    </span>
+                    <span
+                      css={styles.submitType(
+                        submission.submitType !== ExamSubmitType.Onsite,
+                      )}
+                      aria-hidden
+                    >
+                      온라인
+                    </span>
+                  </div>
                 </Flex>
 
                 <Body size={18} weight="bold">
                   {exam.title}
                 </Body>
 
-                <Flex gap={6} items="flex-end">
-                  <div css={styles.myScore}>
-                    {formatScore(submission.totalScore)}
+                <div css={styles.scoreSummary}>
+                  <div css={styles.scoreLine}>
+                    <span>내 점수</span>
+                    <strong>
+                      {formatScoreWithUnit(submission.totalScore)}
+                    </strong>
+                    <span>/ {formatScoreWithUnit(exam.maxScore)}</span>
                   </div>
 
-                  <Body color={COLORS.FONT['40']} size={16} weight="medium">
-                    / {formatScore(exam.maxScore)}점
-                  </Body>
-                </Flex>
-
-                {showRank && statistics.myRank != null && (
-                  <Caption color={COLORS.FONT['60']} size={12} weight="semibold">
-                    내 등수 {statistics.myRank}등 · 응시 인원{' '}
-                    {statistics.applicants}명
-                  </Caption>
-                )}
+                  {showRank && statistics.myRank != null && (
+                    <div css={styles.scoreLine}>
+                      <span>내 등수</span>
+                      <strong>{statistics.myRank}등</strong>
+                      <span>/ {statistics.applicants}명</span>
+                    </div>
+                  )}
+                </div>
               </Flex>
             </CardBase>
 
             {statCards.length > 0 && (
               <CardBase css={styles.noMarginCard}>
-                <Caption
-                  className="mb-2"
-                  color={COLORS.FONT['60']}
-                  size={12}
-                  weight="bold"
-                >
-                  시험 통계
-                </Caption>
+                <h2 css={styles.sectionTitle}>통계</h2>
 
                 <div css={styles.statGrid}>
                   {statCards.map((card) => (
                     <div key={card.label} css={styles.statCard}>
-                      <Caption color={COLORS.FONT['40']} size={10}>
+                      <Caption color={COLORS.FONT['60']} size={12}>
                         {card.label}
                       </Caption>
 
@@ -389,32 +542,20 @@ function ExamResultDetailPage({ examId }: { examId: string }) {
 
             {showHistogram && (
               <CardBase css={styles.noMarginCard}>
-                <Caption
-                  className="mb-2"
-                  color={COLORS.FONT['60']}
-                  size={12}
-                  weight="bold"
-                >
-                  점수대별 인원
-                </Caption>
+                <h2 css={styles.sectionTitle}>점수대별 인원</h2>
 
-                <ExamHistogram
-                  histogram={statistics.histogram}
-                  myBucketIndex={myBucketIndex}
-                />
+                <div css={styles.histogramBox}>
+                  <ExamHistogram
+                    histogram={statistics.histogram}
+                    myBucketIndex={myBucketIndex}
+                  />
+                </div>
               </CardBase>
             )}
 
             {showLevel && (exam.levelCuts?.length ?? 0) > 0 && (
               <CardBase css={styles.noMarginCard}>
-                <Caption
-                  className="mb-2"
-                  color={COLORS.FONT['60']}
-                  size={12}
-                  weight="bold"
-                >
-                  등급컷
-                </Caption>
+                <h2 css={styles.sectionTitle}>등급 정보</h2>
 
                 <Flex direction="column" gap={6}>
                   {[...(exam.levelCuts ?? [])]
@@ -435,12 +576,16 @@ function ExamResultDetailPage({ examId }: { examId: string }) {
                           size={12}
                           weight="semibold"
                         >
-                          {cut.level}등급
+                          {cut.level}등급 컷
                           {cut.level === myLevel && ' (나의 등급)'}
                         </Caption>
 
-                        <Caption color={COLORS.FONT['80']} size={12} weight="bold">
-                          {formatScore(cut.score)}점 이상
+                        <Caption
+                          color={COLORS.FONT['80']}
+                          size={12}
+                          weight="bold"
+                        >
+                          {formatScoreWithUnit(cut.score)}
                         </Caption>
                       </Flex>
                     ))}
@@ -449,11 +594,7 @@ function ExamResultDetailPage({ examId }: { examId: string }) {
             )}
 
             <CardBase css={styles.noMarginCard}>
-              <Flex
-                className="mb-2"
-                items="center"
-                justify="space-between"
-              >
+              <Flex className="mb-2" items="center" justify="space-between">
                 <Caption color={COLORS.FONT['60']} size={12} weight="bold">
                   문항별 결과
                 </Caption>
@@ -490,12 +631,28 @@ function ExamResultDetailPage({ examId }: { examId: string }) {
   )
 }
 
+function LoadError({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div css={styles.loadError}>
+      <Body color={COLORS.FONT['40']} size={14}>
+        시험 성적을 불러오지 못했습니다. 네트워크 연결을 확인해주세요.
+      </Body>
+      <button css={styles.retryButton} type="button" onClick={onRetry}>
+        다시 시도
+      </button>
+    </div>
+  )
+}
+
 interface QuestionResultRowProps {
-  result: MyExamResult_QuestionResultFragment
+  result: MyExamResultQuestionResultFragment
   onWrongNoteClick: () => void
 }
 
-function QuestionResultRow({ result, onWrongNoteClick }: QuestionResultRowProps) {
+function QuestionResultRow({
+  result,
+  onWrongNoteClick,
+}: QuestionResultRowProps) {
   const isWrong = result.isCorrect === false
 
   return (
@@ -527,9 +684,7 @@ function QuestionResultRow({ result, onWrongNoteClick }: QuestionResultRowProps)
               {result.no}번
             </Body>
 
-            {result.unit && (
-              <span css={styles.unitTag}>{result.unit}</span>
-            )}
+            {result.unit && <span css={styles.unitTag}>{result.unit}</span>}
           </Flex>
 
           <Caption color={COLORS.FONT['60']} size={12}>
@@ -579,8 +734,66 @@ const styles = {
     height: 28px;
   `,
 
+  examTabs: css`
+    display: flex;
+    gap: 8px;
+    margin: -2px -14px 10px;
+    padding: 2px 14px 10px;
+    overflow-x: auto;
+    border-bottom: 1px solid ${COLORS.BG['03']};
+    scroll-snap-type: x proximity;
+  `,
+
+  examTab: (active: boolean) => css`
+    flex-shrink: 0;
+    max-width: 180px;
+    padding: 8px 13px;
+    overflow: hidden;
+    border: 1px solid ${active ? COLORS.BG['02'] : 'transparent'};
+    border-radius: 999px;
+    color: ${active ? COLORS.FONT['90'] : COLORS.FONT['50']};
+    background: ${active ? '#fff' : COLORS.BG['01']};
+    box-shadow: ${active ? '0 3px 12px rgba(119, 137, 166, 0.16)' : 'none'};
+    font-size: 13px;
+    font-weight: ${active ? 700 : 500};
+    line-height: 18px;
+    letter-spacing: -0.2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    scroll-snap-align: center;
+
+    &:focus-visible {
+      outline: 2px solid ${COLORS.POINT.SECONDARY};
+      outline-offset: 1px;
+    }
+  `,
+
+  loadError: css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 28px 16px;
+    border-radius: 16px;
+    background: #fff;
+    text-align: center;
+  `,
+
+  retryButton: css`
+    padding: 8px 14px;
+    border-radius: 10px;
+    color: #fff;
+    background: ${COLORS.POINT.PRIMARY};
+    font-size: 13px;
+    font-weight: 600;
+  `,
+
   noMarginCard: css`
     margin-bottom: 0;
+  `,
+
+  heroCard: css`
+    border-radius: 0 0 20px 20px;
   `,
 
   examListCard: css`
@@ -608,12 +821,62 @@ const styles = {
     background: ${COLORS.BG.BACKGROUND};
   `,
 
-  myScore: css`
-    font-size: 32px;
+  submitTypeSwitch: css`
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 2px;
+    border-radius: 999px;
+    background: ${COLORS.BG.BACKGROUND};
+  `,
+
+  submitType: (active: boolean) => css`
+    padding: 4px 8px;
+    border-radius: 999px;
+    color: ${active ? COLORS.FONT['90'] : COLORS.FONT['30']};
+    background: ${active ? '#fff' : 'transparent'};
+    box-shadow: ${active ? '0 1px 4px rgba(47, 51, 57, 0.12)' : 'none'};
+    font-size: 11px;
+    font-weight: ${active ? 700 : 500};
+    line-height: 16px;
+    letter-spacing: -0.2px;
+  `,
+
+  scoreSummary: css`
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  `,
+
+  scoreLine: css`
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    color: ${COLORS.FONT['60']};
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+
+    > span:first-of-type {
+      min-width: 52px;
+      color: ${COLORS.FONT['80']};
+      font-weight: 600;
+    }
+
+    > strong {
+      color: ${COLORS.FONT['90']};
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+    }
+  `,
+
+  sectionTitle: css`
+    margin: 0 0 14px;
+    color: ${COLORS.FONT['90']};
+    font-size: 17px;
     font-weight: 700;
-    line-height: 38px;
-    letter-spacing: -0.5px;
-    color: ${COLORS.POINT.PRIMARY};
+    line-height: 24px;
+    letter-spacing: -0.3px;
   `,
 
   statGrid: css`
@@ -625,10 +888,20 @@ const styles = {
   statCard: css`
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 10px 12px;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 76px;
+    gap: 4px;
+    padding: 10px 6px;
+    border: 1px solid ${COLORS.BG['03']};
     border-radius: 12px;
-    background: ${COLORS.BG.BACKGROUND};
+    background: #fff;
+    text-align: center;
+  `,
+
+  histogramBox: css`
+    height: 220px;
   `,
 
   levelCutRow: (active: boolean) => css`

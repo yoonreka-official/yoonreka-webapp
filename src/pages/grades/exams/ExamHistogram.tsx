@@ -36,11 +36,9 @@ function ExamHistogram({ histogram, myBucketIndex }: ExamHistogramProps) {
         label: '인원',
         data: histogram,
         backgroundColor: HISTOGRAM_BUCKET_LABELS.map((_, index) =>
-          index === myBucketIndex
-            ? COLORS.POINT.PRIMARY
-            : COLORS.POINT.SECONDARY,
+          index === myBucketIndex ? COLORS.POINT.PRIMARY : '#7E8AA6',
         ),
-        borderRadius: 6,
+        borderRadius: 2,
         maxBarThickness: 48,
       },
     ],
@@ -48,19 +46,18 @@ function ExamHistogram({ histogram, myBucketIndex }: ExamHistogramProps) {
 
   const options: ChartOptions<'bar'> = {
     responsive: true,
+    maintainAspectRatio: false,
 
     scales: {
       y: {
         beginAtZero: true,
-        position: 'right',
-        offset: true,
 
         border: {
-          color: COLORS.BG['01'],
+          display: false,
         },
 
         grid: {
-          display: false,
+          color: COLORS.BG['03'],
         },
 
         ticks: {
@@ -74,7 +71,7 @@ function ExamHistogram({ histogram, myBucketIndex }: ExamHistogramProps) {
 
       x: {
         border: {
-          color: COLORS.BG['01'],
+          color: COLORS.BG['03'],
         },
 
         grid: {
