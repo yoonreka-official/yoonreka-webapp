@@ -153,7 +153,7 @@ function CardDailyGrade({
 
       <Flex direction="column" gap={4} style={{ marginTop: 16 }}>
         <Body size={14} weight="bold">
-          {`COMMENT`}
+          COMMENT
         </Body>
 
         <div css={gradeStyles.commentBox}>
@@ -285,6 +285,9 @@ export const gradeStyles = {
 
   scoreBox: css`
     width: 100%;
+    min-width: 0;
+    align-items: center;
+    gap: 8px;
   `,
 
   commentBox: css`
@@ -296,14 +299,20 @@ export const gradeStyles = {
   examResultButton: css`
     flex-shrink: 0;
     margin-left: auto;
-    padding: 2px 10px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 600;
+    min-width: 104px;
+    padding: 9px 14px;
+    border: 1px solid ${COLORS.POINT.PRIMARY};
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
     letter-spacing: -0.2px;
-    line-height: 16px;
-    color: #fff;
-    background: ${COLORS.POINT.PRIMARY};
+    line-height: 18px;
+    color: ${COLORS.POINT.TERTIARY};
+    background: #fff;
+
+    &:active {
+      background: ${COLORS.BG.BACKGROUND_TEXT};
+    }
   `,
 }
 
