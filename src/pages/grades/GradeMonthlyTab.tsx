@@ -2,14 +2,19 @@ import { useQuery } from '@apollo/client'
 
 import Caption from '~/components/typography/Caption.tsx'
 import { COLORS } from '~/configs/theme.ts'
+import useAuth from '~/hooks/useAuth.tsx'
 import {
   GetGradeMonthlyTabDocument,
   GradeType,
   LessonGradeRelayOrder,
 } from '~/types/api'
+
 import { MonthlyGrades } from './MonthlyGrades'
 
 function GradeMonthlyTab() {
+  const {
+    state: { authUser },
+  } = useAuth()
   const { data, error, loading } = useQuery(GetGradeMonthlyTabDocument, {
     fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true,
@@ -27,7 +32,7 @@ function GradeMonthlyTab() {
   }
 
   if (error) {
-    return <MonthlyStatus isError message="월별 성적을 불러오지 못했습니다." />
+    return <MonthlyStatus message="월별 성적을 불러오지 못했습니다." isError />
   }
 
   if (!data?.lessonGrades.length) {
@@ -38,6 +43,7 @@ function GradeMonthlyTab() {
     <MonthlyGrades
       lessonGradeMonthlies={data.lessonGradeMonthlies}
       lessonGrades={data.lessonGrades}
+      studentName={authUser?.name}
     />
   )
 }
